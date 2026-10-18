@@ -1,0 +1,15 @@
+# HTTP clients and parsing
+beautifulsoup4>=4.12
+curl-cffi>=0.7
+lxml>=5.0
+requests>=2.32
+
+# Browser automation
+selenium>=4.20
+seleniumbase>=4.20
+undetected-chromedriver>=3.5
+setuptools  # undetected-chromedriver needs distutils on Python 3.12+
+
+# Data processing
+pandas>=2.0
+tqdm>=4.66

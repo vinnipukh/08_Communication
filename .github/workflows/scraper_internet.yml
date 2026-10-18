@@ -1,0 +1,16 @@
+name: Telecom Home Internet Scraper
+
+on:
+  schedule:
+    # 07:30 Istanbul (UTC+3), same slot as the cron server
+    - cron: '30 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    uses: ./.github/workflows/_communication_scraper.yml
+    with:
+      scraper: internet

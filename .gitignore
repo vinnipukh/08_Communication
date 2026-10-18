@@ -1,0 +1,68 @@
+# Python / virtual environments
+.venv/
+.venv-win/
+venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.p12
+id_rsa
+id_rsa.pub
+
+# Temporary/runtime files
+*.tmp
+*.temp
+tmp/
+temp/
+checkpoints/
+Codes/**/checkpoints/
+InflationItems/Codes/**/checkpoints/
+.playwright-cli/
+
+# Serving databases (owned by the web repository)
+*.db
+*.db-wal
+*.db-shm
+
+# Scraper logs (Telecom writes per-day logs here)
+logs/
+
+# Editors / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 08_Communication scraper runtime files
+InflationItems/Codes/08_Communication/Beymen/.beymen_cookies.json
+InflationItems/Codes/08_Communication/Samsung/checkpoints/
+*.csv.part
+# scraper-server runtime (deploy/scraper-server/setup.sh), repo-root anchored
+/bin/
+/venv/
+/venv.old/
+/server_logs/
+/export/
+/log.txt
+/.env
+# SeleniumBase runtime folder (driver lock file)
+downloaded_files/
+# data of the removed Emlakjet scraper (kept locally, not part of this repo)
+/InflationItems/Datas/04_Housing/

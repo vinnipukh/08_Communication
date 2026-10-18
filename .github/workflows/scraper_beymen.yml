@@ -1,0 +1,19 @@
+name: Beymen Scraper (curl_cffi)
+
+# InflationItems/Codes/08_Communication/Beymen/ -> beymen_*.csv.
+# Not the same as beymen.yml (BeymenTech -> beymen_tech_*.csv).
+
+on:
+  schedule:
+    # 02:00 Istanbul (UTC+3), same slot as the cron server
+    - cron: '0 23 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    uses: ./.github/workflows/_communication_scraper.yml
+    with:
+      scraper: beymen

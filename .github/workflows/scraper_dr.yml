@@ -1,0 +1,16 @@
+name: D&R Scraper
+
+on:
+  schedule:
+    # 01:30 Istanbul (UTC+3), same slot as the cron server
+    - cron: '30 22 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    uses: ./.github/workflows/_communication_scraper.yml
+    with:
+      scraper: dr

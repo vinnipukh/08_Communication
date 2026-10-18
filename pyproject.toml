@@ -1,0 +1,17 @@
+[project]
+name = "inflation-study-data"
+version = "0.2.0"
+description = "Technology and telecom price scrapers for the Inflation Study project"
+requires-python = ">=3.10"
+dependencies = [
+    "beautifulsoup4>=4.12",
+    "curl-cffi>=0.7",
+    "lxml>=5.0",
+    "pandas>=2.0",
+    "requests>=2.32",
+    "selenium>=4.20",
+    "setuptools",
+    "seleniumbase>=4.20",
+    "tqdm>=4.66",
+    "undetected-chromedriver>=3.5",
+]

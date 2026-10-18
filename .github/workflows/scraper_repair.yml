@@ -1,0 +1,16 @@
+name: Telecom Repair Prices Scraper
+
+on:
+  schedule:
+    # 09:00 Istanbul (UTC+3), same slot as the cron server
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    uses: ./.github/workflows/_communication_scraper.yml
+    with:
+      scraper: repair
