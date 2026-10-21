@@ -9,7 +9,7 @@ One public page per service, plain HTTP (recon 2026-10-09, docs/site-analysis/te
   appletv     tv.apple.com/tr?l=tr FAQ ("Aylık abonelik sadece ₺49,99/ay"); apple.com/tr/apple-tv-plus/ is gone
   youtube     youtube.com/premium ytInitialData optionItemRenderer entries
   spotify     spotify.com/tr-tr/premium plan texts
-  mubi        mubi.com/tr/tr __NEXT_DATA__ subscriptionPlans
+  mubi        api.mubi.com/v4/subscription_plans with Client-Country: TR (the page's plans follow the IP)
   tvplus      tvplus.com.tr/paketler RSC payload (stickyBarData + Turkcell x HBO Max packages)
   tivibu      tivibu.com.tr/paketler .item-container / .priceSelect cards
   tod         todtv.com.tr/satinal .package-card cards
@@ -52,9 +52,9 @@ def text_of(html):
     return re.sub(r"\s+", " ", soup.get_text(" ", strip=True))
 
 
-def page(home, url, **kw):
+def page(home, url, headers=None, **kw):
     # Turkish locale: several services localise prices/plan names by Accept-Language
-    html = Fetcher(home, headers={"Accept-Language": "tr-TR,tr;q=0.9"}).get(url, **kw)
+    html = Fetcher(home, headers={"Accept-Language": "tr-TR,tr;q=0.9", **(headers or {})}).get(url, **kw)
     if html is None:
         raise Blocked(f"{url}: 404")
     return html
@@ -152,13 +152,21 @@ def spotify(limit):
     return need(list(rows.values()), "spotify")
 
 
+MUBI_API = "https://api.mubi.com/v4/subscription_plans"
+
+
 def mubi(limit):
+    # mubi.com/tr/tr's __NEXT_DATA__ plans follow the requester's IP (a US GitHub runner got USD plans);
+    # the API the site itself calls takes the country from the Client-Country header instead
     url = "https://mubi.com/tr/tr"
-    html = page(url, url)
-    plans = json.JSONDecoder().raw_decode(html, html.index('"subscriptionPlans":') + len('"subscriptionPlans":'))[0]
+    plans = {p["selection_key"]: p for p in json.loads(
+        page(url, MUBI_API, headers={"Client": "web", "Client-Country": "TR"}, min_len=100))}
+    currencies = {p.get("price_currency") for p in plans.values()}
+    if currencies != {"TRY"}:
+        raise Blocked(f"mubi: expected TRY plans, got {sorted(map(str, currencies))}")
     rows = [srow("mubi", f"MUBI {p.get('display_name') or key} ({key})", p["price_in_cents"] / 100,
-                 "1_yil" if key == "year" else "1_ay", url, pid=key)
-            for key, p in plans.items() if isinstance(p, dict) and p.get("price_in_cents")]
+                 "1_yil" if p.get("renewal_period") == "year" else "1_ay", url, pid=key)
+            for key, p in plans.items() if p.get("price_in_cents")]
     return need(rows, "mubi")
 
 
