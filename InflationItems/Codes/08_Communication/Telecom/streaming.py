@@ -6,7 +6,7 @@ One public page per service, plain HTTP (recon 2026-10-09, docs/site-analysis/te
   disney      disneyplus.com/tr-tr plan cards (monthly + yearly)
   hbomax      hbomax.com/tr/tr plan cards
   prime       amazon.com.tr/prime ("Prime sadece 69,90₺/ay", includes Prime Video)
-  appletv     tv.apple.com/tr?l=tr FAQ ("Aylık abonelik sadece ₺49,99/ay"); apple.com/tr/apple-tv-plus/ is gone
+  appletv     tv.apple.com/tr?l=tr FAQ ("Abonelikler ₺49,99 başlangıç fiyatıyla"; iCloud+ bundle since 2026-10-20); apple.com/tr/apple-tv-plus/ is gone
   youtube     youtube.com/premium ytInitialData optionItemRenderer entries
   spotify     spotify.com/tr-tr/premium plan texts
   mubi        api.mubi.com/v4/subscription_plans with Client-Country: TR (the page's plans follow the IP)
@@ -108,10 +108,13 @@ def prime(limit):
 
 
 def appletv(limit):
-    # apple.com/tr/apple-tv-plus/ redirects to /tr/home/ since 2026-10; the price is in the tv.apple.com FAQ
+    # apple.com/tr/apple-tv-plus/ redirects to /tr/home/ since 2026-10; the price is in the tv.apple.com FAQ.
+    # Since 2026-10-20 Apple TV is not sold separately in TR, only inside iCloud+: the FAQ gives the
+    # cheapest iCloud+ plan ("Abonelikler ₺49,99 başlangıç fiyatıyla sunulur"). Same row id kept for continuity.
     url = "https://tv.apple.com/tr?l=tr"  # without l=tr the storefront answers in English
     t = text_of(page("https://tv.apple.com/tr", url))
-    m = re.search(r"Aylık abonelik sadece ₺([\d.,]+)/ay", t)
+    m = (re.search(r"Aylık abonelik sadece ₺([\d.,]+)/ay", t)
+         or re.search(r"Abonelikler ₺([\d.,]+) başlangıç fiyatıyla", t))
     return need([srow("appletv", "Apple TV+ aylık", m.group(1), "1_ay", url)] if m else [], "appletv")
 
 
