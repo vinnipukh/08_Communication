@@ -1,0 +1,6 @@
+﻿product_name,price,category_number,sub_category_number,date,operator,group,product_id,list_price,period,url
+MUBI aylık (month),14.99,8,0839201,2026-10-21,mubi,,month,,1_ay,https://mubi.com/tr/tr
+MUBI yıllık (year),119.88,8,0839201,2026-10-21,mubi,,year,,1_yil,https://mubi.com/tr/tr
+MUBI aylık (month_premium),19.99,8,0839201,2026-10-21,mubi,,month_premium,,1_ay,https://mubi.com/tr/tr
+MUBI yıllık (year_premium),167.88,8,0839201,2026-10-21,mubi,,year_premium,,1_ay,https://mubi.com/tr/tr
+MUBI aylık (month_student),9.99,8,0839201,2026-10-21,mubi,,month_student,,1_ay,https://mubi.com/tr/tr
