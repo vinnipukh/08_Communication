@@ -94,7 +94,7 @@ Bellek = USS (process'e özel bellek, Chrome alt process'leri dahil).
 | 02:00 | beymen | 10.5 dk | 10.659 | 22 MB | 45 dk | sadece 403 gelirse |
 | 04:00 | vatan | ~19 dk (yavaşlatıldı, ~45 dk bekle) | 5.497 | ~105 MB | 120 dk | yok |
 | 06:00 | telecom (mobil tarifeler: Turkcell, Vodafone, Türk Telekom, NetGSM) | ~40 dk | ~820 | düşük | 90 dk | yok |
-| 07:30 | internet (ev interneti: Superonline, Vodafone, Kablonet, Milleni, TurkNet, Türk Telekom) | ~25 dk | ~400 | ~300 MB (kısa Chrome) | 75 dk | TurkNet için tek seferlik headless Chrome (Cloudflare çerezi) |
+| 07:30 | internet (ev interneti: Superonline, Vodafone, Kablonet, Milleni, TurkNet, Türk Telekom, GIBIRNet) | ~25 dk | ~400 | ~300 MB (kısa Chrome) | 75 dk | TurkNet için tek seferlik headless Chrome (Cloudflare çerezi) |
 | 08:45 | streaming (Netflix, Disney+, HBO Max, Amazon Prime, Apple TV+, YouTube Premium, Spotify, MUBI, TV+, Tivibu, TOD, GAİN, tabii) | ~1 dk | ~40 | ~300 MB (kısa Chrome) | 15 dk | tabii için tek seferlik headless Chrome |
 | 09:00 | repair (onarım: Apple, Samsung, Huawei, GSM İletişim) | ~30 dk | ~2.000 | düşük | 90 dk | yok |
 

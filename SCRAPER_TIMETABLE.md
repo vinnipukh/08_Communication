@@ -35,7 +35,7 @@ failing, disable only that workflow.
 | 02:00 | 23:00 | Beymen | `scraper_beymen.yml` / `beymen` | `InflationItems/Codes/08_Communication/Beymen/scraper.py` | `InflationItems/Datas/08_Communication/Beymen/*.csv` |
 | 04:00 | 01:00 | Vatan | `scraper_vatan.yml` / `vatan` | `InflationItems/Codes/08_Communication/VatanComputer/vatan_comp.py` | `InflationItems/Datas/08_Communication/VatanComputer/*.csv` |
 | 06:00 | 03:00 | Telecom — mobile tariffs (Turkcell, Vodafone, Türk Telekom, NetGSM) | `scraper_telecom.yml` / `telecom` | `InflationItems/Codes/08_Communication/Telecom/scraper.py` | `InflationItems/Datas/08_Communication/<Operator>/*.csv` |
-| 07:30 | 04:30 | Telecom — home internet (Superonline, Vodafone, Kablonet, Milleni, TurkNet, Türk Telekom) | `scraper_internet.yml` / `internet` | `InflationItems/Codes/08_Communication/Telecom/internet.py` | `InflationItems/Datas/08_Communication/<Provider>/*_internet_*.csv` |
+| 07:30 | 04:30 | Telecom — home internet (Superonline, Vodafone, Kablonet, Milleni, TurkNet, Türk Telekom, GIBIRNet) | `scraper_internet.yml` / `internet` | `InflationItems/Codes/08_Communication/Telecom/internet.py` | `InflationItems/Datas/08_Communication/<Provider>/*_internet_*.csv` |
 | 08:45 | 05:45 | Telecom — streaming subscriptions (12 services) | `scraper_streaming.yml` / `streaming` | `InflationItems/Codes/08_Communication/Telecom/streaming.py` | `InflationItems/Datas/08_Communication/<Service>/*.csv` |
 | 09:00 | 06:00 | Telecom — ICT equipment repair prices (Apple, Samsung, Huawei, GSM İletişim) | `scraper_repair.yml` / `repair` | `InflationItems/Codes/08_Communication/Telecom/repair.py` | `InflationItems/Datas/08_Communication/<Source>/*_repair_*.csv` |
 

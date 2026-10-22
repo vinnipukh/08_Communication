@@ -100,7 +100,7 @@ comma, utf-8-sig:
 
 ---
 
-# Ev interneti — Türk Telekom, TurkNet, Kablonet, Superonline, Vodafone, Millenicom
+# Ev interneti — Türk Telekom, TurkNet, Kablonet, Superonline, Vodafone, Millenicom, GIBIRNet
 
 Recon: 2026-10-08. Scraper: `InflationItems/Codes/08_Communication/Telecom/internet.py` (shares `Fetcher`, `run()` and the
 Türk Telekom detail parser `tt_details()` with `scraper.py`). TÜİK item: `0833001` İnternet ücreti.
@@ -115,6 +115,7 @@ Türk Telekom detail parser `tt_details()` with `scraper.py`). TÜİK item: `083
 | Milleni (Millenicom) | `www.milleni.com.tr/eviniz-icin/kampanyalar/internet` | plain HTTP, robots `Allow: /`. `millenicom.com.tr` serves IIS 404 with a certificate for another name; `millenicom.com` is an unrelated US company |
 | TurkNet | `www.turk.net/tarifelerimiz` | Cloudflare → cookie factory (below) |
 | Türk Telekom | sitemap `/evde-internet/{yeni,mevcut}-musteri-kampanyalari/<slug>` (~340 pages) | plain HTTP, same layout and robots constraint as mobile |
+| GIBIRNet | `gibir.net.tr/` (G-Net cards), `gibir.net.tr/on-odeme-formu` (prepaid campaign) | plain HTTP (curl_cffi chrome124 → 200), Next.js server rendering; recon 2026-10-22 |
 
 ## Superonline
 - Hub pages (`/ev-interneti/tum-kampanyalar`) embed only 12 of ~40 campaigns; the rest is paged client-side,
@@ -170,9 +171,22 @@ Türk Telekom detail parser `tt_details()` with `scraper.py`). TÜİK item: `083
   "Bu teklif müşteri alımına kapatılmıştır." and are skipped (applies to mobile too).
 - Speed from name / pricing table / slug (`…-100-mbps-10`).
 
+## GIBIRNet
+- Home page: six `h3` "G-Net …" cards (Mega 35, Fiber 100, Esnaf 100, Ultra 200, Extreme 500, Gigabir 1000), each
+  `N TL / ilk 3 ay` + `M TL / sonraki 9 ay` (campaign + regular price) or `N TL / ay` (Ultra ≥ 200 Mbps, 12 months
+  fixed, "modem bedeli hariç"). Prices are read from the text before "Paket İçeriği:" (the modem fee comes after it).
+- The VDSL / Fiber tab buttons are client-side only; checked in a browser on 2026-10-22: both tabs render the same six
+  cards. Low-speed cards are therefore emitted once per infrastructure (VDSL, Fiber), Ultra cards Fiber only.
+  If the site ever shows different cards per tab, the server-rendered HTML (default tab only) is no longer enough.
+- `/on-odeme-formu` ("10 öde 12 kullan"): the page text says "Kampanya DD.MM.YYYY tarihine kadar geçerlidir" → skipped
+  after that date. Only the VDSL tab is server-rendered; all three infrastructures (VDSL, Fiber, Kablosuz) are the
+  `packagePrices` prop in the RSC payload (`self.__next_f`): `{<infra>: {<mbps>: {monthly, totalPrice, originalYearlyPrice}}}`.
+  `price` = `totalPrice` (12-month up-front total, not a monthly fee; `period` is `12_ay`), `list_price` = `originalYearlyPrice`.
+- Replaces the standalone Selenium script (gibirnet_YYYY-MM-DD.csv, 4 columns); same product names, same prices.
+
 ## Output
 
-`InflationItems/Datas/08_Communication/<Superonline|Vodafone|Kablonet|Milleni|TurkNet|TurkTelekom>/<provider>_internet_YYYY-MM-DD.csv`,
+`InflationItems/Datas/08_Communication/<Superonline|Vodafone|Kablonet|Milleni|TurkNet|TurkTelekom|GIBIRNet>/<provider>_internet_YYYY-MM-DD.csv`,
 comma, utf-8-sig:
 
 `date,operator,group,product_id,product_name,price,list_price,period,speed_mbps,upload_mbps,infrastructure,commitment_months,url`

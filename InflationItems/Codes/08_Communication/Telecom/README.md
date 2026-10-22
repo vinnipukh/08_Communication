@@ -14,7 +14,7 @@ Bu klasörde dört ayrı scraper var. Hepsi `scraper.py` içindeki ortak `Fetche
 | Diğer iletişim cihazları | — | | |
 | Bilgi ve iletişim aksesuarları | — | | |
 | Cep telefonu hizmet ücreti | ✅ | `scraper.py` | Turkcell, Vodafone, Türk Telekom, NetGSM: faturalı / faturasız tarifeler ve ek paketler |
-| İnternet hizmet ücreti | ✅ | `internet.py` | Superonline, Vodafone Net, Kablonet, Milleni, TurkNet, Türk Telekom: ev interneti tarifeleri |
+| İnternet hizmet ücreti | ✅ | `internet.py` | Superonline, Vodafone Net, Kablonet, Milleni, TurkNet, Türk Telekom, GIBIRNet: ev interneti tarifeleri |
 | Bilgi ve iletişim ekipmanı bakım / onarım ücreti | ✅ | `repair.py` | Apple (garanti dışı tahmini ücret), Samsung (ekran değişimi), Huawei (yedek parça), GSM İletişim (bağımsız servis) |
 | Dijital içerik / streaming platform aboneliği | ✅ | `streaming.py` | Netflix, Disney+, HBO Max, Prime, Apple TV+, YouTube Premium, Spotify, MUBI, TV+, Tivibu, TOD, GAIN, Tabii |
 
@@ -27,7 +27,8 @@ yayımladığı bütün ücretleri toplar.
 Tarayıcı neredeyse hiç kullanılmaz: kaynaklar Chrome TLS parmak izli `curl_cffi` istemcisine
 cevap verir. İstisnalar: TurkNet (Cloudflare; tek bir headless Chrome ziyaretiyle cookie + UA
 alınır, sonra `curl_cffi`) ve Tabii (fiyat istemci tarafında dolduğu için tek bir headless Chrome
-ziyareti). Kaynak bazında hangi sayfadan / JSON'dan okunduğu her dosyanın başındaki docstring'de
+ziyareti). GIBIRNet tarayıcısız: ana sayfa kartları sunucuda render edilir, ön ödeme kampanyası ise
+`/on-odeme-formu` Next.js RSC verisindeki `packagePrices` içinde gelir. Kaynak bazında hangi sayfadan / JSON'dan okunduğu her dosyanın başındaki docstring'de
 ve `docs/site-analysis/telecom/NOTES.md` içinde.
 
 Bir kaynak hata verirse diğerleri devam eder; boş sonuç yazılmaz (son iyi snapshot korunur),

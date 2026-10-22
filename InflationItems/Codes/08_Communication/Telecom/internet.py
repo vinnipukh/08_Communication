@@ -10,9 +10,11 @@ Providers and where the data lives (recon 2026-10-08, docs/site-analysis/telecom
   turknet      /tarifelerimiz "Abone alımına açık tarifeler" table. Cloudflare: curl_cffi 0.15
                is answered 403, so one headless Chrome visit supplies cookies + UA, then curl_cffi.
   turktelekom  sitemap evde-internet/* detail pages (same SharePoint layout as mobile)
+  gibirnet     gibir.net.tr home page G-Net cards (server-rendered) + /on-odeme-formu prepaid campaign
+               (`packagePrices` in the Next.js RSC payload). No browser needed.
 
 Output: InflationItems/Datas/08_Communication/<Provider>/<provider>_internet_YYYY-MM-DD.csv
-Usage:  python internet.py [--operator superonline|vodafone|kablonet|milleni|turknet|turktelekom|all] [--limit N]
+Usage:  python internet.py [--operator superonline|vodafone|kablonet|milleni|turknet|turktelekom|gibirnet|all] [--limit N]
 """
 
 import json
@@ -344,10 +346,107 @@ def turktelekom(limit):
     return rows
 
 
+# ---------------------------------------------------------------- gibirnet
+
+GIBIRNET = "https://gibir.net.tr"
+GIBIRNET_PRICE = re.compile(r"([\d.,]+)\s*TL\s*/\s*(ilk\s+\d+\s+ay|sonraki\s+\d+\s+ay|ay)\b", re.I)
+
+
+def next_flight(html):
+    """Concatenated Next.js RSC payload (self.__next_f.push chunks) of a page."""
+    return "".join(json.loads('"' + c + '"') for c in
+                   re.findall(r'self\.__next_f\.push\(\[1,"(.*?)"\]\)</script>', html, re.S))
+
+
+def gibirnet_home(f):
+    """G-Net package cards: 'N TL / ilk 3 ay' + 'M TL / sonraki 9 ay' (campaign + regular price) or 'N TL / ay'.
+
+    The page renders the same cards under its VDSL and Fiber tabs (checked in a browser 2026-10-22), so
+    the server-rendered default tab is enough: speeds below 200 Mbps are emitted once per
+    infrastructure, the 'Ultra' packages (>= 200 Mbps) are Fiber only."""
+    rows = {}
+    for h3 in BeautifulSoup(f.get(GIBIRNET + "/"), "html.parser").find_all("h3"):
+        name = re.sub(r"\s+", " ", h3.get_text(" ", strip=True))
+        card = re.sub(r"\s+", " ", h3.parent.get_text(" ", strip=True))
+        if not name.startswith("G-Net ") or "Paket İçeriği:" not in card:
+            continue
+        # the modem fee line sits after "Paket İçeriği:" and is not the package price
+        prices = GIBIRNET_PRICE.findall(card.split("Paket İçeriği:")[0])
+        if not prices:
+            raise Blocked(f"gibirnet: no price on card {name!r}")
+        speed = int(m.group(1)) if (m := re.search(r"(\d+)\s*$", name)) else 0
+        high_speed = speed >= 200 and "Ultra hızlı internet paketi" in card
+        down = re.search(r"(\d+)\s*mbps'e kadar\s+indirme", tr_lower(card))
+        up = re.search(r"(\d+)\s*mbps'e kadar\s+yükleme", tr_lower(card))
+        regular = next((tl(a) for a, p in prices if p.lower().startswith("sonraki")), None)
+        for infra in (["Fiber"] if high_speed else ["VDSL", "Fiber"]):
+            for amount, period in prices:
+                period = re.sub(r"\s+", " ", period.lower())
+                product_name = (f"GIBIRNet {name} - {infra} - {period} - aylık internet ücreti"
+                                f"{' - modem bedeli hariç' if 'Fiber Modem' in card else ''}")
+                price = tl(amount)
+                if price is None or price <= 0:
+                    raise Blocked(f"gibirnet: bad price {amount!r} on {name!r}")
+                old = rows.get(product_name)
+                if old and old["price"] != price:
+                    raise Blocked(f"gibirnet: conflicting prices for {product_name!r}")
+                rows[product_name] = irow(
+                    "gibirnet", group="ana-sayfa", product_id=slug(f"{name} {infra} {period}"),
+                    product_name=product_name, price=price,
+                    list_price=regular if period.startswith("ilk") else None, period=norm_period(period),
+                    speed_mbps=int(down.group(1)) if down else speed, upload_mbps=int(up.group(1)) if up else "",
+                    infrastructure=infra, url=GIBIRNET + "/",
+                )
+    if not rows:
+        raise Blocked("gibirnet: no package cards on the home page")
+    return list(rows.values())
+
+
+def gibirnet_prepaid(f):
+    """'10 ay öde 12 ay kullan' campaign (/on-odeme-formu): price is the 12-month up-front total, not a monthly fee.
+
+    Only the active tab (VDSL) is server-rendered; the per-infrastructure numbers are the
+    `packagePrices` prop in the RSC payload."""
+    url = GIBIRNET + "/on-odeme-formu"
+    html = f.get(url)
+    text = re.sub(r"\s+", " ", BeautifulSoup(html, "html.parser").get_text(" ", strip=True))
+    expiry = re.search(r"Kampanya\s+(\d{2})\.(\d{2})\.(\d{4})\s+tarihine kadar geçerlidir", text)
+    if not expiry:
+        raise Blocked("gibirnet: prepaid campaign expiry date not found")
+    if "-".join(reversed(expiry.groups())) < TODAY:  # an expired campaign is not a current price
+        log.info("gibirnet: prepaid campaign expired on %s.%s.%s, skipped", *expiry.groups()[:3])
+        return []
+    rsc = next_flight(html)
+    key = '"packagePrices":'
+    if key not in rsc:
+        raise Blocked("gibirnet: packagePrices not in the prepaid page")
+    packages, _ = json.JSONDecoder().raw_decode(rsc, rsc.index(key) + len(key))
+    rows = []
+    for infra, speeds in packages.items():
+        infra = "VDSL" if infra.lower() == "vdsl" else infra
+        for speed, p in speeds.items():
+            rows.append(irow(
+                "gibirnet", group="on-odeme", product_id=f"on-odeme-{speed}-{slug(infra)}",
+                product_name=f"GIBIRNet Ön Ödemeli {speed} Mbps - {infra} - 10 ay öde 12 ay kullan - "
+                             "12 aylık toplam peşin bedel",
+                price=p["totalPrice"], list_price=p.get("originalYearlyPrice"), period="12_ay",
+                speed_mbps=int(speed), infrastructure=infra, commitment_months=12, url=url,
+            ))
+    if not rows:
+        raise Blocked("gibirnet: no prepaid packages")
+    return rows
+
+
+def gibirnet(limit):
+    f = Fetcher(GIBIRNET)
+    rows = gibirnet_home(f) + gibirnet_prepaid(f)
+    return rows[:limit] if limit else rows
+
+
 PROVIDERS = {"superonline": superonline, "vodafone": vodafone, "kablonet": kablonet, "milleni": milleni,
-             "turknet": turknet, "turktelekom": turktelekom}
+             "turknet": turknet, "turktelekom": turktelekom, "gibirnet": gibirnet}
 DIR_NAMES = {"superonline": "Superonline", "vodafone": "Vodafone", "kablonet": "Kablonet", "milleni": "Milleni",
-             "turknet": "TurkNet", "turktelekom": "TurkTelekom"}
+             "turknet": "TurkNet", "turktelekom": "TurkTelekom", "gibirnet": "GIBIRNet"}
 
 if __name__ == "__main__":
     run(PROVIDERS, DIR_NAMES, OUT_ROOT, FIELDS, "telecom_internet", __doc__, tuik08.INTERNET_SERVICE, kind="_internet")

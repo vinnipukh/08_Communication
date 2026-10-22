@@ -52,7 +52,7 @@ anahtar kelime kurallarını kullanır. Kurallar 2026-10-18 verisinde örneklene
 | Diğer iletişim cihazları | 7 | Vatan, Beymen, BeymenTech, Pozitif, DR, Huawei, Samsung | ~570 | ~460 |
 | Bilgi ve iletişim aksesuarları | 7 | Beymen, BeymenTech, Pozitif, Vatan, DR, Samsung, Huawei | ~11.500 | ~6.500 |
 | Cep telefonu hizmet ücreti | 1 (`Telecom/scraper.py`, 4 operatör) | Turkcell, Türk Telekom, Vodafone, NetGSM | ~760 | ~760 |
-| İnternet hizmet ücreti | 1 (`Telecom/internet.py`, 6 sağlayıcı) | Türk Telekom, Superonline, Kablonet, TurkNet, Vodafone, Milleni | ~360 | ~360 |
+| İnternet hizmet ücreti | 1 (`Telecom/internet.py`, 7 sağlayıcı) | Türk Telekom, Superonline, Kablonet, TurkNet, Vodafone, Milleni, GIBIRNet | ~380 | ~380 |
 | Bilgi ve iletişim ekipmanı bakım / onarım ücreti | 1 (`Telecom/repair.py`, 4 kaynak) | GSM İletişim, Huawei, Apple, Samsung | ~5.800 | ~5.800 |
 | Dijital içerik / streaming platform aboneliği | 1 (`Telecom/streaming.py`, 12 servis) | YouTube Premium, Disney+, Spotify, Tivibu, TV+, MUBI, Netflix, HBO Max, GAIN, Prime, Apple TV+, Tabii | ~34 | ~34 |
 
@@ -95,7 +95,7 @@ küçük ev aletleri, beyaz eşya, kişisel bakım cihazları ve yazılım lisan
 | Kalem | Scraper | Kaynak başına satır (2026-10-10) | Toplam |
 |---|---|---|---|
 | Cep telefonu hizmet ücreti | `Telecom/scraper.py` | Türk Telekom ~420, Turkcell ~220, Vodafone ~110, NetGSM 8 | ~760 |
-| İnternet hizmet ücreti | `Telecom/internet.py` | Türk Telekom ~200, Superonline 92, Kablonet 27, TurkNet 14, Vodafone 11, Milleni 7 | ~360 |
+| İnternet hizmet ücreti | `Telecom/internet.py` | Türk Telekom ~200, Superonline 92, Kablonet 27, TurkNet 14, Vodafone 11, Milleni 7, GIBIRNet 22 | ~380 |
 | Bilgi ve iletişim ekipmanı bakım / onarım ücreti | `Telecom/repair.py` | GSM İletişim ~4.500, Huawei ~600, Apple ~530, Samsung ~170 | ~5.800 |
 | Dijital içerik / streaming platform aboneliği | `Telecom/streaming.py` | YouTube Premium 5, Disney+ 4, Spotify 4, Tivibu 4, TV+ 4, MUBI 3, Netflix 3, HBO Max 2, GAIN 2, Prime 1, Apple TV+ 1, Tabii 1 | 34 |
 
