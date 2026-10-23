@@ -457,6 +457,37 @@ The Emlakjet rental scraper (`InflationItems/Codes/04_Housing/`: `Emlakjet/scrap
 §3.1 and the `--workers` note in §3.2 describe code that no longer exists here. Collected data stays
 under `InflationItems/Datas/04_Housing/Emlakjet/`.
 
+## 3.3.1 Emlakjet rewritten (2026-10-23)
+
+The original source was lost (the old repository was deleted; only the CSVs, a run log and doc notes
+survived), so the scraper was rewritten from §3.1/§3.2 and the old CSV schema:
+`InflationItems/Codes/04_Housing/Emlakjet/scraper.py`.
+- No browser: `curl_cffi` with Chrome TLS impersonation gets the server-rendered grid
+  (30 `article[data-listing-id]` cards/page) after a homepage warm-up. The old Selenium
+  `BrowserSession`, watchdog and `--workers` are gone; one jittered request stream (`--delay`, default 1.5 s).
+- Scope splitting as before: a route above 50 pages (1,500 cards) is split by the links on its own
+  page (country → provinces, province → districts, district → neighbourhoods). Only `?sayfa=`
+  is used (robots disallows `?filtreler=`). `kktc`, `emlakcidan` and `sahibinden` links are not provinces.
+- CSV starts with the shared first four columns like the 08 scrapers: `product_name` (= `ilanId` for
+  now), numeric `price`, `category_number` 4, `sub_category_number` `0411001` ("Actual rentals paid
+  by tenants", CPI methodological notes, Appendix 1). Then `ilanId, District, Rooms, ListingURL,
+  Province, Neighborhood, PropertyType, AreaM2, Currency, ListingDate, CollectedAt`; the old text
+  `Price` column ("18.000 TL") is gone. `product_name` is "District / Neighborhood - Rooms" like the
+  other 04_Housing province scrapers ("Mahallesi" dropped, "Stüdyo" → "Stüdyo (1+0)"). All 40 CSVs
+  (2026-08-17 .. 2026-10-23) were converted to this schema on 2026-10-23, row counts unchanged.
+  `Neighborhood` is filled when the crawl reaches district scope. `ilanId` de-duplicates across scopes.
+- Checkpoint = completed scope URLs, in gitignored `Codes/04_Housing/Emlakjet/checkpoints/`;
+  `--resume` also re-reads today's CSV for seen ids.
+- Verified live on 2026-10-23: Isparta (253 listings, `--max-pages-per-scope 2`: 60 rows) and Ankara
+  (4,019 listings split into 25 district scopes; bounded run, 157 unique rows, correct district and
+  neighbourhood fields). Full single-worker crawl 2026-10-23: 51,122 unique listings in 63 min, no
+  blocks. `--workers 3` on Ankara (3 pages/scope): 1,002 unique rows in 32 s, no blocks.
+- `.github/workflows/scraper_emlakjet.yml` runs daily at 16:00 Istanbul (13:00 UTC) with 3 workers,
+  after every other scraper has finished (last one is Beymen Tech at 13:00) and with a 4 h limit, since a
+  runner may need ~2 h. The CSV (~11 MB/day) is committed (`04_Housing` is no longer gitignored); a run
+  that collected fewer than 10,000 rows is not committed. Not yet run on a GitHub runner: datacenter IPs
+  may be blocked, check the first `workflow_dispatch` run.
+
 ## 3.4 Old 08 CSVs converted to the shared columns (2026-10-18)
 
 All 552 older 08_Communication CSVs (13 legacy layouts, 2026-05-02 to 2026-10-18) were rewritten in

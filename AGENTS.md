@@ -4,7 +4,7 @@ Project instructions for coding agents working in the Inflation Study data repos
 
 ## Repository purpose
 
-This repository contains data acquisition only: technology/telecom scrapers (TÜİK 08). The Emlakjet rental scraper (TÜİK 04) was removed on 2026-10-18; its old data stays under `InflationItems/Datas/04_Housing/`.
+This repository contains data acquisition only: technology/telecom scrapers (TÜİK 08). The Emlakjet rental scraper (TÜİK 04) was removed on 2026-10-18 and rewritten from scratch on 2026-10-23 (`InflationItems/Codes/04_Housing/Emlakjet/scraper.py`); its data lives under `InflationItems/Datas/04_Housing/` (tracked, ~11 MB per daily CSV).
 
 | Path | Role |
 |---|---|

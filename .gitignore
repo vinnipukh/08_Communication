@@ -64,5 +64,6 @@ InflationItems/Codes/08_Communication/Samsung/checkpoints/
 /.env
 # SeleniumBase runtime folder (driver lock file)
 downloaded_files/
-# data of the removed Emlakjet scraper (kept locally, not part of this repo)
-/InflationItems/Datas/04_Housing/
+
+# transient Emlakjet crawl state
+/InflationItems/Datas/04_Housing/Emlakjet/state/

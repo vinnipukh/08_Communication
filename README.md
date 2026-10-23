@@ -12,7 +12,7 @@ InflationItems/
     08_Communication/           # Beymen, BeymenTech, DR, Huawei, PozitifTeknoloji,
                                 # Samsung, VatanComputer, Telecom
   Datas/
-    04_Housing/Emlakjet/        # old rental CSVs; the Emlakjet scraper was removed on 2026-10-18
+    04_Housing/Emlakjet/        # rental CSVs; scraper rewritten 2026-10-23 (Codes/04_Housing/Emlakjet)
     08_Communication/<Source>/  # daily price CSVs per retailer/operator/service
 .github/workflows/              # scheduled jobs for every scraper
 deploy/scraper-server/          # cron setup for the 08_Communication server

@@ -3,7 +3,7 @@
 Local reference copy of selected pages from
 [TheWebScrapingClub/scraping-wiki](https://github.com/TheWebScrapingClub/scraping-wiki)
 (main branch), fetched **2026-08-15** for use during the
-`InflationItems/Codes/04_Housing/` modernization (Emlakjet; that scraper was removed on 2026-10-18).
+`InflationItems/Codes/04_Housing/` modernization (Emlakjet; removed 2026-10-18, rewritten 2026-10-23).
 
 The wiki is updated **daily** — refresh this snapshot periodically:
 

@@ -6,6 +6,7 @@ All times in **Istanbul time (UTC+3)**. Türkiye uses UTC+3 year-round (no dayli
 
 | Istanbul Time (UTC+3) | UTC  | Scraper        | Workflow File         | Script                                   | Output Data                      |
 |-----------------------|------|----------------|-----------------------|------------------------------------------|----------------------------------|
+| 16:00                | 13:00 | Emlakjet (rentals, TÜİK 04) | `scraper_emlakjet.yml` | `InflationItems/Codes/04_Housing/Emlakjet/scraper.py` | `InflationItems/Datas/04_Housing/Emlakjet/` (committed) |
 | 13:00                | 10:00 | Beymen         | `beymen.yml`          | `InflationItems/Codes/08_Communication/BeymenTech/scraper.py`             | `InflationItems/Datas/08_Communication/Beymen/ (beymen_tech_*)`              |
 
 ## Notes
