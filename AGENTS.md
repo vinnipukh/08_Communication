@@ -34,7 +34,7 @@ Related references:
 
 `InflationItems/Codes/04_Housing/Hepsiemlak/` is run daily by four people, each from their own machine
 (`hepsiemlak_<name>.py` → `launcher.py` → `scraper.py --shard <name>`). An agent helping with it must first
-read that folder's `AGENTS.md` (rules: no rate-limit workarounds, changes via branch + PR, shared files
+read that folder's `AGENTS.md` (rules: no rate-limit workarounds, changes pushed directly to the default branch after `git pull --rebase`, no branches or PRs, shared files
 `shards.json` and the CSV columns stay as they are) and its `README.md` (user guide, troubleshooting).
 
 ## Data ownership

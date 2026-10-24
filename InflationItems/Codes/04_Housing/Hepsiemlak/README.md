@@ -72,8 +72,9 @@ engeli büyütür ya da bir ilin o gün hiç toplanmamasına yol açar.
 ## Kod değişikliği gerekirse
 
 Coding agent'ınla çalışıyorsan ona bu klasördeki `AGENTS.md`'yi okut. Kişisel sorunları (kurulum, Python)
-kendi bilgisayarında çöz, commit'leme. `scraper.py` / `launcher.py` düzeltmeleri ayrı bir branch ve PR ile
-gelsin; dört kişinin aynı dosyayı ayrı ayrı değiştirmesi çakışmaya yol açar.
+kendi bilgisayarında çöz, commit'leme. `scraper.py` / `launcher.py` düzeltmeleri doğrudan
+ana branch'e commit'lenip pushlanır, branch/PR açılmaz. Commit'ten hemen önce `git pull --rebase` yap; dört
+kişinin aynı dosyayı ayrı ayrı değiştirmesi çakışmaya yol açar.
 
 Test: `python hepsiemlak_<isim>.py --max-listings 100 --output test_<isim>.csv` → log ve CSV'ye bak →
 test dosyalarını sil.

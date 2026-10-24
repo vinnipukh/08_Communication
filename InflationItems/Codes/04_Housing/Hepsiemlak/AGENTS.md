@@ -41,9 +41,10 @@ Inside `scraper.py`:
 
 1. **Personal-machine problems** (Python version, pip, IDE interpreter, antivirus, sleep settings): fix on
    that machine, do not commit anything for them.
-2. **Code changes** go on a separate branch with a pull request that says what broke, what changed and the
-   live test output. Do not push straight to `main`; four people's agents editing `scraper.py` in parallel
-   will overwrite each other.
+2. **Code changes** are committed and pushed directly to the default branch. Do not create branches or pull
+   requests. Run `git pull --rebase` right before committing and pushing so four people's agents editing
+   `scraper.py` do not overwrite each other; the commit message says what broke, what changed and the live
+   test result.
 3. **Do not work around the rate limit.** Do not lower `--delay-min`/`--delay-max` defaults, add parallel
    sessions on one IP, add CAPTCHA solvers, rotate fingerprints or add proxies without the repository owner
    asking for it. If the log shows 429/`retired`, the answer is to wait and run again, not a code change.
