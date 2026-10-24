@@ -4,7 +4,7 @@ Project instructions for coding agents working in the Inflation Study data repos
 
 ## Repository purpose
 
-This repository contains data acquisition only: technology/telecom scrapers (TÜİK 08). The Emlakjet rental scraper (TÜİK 04) was removed on 2026-10-18 and rewritten from scratch on 2026-10-23 (`InflationItems/Codes/04_Housing/Emlakjet/scraper.py`); its data lives under `InflationItems/Datas/04_Housing/` (tracked, ~11 MB per daily CSV).
+This repository contains data acquisition only: technology/telecom scrapers (TÜİK 08) and housing-rent scrapers (TÜİK 04: Emlakjet, Hepsiemlak). The Emlakjet rental scraper (TÜİK 04) was removed on 2026-10-18 and rewritten from scratch on 2026-10-23 (`InflationItems/Codes/04_Housing/Emlakjet/scraper.py`); its data lives under `InflationItems/Datas/04_Housing/` (tracked, ~11 MB per daily CSV).
 
 | Path | Role |
 |---|---|
@@ -29,6 +29,13 @@ Related references:
 - `docs/TECH-STACK-SEARCH.md` — living scraper tool/driver/skill registry and modernization history.
 - `docs/site-analysis/` — captured endpoints and source analysis.
 - The wiki is a dated snapshot; refresh it before relying on current anti-bot behavior.
+
+## Hepsiemlak (four-person daily crawl)
+
+`InflationItems/Codes/04_Housing/Hepsiemlak/` is run daily by four people, each from their own machine
+(`hepsiemlak_<name>.py` → `launcher.py` → `scraper.py --shard <name>`). An agent helping with it must first
+read that folder's `AGENTS.md` (rules: no rate-limit workarounds, changes via branch + PR, shared files
+`shards.json` and the CSV columns stay as they are) and its `README.md` (user guide, troubleshooting).
 
 ## Data ownership
 

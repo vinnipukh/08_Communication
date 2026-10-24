@@ -499,3 +499,56 @@ the four. Vatan's headerless `name;59.999 TL` files got a header, commas and num
 check against the pre-conversion backup confirmed identical row counts, names and prices in all 570
 finished files. The backup is `export/datas_08_before_tuik_columns_2026-10-18.tar.gz` (gitignored, local
 only). The one-off conversion script was not added to the repository.
+
+## 3.4 Hepsiemlak rental scraper (2026-10-23)
+
+`InflationItems/Codes/04_Housing/Hepsiemlak/scraper.py`, output `InflationItems/Datas/04_Housing/Hepsiemlak/YYYY-MM-DD.csv`.
+- Source: `/kiralik?page=N` (all residential rentals, ~68k listings, 24 `li.listingCard`/page, 2,832 pages,
+  no page cap, server-rendered). The sitemap (`/sitemap/index.xml` → `ilanDetay-*.xml`) lists the same
+  listings as detail URLs (~69k residential rentals) but needs one request each (~57 h at 3 s).
+- The JSON behind the page, `/api/realty-list/kiralik?page=N` (24 items, `price`, `sqm`, `roomAndLivingRoom`,
+  `createDate`; `Accept-Language: tr` for Turkish names), is fast but Cloudflare answered `429` after ~10
+  requests at 3 s spacing, and stayed `429` for 50+ min. The block was IP-level: `curl_cffi` Chrome,
+  Scrapling `Fetcher`, Camoufox and `invisible_playwright` (in-page `fetch`) all got `429`, with or without
+  the browser cookies (`__cf_bm` only). The HTML listing pages stayed reachable.
+- The HTML pages are rate-limited too, more loosely. In a browser the `429` body is Cloudflare's managed
+  challenge ("Just a moment…", `challenge-platform`/`cf_chl`); `curl_cffi` got the site's own HTML with `429`.
+  One invisible_playwright session (3 s pause, ~10-24 s/page with scrolling) ran 103 pages, with a `429`
+  near page 31 that cleared on retry, then stayed blocked at page 104 for 20 min. A single challenge is
+  solvable in place (CloakBrowser passed one in ~5 s); once the IP is over the limit the challenges no
+  longer clear. Five CloakBrowser sessions on one IP (4-6 s pause each, ~27 pages/min together) were
+  all blocked after ~1.5 min (İstanbul run, 736 of 11,669 listings).
+- Browsers tried on the site (2026-10-23, all from one residential IP): Camoufox, invisible_playwright
+  (patched Firefox 151, ~240 MB engine, not tested by TWSC) and CloakBrowser (`pip install cloakbrowser`,
+  closed-source Chromium 146, ~200 MB, free build; newer builds need a licence). All three load the listing
+  pages and all three get the same `429` once the IP is over the limit; browser choice did not matter, the
+  per-IP request rate did. Scrapling `Fetcher` (= curl_cffi) behaved like curl_cffi.
+- Current scraper: CloakBrowser via `launch_async`. Work units are routes: `--route istanbul-kiralik`, several
+  routes, or `all` (every province from `sitemap/iller-*.xml`, as `<province>-kiralik`). A province above 60
+  pages is split into the district links on its first page (`/<district>-kiralik`; İstanbul: 39, the
+  largest ~40 pages). `--workers N` sessions share the queue (one browser each; one per proxy with
+  `--proxies-file`, `geoip=True`). Homepage first, scroll per page, pause drawn from N(mid, range/4)
+  clipped to `--delay-min`/`--delay-max` (default 2-4 s). A challenge page is waited on (45 s) instead of
+  restarting the browser, so `cf_clearance` is kept; a session still blocked after 30-600 s backoffs is
+  retired and its route (with progress) goes back to the queue. Checkpoint = done routes, per-route page
+  progress, queue (gitignored `checkpoints/`, also the first block page as `blocked-<status>.html`).
+  Without proxies use one session: parallel sessions on one IP only reach the limit sooner.
+- Four-person split (2026-10-24): `shards.json` gives each of zelal / dani / neslihan / ekin a quarter of the
+  81 provinces (17,142 listings each by the 2026-10-23 sitemap count; İstanbul, Ankara, İzmir and Antalya
+  each lead a different shard; `kibris` is excluded as not Türkiye). Each person presses Run on
+  `hepsiemlak_<name>.py` in their IDE; `launcher.py` starts `scraper.py --shard <name>` headless in the
+  background with the same interpreter and returns at once (installs `cloakbrowser==0.6.3` if missing;
+  refuses a second run while the pid in `checkpoints/hepsiemlak_<name>.pid` is alive; log in
+  `checkpoints/`). On Windows the child gets `CREATE_NO_WINDOW` (a hidden console the browser driver
+  inherits): `DETACHED_PROCESS` made Windows open a visible console for the driver, and closing that window
+  killed the crawl. Output `YYYY-MM-DD_<name>.csv`. `--max-listings N` bounds a test run. Each person must
+  be on their own internet connection, since the rate limit is per IP. Verified 2026-10-24 by launching each
+  file from another working directory with `--max-listings 100`, one after another: 100 rows each
+  (İstanbul, Ankara, İzmir, Antalya), ~1 min each, one Cloudflare challenge passed in place (Serik).
+  No cover for a person who does not run: their provinces are missing that day.
+  Pressing Run again the same day resumes an interrupted crawl (launcher adds `--resume` when today's
+  checkpoint exists; verified: 30 + 30 rows, no duplicate `ilanId`) and refuses to redo a finished one
+  (CSV with rows but no checkpoint). User guide: `Hepsiemlak/README.md` (Turkish); agent rules:
+  `Hepsiemlak/AGENTS.md`, linked from the root `AGENTS.md`.
+- CSV schema is the Emlakjet one (§3.3.1); `AreaM2` is the card's gross m² (no net on cards), `ListingDate`
+  the card date, `ilanId` the card id (de-duplicates pages shifted by new listings).
