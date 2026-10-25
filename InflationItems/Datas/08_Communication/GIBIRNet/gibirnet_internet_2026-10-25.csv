@@ -1,0 +1,23 @@
+﻿product_name,price,category_number,sub_category_number,date,operator,group,product_id,list_price,period,speed_mbps,upload_mbps,infrastructure,commitment_months,url
+GIBIRNet G-Net Mega 35 - VDSL - ilk 3 ay - aylık internet ücreti,530.0,8,0833001,2026-10-25,gibirnet,ana-sayfa,g-net-mega-35-vdsl-ilk-3-ay,730.0,3_ay,35,12,VDSL,,https://gibir.net.tr/
+GIBIRNet G-Net Mega 35 - VDSL - sonraki 9 ay - aylık internet ücreti,730.0,8,0833001,2026-10-25,gibirnet,ana-sayfa,g-net-mega-35-vdsl-sonraki-9-ay,,9_ay,35,12,VDSL,,https://gibir.net.tr/
+GIBIRNet G-Net Mega 35 - Fiber - ilk 3 ay - aylık internet ücreti,530.0,8,0833001,2026-10-25,gibirnet,ana-sayfa,g-net-mega-35-fiber-ilk-3-ay,730.0,3_ay,35,12,Fiber,,https://gibir.net.tr/
+GIBIRNet G-Net Mega 35 - Fiber - sonraki 9 ay - aylık internet ücreti,730.0,8,0833001,2026-10-25,gibirnet,ana-sayfa,g-net-mega-35-fiber-sonraki-9-ay,,9_ay,35,12,Fiber,,https://gibir.net.tr/
+GIBIRNet G-Net Fiber 100 - VDSL - ilk 3 ay - aylık internet ücreti,580.0,8,0833001,2026-10-25,gibirnet,ana-sayfa,g-net-fiber-100-vdsl-ilk-3-ay,780.0,3_ay,100,20,VDSL,,https://gibir.net.tr/
+GIBIRNet G-Net Fiber 100 - VDSL - sonraki 9 ay - aylık internet ücreti,780.0,8,0833001,2026-10-25,gibirnet,ana-sayfa,g-net-fiber-100-vdsl-sonraki-9-ay,,9_ay,100,20,VDSL,,https://gibir.net.tr/
+GIBIRNet G-Net Fiber 100 - Fiber - ilk 3 ay - aylık internet ücreti,580.0,8,0833001,2026-10-25,gibirnet,ana-sayfa,g-net-fiber-100-fiber-ilk-3-ay,780.0,3_ay,100,20,Fiber,,https://gibir.net.tr/
+GIBIRNet G-Net Fiber 100 - Fiber - sonraki 9 ay - aylık internet ücreti,780.0,8,0833001,2026-10-25,gibirnet,ana-sayfa,g-net-fiber-100-fiber-sonraki-9-ay,,9_ay,100,20,Fiber,,https://gibir.net.tr/
+GIBIRNet G-Net Esnaf 100 - VDSL - ilk 3 ay - aylık internet ücreti,530.0,8,0833001,2026-10-25,gibirnet,ana-sayfa,g-net-esnaf-100-vdsl-ilk-3-ay,730.0,3_ay,100,20,VDSL,,https://gibir.net.tr/
+GIBIRNet G-Net Esnaf 100 - VDSL - sonraki 9 ay - aylık internet ücreti,730.0,8,0833001,2026-10-25,gibirnet,ana-sayfa,g-net-esnaf-100-vdsl-sonraki-9-ay,,9_ay,100,20,VDSL,,https://gibir.net.tr/
+GIBIRNet G-Net Esnaf 100 - Fiber - ilk 3 ay - aylık internet ücreti,530.0,8,0833001,2026-10-25,gibirnet,ana-sayfa,g-net-esnaf-100-fiber-ilk-3-ay,730.0,3_ay,100,20,Fiber,,https://gibir.net.tr/
+GIBIRNet G-Net Esnaf 100 - Fiber - sonraki 9 ay - aylık internet ücreti,730.0,8,0833001,2026-10-25,gibirnet,ana-sayfa,g-net-esnaf-100-fiber-sonraki-9-ay,,9_ay,100,20,Fiber,,https://gibir.net.tr/
+GIBIRNet G-Net Ultra 200 - Fiber - ay - aylık internet ücreti - modem bedeli hariç,900.0,8,0833001,2026-10-25,gibirnet,ana-sayfa,g-net-ultra-200-fiber-ay,,1_ay,200,30,Fiber,,https://gibir.net.tr/
+GIBIRNet G-Net Extreme 500 - Fiber - ay - aylık internet ücreti - modem bedeli hariç,1100.0,8,0833001,2026-10-25,gibirnet,ana-sayfa,g-net-extreme-500-fiber-ay,,1_ay,500,40,Fiber,,https://gibir.net.tr/
+GIBIRNet G-Net Gigabir 1000 - Fiber - ay - aylık internet ücreti - modem bedeli hariç,1250.0,8,0833001,2026-10-25,gibirnet,ana-sayfa,g-net-gigabir-1000-fiber-ay,,1_ay,1000,50,Fiber,,https://gibir.net.tr/
+GIBIRNet Ön Ödemeli 35 Mbps - VDSL - 10 ay öde 12 ay kullan - 12 aylık toplam peşin bedel,7300,8,0833001,2026-10-25,gibirnet,on-odeme,on-odeme-35-vdsl,8760,12_ay,35,,VDSL,12,https://gibir.net.tr/on-odeme-formu
+GIBIRNet Ön Ödemeli 100 Mbps - VDSL - 10 ay öde 12 ay kullan - 12 aylık toplam peşin bedel,7800,8,0833001,2026-10-25,gibirnet,on-odeme,on-odeme-100-vdsl,9360,12_ay,100,,VDSL,12,https://gibir.net.tr/on-odeme-formu
+GIBIRNet Ön Ödemeli 35 Mbps - Fiber - 10 ay öde 12 ay kullan - 12 aylık toplam peşin bedel,8000,8,0833001,2026-10-25,gibirnet,on-odeme,on-odeme-35-fiber,9600,12_ay,35,,Fiber,12,https://gibir.net.tr/on-odeme-formu
+GIBIRNet Ön Ödemeli 100 Mbps - Fiber - 10 ay öde 12 ay kullan - 12 aylık toplam peşin bedel,8500,8,0833001,2026-10-25,gibirnet,on-odeme,on-odeme-100-fiber,10200,12_ay,100,,Fiber,12,https://gibir.net.tr/on-odeme-formu
+GIBIRNet Ön Ödemeli 16 Mbps - Kablosuz - 10 ay öde 12 ay kullan - 12 aylık toplam peşin bedel,5000,8,0833001,2026-10-25,gibirnet,on-odeme,on-odeme-16-kablosuz,6000,12_ay,16,,Kablosuz,12,https://gibir.net.tr/on-odeme-formu
+GIBIRNet Ön Ödemeli 24 Mbps - Kablosuz - 10 ay öde 12 ay kullan - 12 aylık toplam peşin bedel,6500,8,0833001,2026-10-25,gibirnet,on-odeme,on-odeme-24-kablosuz,7800,12_ay,24,,Kablosuz,12,https://gibir.net.tr/on-odeme-formu
+GIBIRNet Ön Ödemeli 35 Mbps - Kablosuz - 10 ay öde 12 ay kullan - 12 aylık toplam peşin bedel,7500,8,0833001,2026-10-25,gibirnet,on-odeme,on-odeme-35-kablosuz,9000,12_ay,35,,Kablosuz,12,https://gibir.net.tr/on-odeme-formu
