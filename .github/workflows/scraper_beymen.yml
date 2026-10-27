@@ -4,9 +4,8 @@ name: Beymen Scraper (curl_cffi)
 # Not the same as beymen.yml (BeymenTech -> beymen_tech_*.csv).
 
 on:
-  schedule:
-    # 02:00 Istanbul (UTC+3), same slot as the cron server
-    - cron: '0 23 * * *'
+  # no schedule: the cron server scrapes this daily and pushes the CSVs itself
+  # (deploy/scraper-server/bin/push_data.sh); run here by hand only
   workflow_dispatch:
 
 permissions:

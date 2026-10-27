@@ -1,9 +1,8 @@
 name: Samsung Scraper
 
 on:
-  schedule:
-    # 01:00 Istanbul (UTC+3), same slot as the cron server
-    - cron: '0 22 * * *'
+  # no schedule: the cron server scrapes this daily and pushes the CSVs itself
+  # (deploy/scraper-server/bin/push_data.sh); run here by hand only
   workflow_dispatch:
 
 permissions:

@@ -109,9 +109,10 @@ Telecom çıktısı: `InflationItems/Datas/08_Communication/<Operatör>/*.csv` (
 geliştirici PC'sinde ölçüldü; süreyi Türk Telekom'un sitemap'teki ~490 + ~340 detay sayfası belirler
 (sıralı, 1.5-3.5 sn bekleme). Kaynak notları: `docs/site-analysis/telecom/NOTES.md`.
 
-GitHub Actions da aynı on işi aynı saatlerde çalıştırır (`.github/workflows/scraper_<isim>.yml` →
-`_communication_scraper.yml`). Bu iş akışları `bin/run_scraper.sh` ve `requirements.txt` dosyalarını doğrudan
-kullanır, bu yüzden bu dosyalardaki bir değişiklik iki tarafı da etkiler.
+Bu on işin verisini GitHub'a sunucu push'lar (aşağıda "GitHub'a push"). `.github/workflows/scraper_<isim>.yml`
+iş akışlarının artık zamanlaması yok, sadece elle (`workflow_dispatch`) çalışır; `bin/run_scraper.sh` ve
+`requirements.txt` dosyalarını doğrudan kullandıkları için bu dosyalardaki bir değişiklik iki tarafı da etkiler.
+Emlakjet ve Beymen tech iş akışları ayrıdır ve kendi zamanlamalarıyla çalışmaya devam eder.
 
 ## Haftalık rutin
 
@@ -169,3 +170,17 @@ Kapsam her mağazada sitemap / sitenin kendi ürün sayısıyla kontrol edildi (
 ```
 CHROME_VERSION_MAIN=153   # Chrome sürüm algılama bir gün bozulursa sabitle
 ```
+GIT_PUSH=1                # her scraper'dan sonra CSV'leri GitHub'a push'la (bin/push_data.sh)
+```
+
+## GitHub'a push
+
+`GIT_PUSH=1` iken `run_scraper.sh` her işten sonra (kilit içindeyken) `bin/push_data.sh <isim>` çalıştırır:
+son başarılı push'tan (`.last_push`) beri yazılan CSV'leri güncel `origin/main`'in üstüne geçici bir index ile
+commit'ler ve push'lar. Çalışma dizinine, sparse checkout'a ve yerel `main`'e dokunmaz; silmeleri hiç
+commit'lemez (`export_data.sh --delete` sadece sunucudan siler). Push başarısız olursa dosyalar bir sonraki
+işte tekrar denenir; `log.txt`'de `PUSH FAILED` görünür.
+
+Kimlik doğrulama: repo'ya yazma yetkili deploy key (`~/.ssh/github_08comm`, `~/.ssh/config`'te
+`Host github-08comm`), remote `git@github-08comm:vinnipukh/08_Communication.git`. Test:
+`ssh -T github-08comm`.

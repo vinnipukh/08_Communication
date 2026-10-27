@@ -71,4 +71,14 @@ case $rc in
   124|137) status "TIMEOUT after ${dur} min (see $RUN_LOG)" ;;
   *)       status "FAILED rc=$rc after ${dur} min (see $RUN_LOG)" ;;
 esac
+
+# Optional: push the CSVs to GitHub (GIT_PUSH=1 in .env). Still inside the lock,
+# so two pushes never overlap; also after a failure (partial data is saved).
+if [ "${GIT_PUSH:-0}" = 1 ]; then
+  if timeout 10m "$ROOT/bin/push_data.sh" "$NAME" >> "$RUN_LOG" 2>&1; then
+    status "$(tail -n 1 "$RUN_LOG")"
+  else
+    status "PUSH FAILED (see $RUN_LOG)"
+  fi
+fi
 exit $rc
