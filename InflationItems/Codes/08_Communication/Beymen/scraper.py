@@ -38,6 +38,8 @@ CATEGORY_ID = "95935"
 # safety cap; lower it via env for a bounded test run.
 MAX_PAGES = int(os.getenv("BEYMEN_MAX_PAGES", "2000"))
 REQUEST_TIMEOUT = 30
+PAGE_ATTEMPTS = 6           # per page, backoff 5, 10, 20, 40, 60 s
+MAX_CONSECUTIVE_FAILED = 5  # this many failed pages in a row = the API is down, stop
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
 OUT_DIR = REPO_ROOT / "InflationItems" / "Datas" / "08_Communication" / "Beymen"
@@ -122,22 +124,28 @@ def load_cached_cookies():
 
 def fetch_page(session, page):
     params = {"languageCode": "tr", "sayfa": page, "categoryId": CATEGORY_ID, "includeDocuments": "true"}
-    for attempt in range(1, 4):
+    for attempt in range(1, PAGE_ATTEMPTS + 1):
+        wait = min(5 * 2 ** (attempt - 1), 60)
         try:
             r = session.get(BASE_API_URL, params=params, timeout=REQUEST_TIMEOUT)
         except Exception as e:
             log.warning("Page %d attempt %d failed: %s", page, attempt, e)
-            time.sleep(5 * attempt)
+            time.sleep(wait)
             continue
         if r.status_code == 403:
             raise Blocked()
         if r.status_code >= 400:
             log.warning("Page %d HTTP %d (attempt %d)", page, r.status_code, attempt)
-            time.sleep(5 * attempt)
+            time.sleep(wait)
             continue
-        data = r.json().get("data") or {}
+        try:
+            data = r.json().get("data") or {}
+        except ValueError as e:
+            log.warning("Page %d bad JSON (attempt %d): %s", page, attempt, e)
+            time.sleep(wait)
+            continue
         return data.get("productList") or data.get("products") or [], data.get("totalPageCount")
-    raise RuntimeError(f"page {page} failed after retries")
+    raise RuntimeError(f"page {page} failed after {PAGE_ATTEMPTS} attempts")
 
 
 def make_session(cookies):
@@ -155,41 +163,37 @@ def scrape_beymen():
     out_file = OUT_DIR / f"beymen_{date_str}.csv"
     tmp_file = out_file.with_suffix(".csv.part")
 
-    session = make_session(load_cached_cookies())
-    used_browser = False
-    total = 0
+    state = {"session": make_session(load_cached_cookies()), "used_browser": False, "total": 0}
     seen = set()
 
     with tmp_file.open("w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(tuik08.COLUMNS + ["UrunID"])
-        page = 1
-        total_pages = None
-        while page <= min(total_pages or MAX_PAGES, MAX_PAGES):
-            try:
-                products, reported = fetch_page(session, page)
-                if total_pages is None and reported:
-                    total_pages = int(reported)
-                    log.info("API reports %d pages", total_pages)
-            except Blocked:
-                if used_browser:
-                    log.error("403 on page %d even with fresh browser cookies; stopping.", page)
-                    break
-                log.warning("403 on page %d; refreshing cookies with browser.", page)
-                used_browser = True
-                try:
-                    session = make_session(get_stealth_cookies(TARGET_WEB_URL))
-                except Exception as e:
-                    log.error("Browser cookie collection failed: %s", e)
-                    break
-                continue
-            except Exception as e:
-                log.error("Page %d: %s", page, e)
-                break
 
-            if not products:
-                log.info("No products on page %d; done (%d pages).", page, page - 1)
-                break
+        def scrape_page(page):
+            """Fetch one page and write its new products.
+            Returns the product list ([] = past the last page), or None when the page failed."""
+            while True:
+                try:
+                    products, reported = fetch_page(state["session"], page)
+                    break
+                except Blocked:
+                    if state["used_browser"]:
+                        log.error("403 on page %d even with fresh browser cookies.", page)
+                        return None
+                    log.warning("403 on page %d; refreshing cookies with browser.", page)
+                    state["used_browser"] = True
+                    try:
+                        state["session"] = make_session(get_stealth_cookies(TARGET_WEB_URL))
+                    except Exception as e:
+                        log.error("Browser cookie collection failed: %s", e)
+                        return None
+                except Exception as e:
+                    log.error("Page %d: %s", page, e)
+                    return None
+            if reported and not state.get("total_pages"):
+                state["total_pages"] = int(reported)
+                log.info("API reports %d pages", state["total_pages"])
             for item in products:
                 pid = item.get("productId")
                 if pid in seen:  # listing order can shift between pages during a run
@@ -197,18 +201,48 @@ def scrape_beymen():
                 seen.add(pid)
                 name = item.get("displayName")
                 writer.writerow([name, item.get("actualPrice"), tuik08.CATEGORY_NUMBER, tuik08.classify(name), pid])
-                total += 1
+                state["total"] += 1
             f.flush()
-            log.info("Page %d saved (%d products, total %d)", page, len(products), total)
+            if products:
+                log.info("Page %d saved (%d products, total %d)", page, len(products), state["total"])
+            return products
+
+        # one failed page no longer ends the run (2026-10-26: HTTP 500 on page 222 of 237
+        # cut ~640 products): skip it, go on, and retry the skipped pages at the end
+        failed, streak, page = [], 0, 1
+        while page <= min(state.get("total_pages") or MAX_PAGES, MAX_PAGES):
+            products = scrape_page(page)
+            if products is None:
+                failed.append(page)
+                streak += 1
+                if streak >= MAX_CONSECUTIVE_FAILED or not state.get("total_pages"):
+                    log.error("%s; stopping.", f"{streak} pages failed in a row" if state.get("total_pages")
+                              else "Page count unknown")
+                    break
+            elif not products:
+                log.info("No products on page %d; done (%d pages).", page, page - 1)
+                break
+            else:
+                streak = 0
             page += 1
             time.sleep(random.uniform(1.5, 3.5))
 
+        if failed and streak < MAX_CONSECUTIVE_FAILED and state.get("total_pages"):
+            log.warning("Retrying %d skipped page(s) %s after a pause.", len(failed), failed)
+            time.sleep(30)
+            state["session"] = make_session(load_cached_cookies())
+            failed = [p for p in failed if scrape_page(p) is None]
+
+    total = state["total"]
     if total == 0:
         tmp_file.unlink(missing_ok=True)
         log.error("No data collected.")
         sys.exit(1)
     os.replace(tmp_file, out_file)
     log.info("Saved %d rows to %s", total, out_file)
+    if failed:
+        log.error("Pages missing from this run: %s", failed)
+        sys.exit(1)  # data is saved; run_scraper.sh logs FAILED so the daily report flags it
 
 
 if __name__ == "__main__":

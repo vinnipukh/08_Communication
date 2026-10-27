@@ -27,6 +27,11 @@ açılmaz. API sadece 403 dönerse tek bir headless undetected-chromedriver aç�
 cookie'leri alınıp diske yazılır (`.beymen_cookies.json`, git'te yok sayılıyor) ve istekler
 `curl_cffi` ile devam eder. Toplu isteklerden önce tarayıcı her zaman kapatılır.
 
+Bir sayfa 6 denemede (5-60 sn bekleme) alınamazsa tarama durmaz: sayfa atlanır, sonraki sayfalarla devam
+edilir ve atlanan sayfalar en sonda yeni bir oturumla tekrar denenir. Üst üste 5 sayfa başarısız olursa
+(API çökmüş) durur. Sonunda hâlâ eksik sayfa varsa veri yine kaydedilir ama çıkış kodu 1 olur, yani
+`log.txt`'de FAILED görünür.
+
 ## Çalıştırma
 
 ```bash
