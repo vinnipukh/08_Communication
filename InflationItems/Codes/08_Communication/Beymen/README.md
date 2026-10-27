@@ -41,4 +41,5 @@ geçmiş çıktısı aynı klasörde `beymen_tech_*.csv` olarak duruyor.
 
 `InflationItems/Datas/08_Communication/Beymen/beymen_YYYY-MM-DD.csv`
 
-`product_name, price, category_number, sub_category_number, Tarih, UrunID` (ilk dört kolon `product_name, price, category_number, sub_category_number` (bkz. `../README.md`))
+`product_name, price, category_number, sub_category_number` (bkz. `../README.md`). Tarih dosya adında;
+ürün ID'si sadece tekilleştirmede kullanılır, yazılmaz (2026-10-27'ye kadarki `Tarih, UrunID` kolonları da silindi).
