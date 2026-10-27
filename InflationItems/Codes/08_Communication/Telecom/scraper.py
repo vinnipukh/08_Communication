@@ -49,6 +49,10 @@ class Blocked(Exception):
     pass
 
 
+class Skipped(Exception):
+    """Operator unreachable from this host for a known external reason: logged, not counted as failed."""
+
+
 # ---------------------------------------------------------------- helpers
 
 def tr_lower(s):
@@ -424,6 +428,9 @@ def run(operators, dir_names, out_root, fields, log_name, doc, sub_category, kin
     for name in (operators if args.operator == "all" else [args.operator]):
         try:
             rows = operators[name](args.limit)
+        except Skipped as e:
+            log.warning("%s SKIPPED: %s", name, e)
+            continue
         except Exception as e:  # one operator failing must not stop the others
             log.error("%s FAILED: %s: %s", name, type(e).__name__, e)
             failed.append(name)

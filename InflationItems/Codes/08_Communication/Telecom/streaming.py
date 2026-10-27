@@ -27,7 +27,7 @@ import re
 
 from bs4 import BeautifulSoup
 
-from scraper import OUT_ROOT, Blocked, Fetcher, row, run, tl, tr_lower
+from scraper import OUT_ROOT, Blocked, Fetcher, Skipped, row, run, tl, tr_lower
 
 import tuik08  # noqa: E402  (scraper.py put 08_Communication/ on sys.path)
 
@@ -79,7 +79,8 @@ def netflix(limit):
 def disney(limit):
     url = "https://www.disneyplus.com/tr-tr"
     t = text_of(page(url, url))
-    names = re.findall(r"DISNEY\+ (REKLAMLI|REKLAMSIZ)", t)[:2]
+    # plan names switched from "DISNEY+ REKLAMLI" to "Disney+ Reklamlı" on 2026-10-27 -> match either case
+    names = [n.upper() for n in re.findall(r"(?i)DISNEY\+ (REKLAML[Iı]|REKLAMS[Iı]Z)", t)][:2]
     monthly = re.findall(r"([\d.,]+) TL / ay", t)[:2]
     yearly = re.findall(r"([\d.,]+) TL / yıl", t)[:2]
     label = {"REKLAMLI": "Reklamlı", "REKLAMSIZ": "Reklamsız"}
@@ -217,7 +218,13 @@ def tivibu(limit):
 def tod(limit):
     url = "https://www.todtv.com.tr/satinal"
     # the homepage redirects to a small "/mac-basliyor/" splash on match days -> open the shop page directly
-    soup = BeautifulSoup(page(url, url), "html.parser")
+    try:
+        html = page(url, url)
+    except Blocked as e:
+        if "-> 403" in str(e):  # CloudFront refuses datacenter IPs (all paths, every TLS fingerprint)
+            raise Skipped(f"{e}; IP blocked by CloudFront, no row written") from e
+        raise
+    soup = BeautifulSoup(html, "html.parser")
     rows, seen = [], set()
     for card in soup.select(".package-card[data-item-name]"):
         name = card["data-item-name"]
