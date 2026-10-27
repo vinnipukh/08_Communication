@@ -37,7 +37,6 @@ Galaxy Z Flip8 (Samsung.com’a özel),96999.0,8,0812002,SM-F776BLGGTUR,Smartpho
 Galaxy A27 5G,20499.0,8,0812002,SM-A276BZKBTUR,Smartphones
 Galaxy A37 5G,30499.0,8,0812002,SM-A376BZAGTUR,Smartphones
 Galaxy A37 5G,30499.0,8,0812002,SM-A376BDGGTUR,Smartphones
-Galaxy A37 5G,25999.0,8,0812002,SM-A376BLVDTUR,Smartphones
 Galaxy A37 5G,30499.0,8,0812002,SM-A376BLVGTUR,Smartphones
 Galaxy A37 5G,30499.0,8,0812002,SM-A376BZWGTUR,Smartphones
 Galaxy A57 5G,33499.0,8,0812002,SM-A576BDBBTUR,Smartphones
@@ -49,7 +48,9 @@ Galaxy A07 5G,15499.0,8,0812002,SM-A076ELVBTUR,Smartphones
 Galaxy S26 Ultra,149999.0,8,0812002,SM-S948BZVGTUR,Smartphones
 Galaxy S26 Ultra,132999.0,8,0812002,SM-S948BZKDTUR,Smartphones
 Galaxy S26 Ultra,149999.0,8,0812002,SM-S948BZKGTUR,Smartphones
+Galaxy S26 Ultra,183999.0,8,0812002,SM-S948BZKHTUR,Smartphones
 Galaxy S26 Ultra,132999.0,8,0812002,SM-S948BZVDTUR,Smartphones
+Galaxy S26 Ultra,183999.0,8,0812002,SM-S948BZVHTUR,Smartphones
 Galaxy S26 Ultra,132999.0,8,0812002,SM-S948BLBDTUR,Smartphones
 Galaxy S26 Ultra,149999.0,8,0812002,SM-S948BLBGTUR,Smartphones
 Galaxy S26 Ultra,183999.0,8,0812002,SM-S948BLBHTUR,Smartphones
@@ -57,6 +58,7 @@ Galaxy S26 Ultra,132999.0,8,0812002,SM-S948BZWDTUR,Smartphones
 Galaxy S26 Ultra,149999.0,8,0812002,SM-S948BZWGTUR,Smartphones
 Galaxy S26 Ultra,183999.0,8,0812002,SM-S948BZWHTUR,Smartphones
 Galaxy S26+,103999.0,8,0812002,SM-S947BZKDTUR,Smartphones
+Galaxy S26+,103999.0,8,0812002,SM-S947BZVDTUR,Smartphones
 Galaxy S26+,103999.0,8,0812002,SM-S947BLBDTUR,Smartphones
 Galaxy S26,86999.0,8,0812002,SM-S942BZKGTUR,Smartphones
 Galaxy S26,86999.0,8,0812002,SM-S942BZVGTUR,Smartphones
@@ -92,6 +94,7 @@ Galaxy Tab S11 (Wi-Fi),59999.0,8,0813101,SM-X730NZSPTUR,Tablets
 Galaxy Tab S11 5G,68499.0,8,0813101,SM-X736BZAPTUR,Tablets
 Galaxy Tab S11 5G,63499.0,8,0813101,SM-X736BZARTUR,Tablets
 Galaxy Tab S10 FE+ (Wi-Fi),35499.0,8,0813101,SM-X620NZARTUR,Tablets
+Galaxy Tab Active5 5G (SM-X308),29999.0,8,0813101,SM-X308BZGAM09,Tablets
 Galaxy Watch Ultra2 LTE,59999.0,8,0819103,SM-L715FZKATUR,Watches
 Galaxy Watch Ultra2 LTE,59999.0,8,0819103,SM-L715FZSATUR,Watches
 Galaxy Watch Ultra2 Bluetooth,37999.0,8,0819103,SM-L710NZSATUR,Watches
@@ -100,9 +103,14 @@ Galaxy Watch Ultra2 Bluetooth,37999.0,8,0819103,SM-L710NZKATUR,Watches
 "Galaxy Watch9 (Bluetooth, 40 mm)",19999.0,8,0819103,SM-L340NZKATUR,Watches
 "Galaxy Watch9 (Bluetooth, 44 mm)",20999.0,8,0819103,SM-L350NZKATUR,Watches
 "Galaxy Watch9 (Bluetooth, 44 mm)",20999.0,8,0819103,SM-L350NZSATUR,Watches
-"Galaxy Watch8 Classic (Bluetooth, 46 mm)",19999.0,8,0819103,SM-L500NZWATUR,Watches
+"Galaxy Watch8 (Bluetooth, 40 mm)",13999.0,8,0819103,SM-L320NZSATUR,Watches
+"Galaxy Watch8 (Bluetooth, 40 mm)",13999.0,8,0819103,SM-L320NDAATUR,Watches
+"Galaxy Watch8 (Bluetooth, 44 mm)",14999.0,8,0819103,SM-L330NZSATUR,Watches
 "Galaxy Watch8 (Bluetooth, 44 mm)",14999.0,8,0819103,SM-L330NDAATUR,Watches
-Galaxy Buds4 Pro,12499.0,8,0814001,SM-R640NZWATUR,Audio Sound
+Galaxy Buds4 Pro (Samsung.com’a özel),12499.0,8,0814001,SM-R640NZDATUR,Audio Sound
+Galaxy Buds4,8999.0,8,0814001,SM-R540NZKATUR,Audio Sound
+AKG Tip C Kulaklık,1399.0,8,0814001,EO-IC100BBEGWW,Audio Sound
+AKG Tip C Kulaklık,1399.0,8,0814001,EO-IC100BWEGWW,Audio Sound
 Galaxy SmartTag2,1599.0,8,0819201,EI-T5600BBEGTR,Mobile Accessories
 EP-T2510X TypeC Hızlı Şarj Aleti (25W) - Siyah,1799.0,8,0819201,EP-T2510XBEGWW,Mobile Accessories
 İkili Süper Hızlı Kablosuz Şarj Cihazı,3999.0,8,0819201,EP-P5400TBEGWW,Mobile Accessories
@@ -157,8 +165,6 @@ Galaxy Tab S12 Ultra/Tab 11 Ultra Pro Klavye,18999.0,8,0819201,EF-DX935BSEGTR,Mo
 Standlı Magnet Powerbank,3199.0,8,0819201,EB-U2500XJEGWW,Mobile Accessories
 Galaxy Buds4 | Buds4 Pro Magnet Standlı Kılıf,1299.0,8,0819201,GP-FPR640HICJW,Mobile Accessories
 Galaxy Buds4 | Buds4 Pro Magnet Standlı Kılıf,1299.0,8,0819201,GP-FPR640HICNW,Mobile Accessories
-Galaxy S26 İnce Magnet Kılıf,2399.0,8,0819201,EF-SS942CVEGWW,Mobile Accessories
-Galaxy S26 İnce Magnet Kılıf,2399.0,8,0819201,EF-SS942CJEGWW,Mobile Accessories
 Galaxy S26 Ultra İnce Magnet Kılıf,2399.0,8,0819201,EF-SS948CVEGWW,Mobile Accessories
 Galaxy S26 Ultra İnce Magnet Kılıf,2399.0,8,0819201,EF-SS948CLEGWW,Mobile Accessories
 Galaxy S26 Ultra Silikon Magnet Kılıf,2399.0,8,0819201,EF-ES948CWEGWW,Mobile Accessories
@@ -297,8 +303,8 @@ B-serisi Soundbar HW-B650F 3.1 ch Subwoofer (2025),12099.0,8,0814001,HW-B650F/TK
 990 PRO PCIe 4.0 NVMe M.2 SSD,46198.68,8,0813209,MZ-V9P2T0BW,Memory & Storage
 Taşınabilir SSD T7 USB 3.2 Gen 2 1TB (Mavi),18742.68,8,0813209,MU-PC1T0H/WW,Memory & Storage
 Taşınabilir SSD T7 USB 3.2 Gen 2 2TB (Mavi),37486.68,8,0813209,MU-PC2T0H/WW,Memory & Storage
+Bespoke AI Çamaşır & Kurutma Makinesi,99198.0,8,0,F-DVWW261,Washers & Dryers
 Combo AI Ecobubble™ ve Yapay Zeka Enerji Modu 9kg + 6kg,59399.0,8,0,WD90HG5U34BEAH,Washers & Dryers
-Çamaşır Makinesi Hızlı Yıkama 9kg,32299.0,8,0,WW90FG3M05TWAH,Washers & Dryers
 Kurutma Makinesi AI Kurutma+ 9kg,46899.0,8,0,DV90DG6845LEAH,Washers & Dryers
 Kurutma Makinesi AI Kurutma+ 9kg,48299.0,8,0,DV90DG6845LBAH,Washers & Dryers
 Kurutma Makinesi AI Kurutma 10kg,50499.0,8,0,DV10DG6440LEAH,Washers & Dryers
@@ -317,13 +323,14 @@ Bespoke AI Çamaşır Makinesi AI Yıkama 11kg,56499.0,8,0,WW11DB8B95GBAH,Washer
 Çamaşır Makinesi AI EcoBubble™ 11kg,47299.0,8,0,WW11DG6B25LEAH,Washers & Dryers
 Çamaşır Makinesi AI EcoBubble™ 11kg,48099.0,8,0,WW11DG6B25LBAH,Washers & Dryers
 Bespoke AI Çamaşır Makinesi AI Ecobubble™ 11kg,50999.0,8,0,WW11DB7B34GEAH,Washers & Dryers
-Kurutmalı Çamaşır Makinesi AI Ecobubble™ 11kg + 6kg,73299.0,8,0,WD11DG5B15BBAH,Washers & Dryers
 Kurutmalı Çamaşır Makinesi AI Ecobubble™ 11kg + 6kg,70699.0,8,0,WD11DG5B15BEAH,Washers & Dryers
 Kurutmalı Çamaşır Makinesi AI Yıkama 11kg + 6kg,77499.0,8,0,WD11DB8B85GHAH,Washers & Dryers
 Çamaşır Makinesi Ecobubble™ 9kg,40499.0,8,0,WW90CGC04DAEAH,Washers & Dryers
 Çamaşır Makinesi Ecobubble™ 9kg,42899.0,8,0,WW90CGC04DABAH,Washers & Dryers
 Kurutma ve Çamaşır Makinesi Bağlantı Kiti,5040.0,8,0,DC82-01412A,Washers & Dryers
 Kurutma ve Çamaşır Makinesi Bağlantı Kiti,5040.0,8,0,DC82-01411A,Washers & Dryers
+Bespoke AI Alttan Donduruculu Buzdolabı & Solo Bulaşık Makinesi,92498.0,8,0,F-RBDW263,Refrigerators
+Bespoke AI Üstten Donduruculu Buzdolabı & Çamaşır Makinesi AI EcoBubble™,123698.0,8,0,F-RTWW262,Refrigerators
 Bespoke AI Gardrop Tipi Buzdolabı Space Max™ 655L,116699.0,8,0,RS70F65QETTR,Refrigerators
 Alttan Donduruculu Buzdolabı Twin Cooling™ 520L,62999.0,8,0,RB52DS33ESA/TR,Refrigerators
 Bespoke AI Üstten Donduruculu Buzdolabı Twin Cooling™ 588L,77199.0,8,0,RT58K704RWW/TR,Refrigerators
@@ -336,7 +343,6 @@ Alttan Donduruculu Buzdolabı Twin Cooling™ 580L,76399.0,8,0,RB58DS75ESA/TR,Re
 Alttan Donduruculu Buzdolabı Twin Cooling™ 580L,72399.0,8,0,RB58DS75EWW/TR,Refrigerators
 Bespoke AI Üstten Donduruculu Buzdolabı Space Max™ 465L,49699.0,8,0,RT47CG6636WWTR,Refrigerators
 Bespoke AI Üstten Donduruculu Buzdolabı Space Max™ 465L,52499.0,8,0,RT47CG6636S9TR,Refrigerators
-Bespoke AI Alttan Donduruculu Buzdolabı Space Max™ 508L,68499.0,8,0,RB50DG601ES9TR,Refrigerators
 Bespoke AI Alttan Donduruculu Buzdolabı Space Max™ 508L,68999.0,8,0,RB50DG601EB1TR,Refrigerators
 Bespoke AI Alttan Donduruculu Buzdolabı Space Max™ 508L,64099.0,8,0,RB50DG601EWWTR,Refrigerators
 Bespoke AI 4 Kapılı Buzdolabı İçecek İstasyonu 819L,204499.0,8,0,RF71DB965E8CTR,Refrigerators
@@ -365,7 +371,6 @@ Salon Tipi Klima (PAC),160081.04,8,0,AC140BNPDKH/TK,Air Conditioners
 Jet 85S Pet 250 W Emiş Gücü,27299.0,8,0,VS70H25WLG/TR,Vacuum Cleaners
 Bespoke Jet Bot Combo™ AI Robot Süpürge Toz Torbası (5 adet),999.0,8,0,VCA-RDB95/VT,Vacuum Cleaners
 Bespoke JET™ AI 250W BATARYA,5199.0,8,0,VCA-SBTC97S/GL,Vacuum Cleaners
-Jet 60 Turbo 150W Emiş Gücü,15699.0,8,0,VS15A6031R4/TR,Vacuum Cleaners
 VC3500TM CycloneForce™ Teknolojili Torbasız Elektrikli Süpürge,7899.0,8,0,VC07T357MHR/TR,Vacuum Cleaners
 Bespoke Jet™ için Antibakteriyel Paspas Pedi (4 adet),899.0,8,0,VCA-SPW95/VT,Vacuum Cleaners
 Bespoke Jet™ için Tek Kullanımlık Islak Bez (20 adet),699.0,8,0,VCA-SPA95/GL,Vacuum Cleaners
@@ -377,10 +382,10 @@ JET 85 BATARYA,4499.0,8,0,VCA-SBTA95/VT,Vacuum Cleaners
 Bespoke AI Fırın Buhar Özellikli İkili Pişirme 76L,73599.0,8,0,NV7B6665IAN/TR,Cooking Appliances
 Bespoke AI Fırın İkili ve Buharlı Pişirme 76L,65299.0,8,0,NV7B56458AE/TR,Cooking Appliances
 Ankastre Gazlı Ocak Temperli Cam 60cm,19099.0,8,0,NA64N7100AB/TR,Cooking Appliances
-Ankastre Gazlı Ocak Temperli Cam 60cm,19599.0,8,0,NA64M7100AW/TR,Cooking Appliances
 Ankastre Duvar Tipi Davlumbaz 60 cm,21399.0,8,0,NK24N7060VB/TR,Cooking Appliances
 Ankastre Duvar Tipi Davlumbaz 60 cm,22299.0,8,0,NK24M7060VW/TR,Cooking Appliances
 Fırın 7 Pişirme Fonksiyonlu 60L,18199.0,8,0,NV60K3110BS/TR,Cooking Appliances
+Fırın 8 Pişirme Fonksiyonlu 60L,28699.0,8,0,NV60M7140BW/TR,Cooking Appliances
 Fırın 8 Pişirme Fonksiyonlu 60L,28699.0,8,0,NV60K7140BB/TR,Cooking Appliances
 Fırın 7 Pişirme Fonksiyonlu 60L,24199.0,8,0,NV60K5140BB/TR,Cooking Appliances
 NA64H3010AK 4 Gözü Gazlı Ankastre Ocak,20199.0,8,0,NA64H3010AK/TR,Cooking Appliances
@@ -394,8 +399,8 @@ Solo Bulaşık Makinesi Otomatik Açılır Kapı 6 program,36599.0,8,0,DW60DG560
 Solo Bulaşık Makinesi Otomatik Açılır Kapı 6 program,34599.0,8,0,DW60DG560FWQTR,Dishwashers
 Solo Bulaşık Makinesi Otomatik Açılır Kapı 5 program,32399.0,8,0,DW60DG550FWQTR,Dishwashers
 Solo Bulaşık Makinesi Otomatik Açılır Kapı 5 program,34399.0,8,0,DW60DG550FSRTR,Dishwashers
-"27"" The Movingstyle LSM7F QHD Dokunmatik Etkileşimli Taşınabilir Ekran (2025)",59999.0,8,0814007,UE27LSM7FAXXTK,Other (movable-screens)
 MPA,2899.0,8,0819201,EE-P5400USEGWW,Other (computer-accessories)
 360 Stand Magnet,1399.0,8,0819201,GP-TEU026HCABW,Other (mobile-accessories)
 360 Stand Magnet,1399.0,8,0819201,GP-TEU026HCASW,Other (mobile-accessories)
 Samsung Bluetooth Mouse Slim,1499.0,8,0813209,EJ-M3400DBEGWW,Other (mobile-accessories)
+"27"" The Movingstyle LSM7F QHD Dokunmatik Etkileşimli Taşınabilir Ekran (2025)",59999.0,8,0814007,UE27LSM7FAXXTK,Other (movable-screens)
