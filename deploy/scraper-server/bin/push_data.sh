@@ -20,9 +20,11 @@ export GIT_SSH_COMMAND="ssh -o BatchMode=yes -o ConnectTimeout=30"
 [ -f "$STAMP" ] || touch -d '1 day ago' "$STAMP"
 
 # taken before the scan: a CSV written while we push is picked up next time
-NEXT=$(mktemp "${TMPDIR:-/tmp}/push_stamp.XXXXXX")
-export GIT_INDEX_FILE=$(mktemp "${TMPDIR:-/tmp}/push_index.XXXXXX")
-trap 'rm -f "$NEXT" "$GIT_INDEX_FILE"' EXIT
+WORK=$(mktemp -d "${TMPDIR:-/tmp}/push_data.XXXXXX")
+trap 'rm -rf "$WORK"' EXIT
+NEXT="$WORK/stamp"
+touch "$NEXT"
+INDEX="$WORK/index"  # must not exist yet: git rejects an empty index file
 
 mapfile -t FILES < <(find "$DATA" -type f -name '*.csv' -newer "$STAMP" | sort)
 if [ ${#FILES[@]} -eq 0 ]; then
@@ -33,10 +35,10 @@ fi
 for attempt in 1 2 3; do
   if git fetch -q origin "$BRANCH"; then
     base=$(git rev-parse "origin/$BRANCH")
-    rm -f "$GIT_INDEX_FILE"
-    git read-tree "$base"
-    git -c core.safecrlf=false update-index --add -- "${FILES[@]}"   # applies .gitattributes (CSV stored with LF)
-    tree=$(git write-tree --missing-ok)       # blob:none clone: don't fetch every old blob
+    rm -f "$INDEX"
+    GIT_INDEX_FILE="$INDEX" git read-tree "$base"
+    GIT_INDEX_FILE="$INDEX" git -c core.safecrlf=false update-index --add -- "${FILES[@]}"   # applies .gitattributes (CSV stored with LF)
+    tree=$(GIT_INDEX_FILE="$INDEX" git write-tree --missing-ok)       # blob:none clone: don't fetch every old blob
     if [ "$tree" = "$(git rev-parse "$base^{tree}")" ]; then
       echo "push: ${#FILES[@]} CSV(s) already identical on origin"
       mv "$NEXT" "$STAMP"
