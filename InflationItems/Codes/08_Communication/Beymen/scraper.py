@@ -162,7 +162,7 @@ def scrape_beymen():
 
     with tmp_file.open("w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-        writer.writerow(tuik08.COLUMNS)
+        writer.writerow(tuik08.COLUMNS + ["UrunID"])
         page = 1
         total_pages = None
         while page <= min(total_pages or MAX_PAGES, MAX_PAGES):
@@ -196,7 +196,7 @@ def scrape_beymen():
                     continue
                 seen.add(pid)
                 name = item.get("displayName")
-                writer.writerow([name, item.get("actualPrice"), tuik08.CATEGORY_NUMBER, tuik08.classify(name)])
+                writer.writerow([name, item.get("actualPrice"), tuik08.CATEGORY_NUMBER, tuik08.classify(name), pid])
                 total += 1
             f.flush()
             log.info("Page %d saved (%d products, total %d)", page, len(products), total)
