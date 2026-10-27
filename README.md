@@ -9,12 +9,12 @@ The Svelte dashboard, Falcon API and SQLite serving layer live in the sibling `i
 ```text
 InflationItems/
   Codes/
-    08_Communication/           # Beymen, BeymenTech, DR, Huawei, PozitifTeknoloji,
+    08_Communication/           # Beymen, DR, Huawei, PozitifTeknoloji,
                                 # Samsung, VatanComputer, Telecom
   Datas/
     04_Housing/Emlakjet/        # rental CSVs; scraper rewritten 2026-10-23 (Codes/04_Housing/Emlakjet)
     08_Communication/<Source>/  # daily price CSVs per retailer/operator/service
-.github/workflows/              # scheduled jobs for every scraper
+.github/workflows/              # Emlakjet schedule + manual runs of the server scrapers
 deploy/scraper-server/          # cron setup for the 08_Communication server
 docs/                           # scraping wiki, tool registry, telecom recon
 SCRAPER_TIMETABLE.md            # daily schedule
@@ -32,12 +32,12 @@ or
 python -m pip install -r requirements.txt
 ```
 
-Chrome is needed for the browser-backed scrapers (Beymen fallback, BeymenTech, TurkNet, tabii).
+Chrome is needed for the browser-backed scrapers (Beymen fallback, TurkNet, tabii).
 
 ## Run scrapers
 
 ```bash
-python InflationItems/Codes/08_Communication/BeymenTech/scraper.py
+python InflationItems/Codes/08_Communication/Beymen/scraper.py
 python InflationItems/Codes/08_Communication/Samsung/scripts/main.py
 python InflationItems/Codes/08_Communication/Telecom/scraper.py
 ```
@@ -48,9 +48,10 @@ Before touching a protected or browser-backed scraper, read `docs/scraping-wiki/
 
 ## Automation
 
-- GitHub Actions: `beymen.yml` (BeymenTech), daily, committing only its data path.
-- GitHub Actions: `scraper_<name>.yml` for the other ten 08_Communication scrapers, via `_communication_scraper.yml`.
-- Self-hosted cron server: the same ten scrapers, see `deploy/scraper-server/README.md`.
+- Self-hosted cron server: the ten 08_Communication scrapers, daily; it pushes their CSVs to `main` itself
+  (`deploy/scraper-server/bin/push_data.sh`), see `deploy/scraper-server/README.md`.
+- GitHub Actions: `scraper_<name>.yml` for the same ten, manual runs only (via `_communication_scraper.yml`).
+- GitHub Actions: `scraper_emlakjet.yml`, daily.
 
 ## Testing policy
 

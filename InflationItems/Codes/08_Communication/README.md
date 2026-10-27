@@ -35,39 +35,34 @@ bunlardan sonra gelir:
 | `0` | 08 sitesinde ama 08 sepetinde değil |
 
 Kodlar ve sınıflandırma `tuik08.py` içinde. Samsung ve Huawei sitenin kendi kategorisinden birebir
-eşlenir. Beymen, BeymenTech, D&R, Pozitif ve Vatan için `tuik08.classify(ürün adı, site kategorisi)`
+eşlenir. Beymen, D&R, Pozitif ve Vatan için `tuik08.classify(ürün adı, site kategorisi)`
 anahtar kelime kurallarını kullanır. Kurallar 2026-10-18 verisinde örneklenerek kontrol edildi ve
 ürün adına dayandığı için birkaç yüz üründe hata payı var. `python tuik08.py` kural sırasını kontrol eder.
 2026-10-18'de eski dosyalar da bu düzene çevrildi (çevrilmeden önceki hali: `export/datas_08_before_tuik_columns_2026-10-18.tar.gz`, gitignore'da).
 
 ## Özet
 
-| Kalem | Scraper sayısı | Scraper'lar | Günlük ürün (yaklaşık) | BeymenTech hariç |
-|---|---|---|---|---|
-| Cep telefonu | 7 | Vatan, Pozitif, Beymen, BeymenTech, Samsung, Huawei, DR | ~970 | ~840 |
-| Bilgisayar | 6 | Vatan, Beymen, Pozitif, BeymenTech, Samsung, Huawei | ~1.700 | ~1.300 |
-| Bilgisayar çevre birimleri | 7 | Vatan, Beymen, BeymenTech, Pozitif, DR, Samsung, Huawei | ~2.800 | ~2.400 |
-| Ses ve görüntü ekipmanı | 7 | Beymen, BeymenTech, DR, Vatan, Pozitif, Samsung, Huawei | ~3.100 | ~1.900 |
-| Televizyon | 4 | Vatan, Beymen, BeymenTech, Samsung | ~420 | ~320 |
-| Diğer iletişim cihazları | 7 | Vatan, Beymen, BeymenTech, Pozitif, DR, Huawei, Samsung | ~570 | ~460 |
-| Bilgi ve iletişim aksesuarları | 7 | Beymen, BeymenTech, Pozitif, Vatan, DR, Samsung, Huawei | ~11.500 | ~6.500 |
-| Cep telefonu hizmet ücreti | 1 (`Telecom/scraper.py`, 4 operatör) | Turkcell, Türk Telekom, Vodafone, NetGSM | ~760 | ~760 |
-| İnternet hizmet ücreti | 1 (`Telecom/internet.py`, 7 sağlayıcı) | Türk Telekom, Superonline, Kablonet, TurkNet, Vodafone, Milleni, GIBIRNet | ~380 | ~380 |
-| Bilgi ve iletişim ekipmanı bakım / onarım ücreti | 1 (`Telecom/repair.py`, 4 kaynak) | GSM İletişim, Huawei, Apple, Samsung | ~5.800 | ~5.800 |
-| Dijital içerik / streaming platform aboneliği | 1 (`Telecom/streaming.py`, 12 servis) | YouTube Premium, Disney+, Spotify, Tivibu, TV+, MUBI, Netflix, HBO Max, GAIN, Prime, Apple TV+, Tabii | ~34 | ~34 |
+| Kalem | Scraper sayısı | Scraper'lar | Günlük ürün (yaklaşık) |
+|---|---|---|---|
+| Cep telefonu | 6 | Vatan, Pozitif, Beymen, Samsung, Huawei, DR | ~840 |
+| Bilgisayar | 5 | Vatan, Beymen, Pozitif, Samsung, Huawei | ~1.300 |
+| Bilgisayar çevre birimleri | 6 | Vatan, Beymen, Pozitif, DR, Samsung, Huawei | ~2.400 |
+| Ses ve görüntü ekipmanı | 6 | Beymen, DR, Vatan, Pozitif, Samsung, Huawei | ~1.900 |
+| Televizyon | 3 | Vatan, Beymen, Samsung | ~320 |
+| Diğer iletişim cihazları | 6 | Vatan, Beymen, Pozitif, DR, Huawei, Samsung | ~460 |
+| Bilgi ve iletişim aksesuarları | 6 | Beymen, Pozitif, Vatan, DR, Samsung, Huawei | ~6.500 |
+| Cep telefonu hizmet ücreti | 1 (`Telecom/scraper.py`, 4 operatör) | Turkcell, Türk Telekom, Vodafone, NetGSM | ~760 |
+| İnternet hizmet ücreti | 1 (`Telecom/internet.py`, 7 sağlayıcı) | Türk Telekom, Superonline, Kablonet, TurkNet, Vodafone, Milleni, GIBIRNet | ~380 |
+| Bilgi ve iletişim ekipmanı bakım / onarım ücreti | 1 (`Telecom/repair.py`, 4 kaynak) | GSM İletişim, Huawei, Apple, Samsung | ~5.800 |
+| Dijital içerik / streaming platform aboneliği | 1 (`Telecom/streaming.py`, 12 servis) | YouTube Premium, Disney+, Spotify, Tivibu, TV+, MUBI, Netflix, HBO Max, GAIN, Prime, Apple TV+, Tabii | ~34 |
 
 Scraper'lar listede o kalemdeki ürün sayısına göre büyükten küçüğe sıralı.
-
-**BeymenTech hariç** kolonu: `Beymen` (sunucu) ve `BeymenTech` (GitHub Actions) Beymen'in aynı
-"Teknoloji" kategorisini çekiyor, yani ürünlerin neredeyse tamamı iki kez sayılıyor. Kalemdeki
-tekil ürün sayısı için bu kolona bakılmalı.
 
 ## Ürün ve cihaz kalemleri: scraper başına
 
 | Scraper | Cep telefonu | Bilgisayar | Çevre birimleri | Ses ve görüntü | Televizyon | Diğer iletişim | Aksesuar | Kapsam dışı | Toplam |
 |---|---|---|---|---|---|---|---|---|---|
 | Beymen (sunucu) | ~130 | ~430 | ~440 | ~1.200 | ~100 | ~110 | ~5.100 | ~3.500 | ~10.900 |
-| BeymenTech (GitHub Actions) | ~130 | ~340 | ~440 | ~1.200 | ~100 | ~110 | ~5.100 | ~3.500 | ~10.800 |
 | VatanComputer | ~500 | ~490 | ~1.700 | ~130 | ~170 | ~190 | ~430 | ~1.800 | ~5.400 |
 | PozitifTeknoloji | ~140 | ~380 | ~140 | ~100 | — | 98 | ~440 | 23 | ~1.300 |
 | DR | 3 | — | 89 | ~480 | — | 30 | ~370 | ~430 | ~1.400 |
@@ -79,7 +74,7 @@ Nasıl sayıldı:
 - **Site kategorisinden** (daha güvenilir): DR (`Category` / `Subcategory`), Huawei (`Category`),
   Samsung (`category`), PozitifTeknoloji (`category`; "Fırsatlar" / "Outlet" gibi karışık
   kategorilerde ürün adından).
-- **Ürün adındaki anahtar kelimelerden** (daha kaba): Beymen, BeymenTech ve VatanComputer. Bu
+- **Ürün adındaki anahtar kelimelerden** (daha kaba): Beymen ve VatanComputer. Bu
   CSV'lerde kategori kolonu yok. Kılıf, kordon ve şarj cihazı gibi aksesuarlar önce ayrılır
   (örneğin "iPhone 17 uyumlu kılıf" telefon sayılmaz), sonra telefon, bilgisayar, TV, saat,
   çevre birimi ve ses/görüntü kelimeleri aranır. Hata payı birkaç yüz ürün mertebesinde.

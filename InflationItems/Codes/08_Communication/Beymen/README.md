@@ -27,8 +27,6 @@ açılmaz. API sadece 403 dönerse tek bir headless undetected-chromedriver aç�
 cookie'leri alınıp diske yazılır (`.beymen_cookies.json`, git'te yok sayılıyor) ve istekler
 `curl_cffi` ile devam eder. Toplu isteklerden önce tarayıcı her zaman kapatılır.
 
-Aynı kategoriyi GitHub Actions üzerinde ayrıca `../BeymenTech/` çeker (`beymen_tech_*`).
-
 ## Çalıştırma
 
 ```bash
@@ -36,6 +34,8 @@ python InflationItems/Codes/08_Communication/Beymen/scraper.py
 ```
 
 Sunucuda `bin/run_scraper.sh beymen` ile her gün 02:00'de çalışır (`deploy/scraper-server/`).
+Aynı kategoriyi SeleniumBase ile çeken eski `BeymenTech` scraper'ı 2026-10-27'de kaldırıldı;
+geçmiş çıktısı aynı klasörde `beymen_tech_*.csv` olarak duruyor.
 
 ## Çıktı
 
