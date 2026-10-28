@@ -1,12 +1,13 @@
 ---
 name: hybrid-scraping
 type: concept
-first_seen:
-last_updated: 2026-04-22
+first_seen: null
+last_updated: '2026-09-02'
 sources:
-  - hybrid-scraping-camoufox-curl-cffi.md
-  - the-lab-35-bypassing-perimeterx-with.md
-  - hybrid-scraping-browser-login-http-extraction.md
+- hybrid-scraping-camoufox-curl-cffi.md
+- the-lab-35-bypassing-perimeterx-with.md
+- hybrid-scraping-browser-login-http-extraction.md
+- about.md
 ---
 
 # Hybrid Scraping
@@ -51,6 +52,6 @@ Hybrid scraping is an established pattern with clear implementation requirements
 
 ## Sources
 
-- [https://substack.thewebscraping.club/p/hybrid-scraping-camoufox-curl-cffi](https://substack.thewebscraping.club/p/hybrid-scraping-camoufox-curl-cffi)
-- [https://substack.thewebscraping.club/p/the-lab-35-bypassing-perimeterx-with](https://substack.thewebscraping.club/p/the-lab-35-bypassing-perimeterx-with)
-- [https://substack.thewebscraping.club/p/hybrid-scraping-browser-login-http-extraction](https://substack.thewebscraping.club/p/hybrid-scraping-browser-login-http-extraction)
+- [https://www.scraping.club/p/hybrid-scraping-camoufox-curl-cffi](https://www.scraping.club/p/hybrid-scraping-camoufox-curl-cffi)
+- [https://www.scraping.club/p/the-lab-35-bypassing-perimeterx-with](https://www.scraping.club/p/the-lab-35-bypassing-perimeterx-with)
+- [https://www.scraping.club/p/hybrid-scraping-browser-login-http-extraction](https://www.scraping.club/p/hybrid-scraping-browser-login-http-extraction)

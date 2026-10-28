@@ -2,7 +2,7 @@
 name: cdp-detection
 type: concept
 first_seen: 2024-07-01
-last_updated: '2026-05-07'
+last_updated: '2026-09-22'
 sources:
 - playwright-stealth-cdp.md
 - the-stealth-stack-web-scraping.md
@@ -65,10 +65,11 @@ Patchright is the recommended drop-in solution for teams running Playwright on C
 - [DataDome](../entities/datadome.md)
 - [Camoufox](../entities/camoufox.md)
 - [Playwright](../entities/playwright.md)
+- [Google SearchGuard](../entities/google-searchguard.md) - reads ChromeDriver $cdc_ / $wdc_ markers, navigator.webdriver and a dozen other automation names on first visit
 
 ## Sources
 
-- [https://substack.thewebscraping.club/p/playwright-stealth-cdp](https://substack.thewebscraping.club/p/playwright-stealth-cdp)
-- [https://substack.thewebscraping.club/p/the-stealth-stack-web-scraping](https://substack.thewebscraping.club/p/the-stealth-stack-web-scraping)
-- [https://substack.thewebscraping.club/p/webdriver-vs-cdp-vs-bidi](https://substack.thewebscraping.club/p/webdriver-vs-cdp-vs-bidi)
-- [https://substack.thewebscraping.club/p/playwright-scrapers-undetected](https://substack.thewebscraping.club/p/playwright-scrapers-undetected)
+- [https://www.scraping.club/p/playwright-stealth-cdp](https://www.scraping.club/p/playwright-stealth-cdp)
+- [https://www.scraping.club/p/the-stealth-stack-web-scraping](https://www.scraping.club/p/the-stealth-stack-web-scraping)
+- [https://www.scraping.club/p/webdriver-vs-cdp-vs-bidi](https://www.scraping.club/p/webdriver-vs-cdp-vs-bidi)
+- [https://www.scraping.club/p/playwright-scrapers-undetected](https://www.scraping.club/p/playwright-scrapers-undetected)

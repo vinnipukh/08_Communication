@@ -2,7 +2,7 @@
 
 Local reference copy of selected pages from
 [TheWebScrapingClub/scraping-wiki](https://github.com/TheWebScrapingClub/scraping-wiki)
-(main branch), fetched **2026-08-15** for use during the
+(main branch), fetched **2026-10-28** (upstream commit `7feb286`) for use during the
 `InflationItems/Codes/04_Housing/` modernization (Emlakjet; removed 2026-10-18, rewritten 2026-10-23).
 
 The wiki is updated **daily** — refresh this snapshot periodically:
@@ -42,7 +42,7 @@ The wiki is updated **daily** — refresh this snapshot periodically:
 
 ### Index
 
-`index.md` — full wiki catalog (117 entities / 29 concepts) for finding further pages.
+`index.md` — full wiki catalog (219 entities / 36 concepts) for finding further pages.
 
 ## Cross-references
 
