@@ -1,5 +1,5 @@
 product_name,price,category_number,sub_category_number,province,utility,subscriber_type,tier_from_m3,tier_to_m3,water_price,wastewater_price,total,unit,vat_included,ctv_included,effective_date,source_url,collected_at
-Su İzmir İZSU konut 0-10 m³,60.0,4,0441101,İzmir,İZSU,konut,0,10,40.0,20.0,60.0,TL/m³,false,false,2026-06-01,https://izsu.gov.tr/su-ve-atik-su-tarifesi,2026-10-28T12:53:19+00:00
-Su İzmir İZSU konut 11-20 m³,99.83,4,0441101,İzmir,İZSU,konut,11,20,66.56,33.27,99.83,TL/m³,false,false,2026-06-01,https://izsu.gov.tr/su-ve-atik-su-tarifesi,2026-10-28T12:53:19+00:00
-Su İzmir İZSU konut 21-40 m³,145.0,4,0441101,İzmir,İZSU,konut,21,40,96.67,48.33,145.0,TL/m³,false,false,2026-06-01,https://izsu.gov.tr/su-ve-atik-su-tarifesi,2026-10-28T12:53:19+00:00
-Su İzmir İZSU konut 41+ m³,201.9,4,0441101,İzmir,İZSU,konut,41,,134.6,67.3,201.9,TL/m³,false,false,2026-06-01,https://izsu.gov.tr/su-ve-atik-su-tarifesi,2026-10-28T12:53:19+00:00
+Su İzmir İZSU konut 0-10 m³,60.0,4,0441101,İzmir,İZSU,konut,0,10,40.0,20.0,60.0,TL/m³,false,false,2026-06-01,https://izsu.gov.tr/su-ve-atik-su-tarifesi,2026-10-28T14:32:33+00:00
+Su İzmir İZSU konut 11-20 m³,99.83,4,0441101,İzmir,İZSU,konut,11,20,66.56,33.27,99.83,TL/m³,false,false,2026-06-01,https://izsu.gov.tr/su-ve-atik-su-tarifesi,2026-10-28T14:32:33+00:00
+Su İzmir İZSU konut 21-40 m³,145.0,4,0441101,İzmir,İZSU,konut,21,40,96.67,48.33,145.0,TL/m³,false,false,2026-06-01,https://izsu.gov.tr/su-ve-atik-su-tarifesi,2026-10-28T14:32:33+00:00
+Su İzmir İZSU konut 41+ m³,201.9,4,0441101,İzmir,İZSU,konut,41,,134.6,67.3,201.9,TL/m³,false,false,2026-06-01,https://izsu.gov.tr/su-ve-atik-su-tarifesi,2026-10-28T14:32:33+00:00
