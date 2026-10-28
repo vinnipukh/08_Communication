@@ -622,3 +622,25 @@ only). The one-off conversion script was not added to the repository.
 - Verified 2026-10-28 by a full live run: 411 rows, all 81 provinces per brand; 12 kg TL (VAT incl.)
   İstanbul Anadolu / Ankara / İzmir: Aygaz 1700/1645/1645 (deposit 320), Milangaz 1660/1650/1660,
   Mogaz 1700/1645/1643, İpragaz 1680 everywhere.
+
+## 3.9 Armut home repair labour price scraper (2026-10-28)
+
+`InflationItems/Codes/04_Housing/RepairLabor/scraper.py` (TÜİK 0432015), output
+`InflationItems/Datas/04_Housing/RepairLabor/YYYY-MM-DD.csv`. Item 5 of the TÜİK 04 utilities queue (`queue/`).
+- Source: Armut.com city price pages `https://armut.com/fiyatlari/{city}-{slug}_{serviceId}_{plate}`; page URLs
+  come from the `sitemap/price-arealevel1-*.xml` sitemaps (one ~45k-URL file on 2026-10-28), data from the
+  Next.js `__NEXT_DATA__` JSON (`pricePageData`: shown min–max range, quote/pro counts, rating, and
+  `monthlyPrices` = 12 complete months of quote avg/min/max/count per city). `curl_cffi` (Chrome
+  impersonation), no browser, no new dependency. CloudFront, no challenge.
+- 23 curated home repair services in `services.json` (painting, plumbing, electrician, combi boiler service,
+  tiling, parquet, drywall, plaster, roof, waterproofing, carpentry, PVC windows, glass, locks, kitchen cabinet
+  fitting, general repair, renovation) × İstanbul/Ankara/İzmir; `--provinces all` for every province.
+- `price` = newest month's quote mean (midpoint of the shown range when there is no monthly data). Means are
+  outlier-heavy (single quotes up to 9,999,999 TL); min/max, the month's min/max and quote counts are stored.
+- ~71 requests (sitemap index + 1 sitemap + 69 pages), 1 s apart: 83 s measured.
+- Verified 2026-10-28 by a live run: 69 rows, no failures; e.g. Su tesisatçısı mean (Sep 2026) İstanbul
+  5,312 / Ankara 9,307 / İzmir 6,446 TL, shown ranges 1,000–5,500 / 1,000–15,000 / 1,110–8,000 TL.
+- `--backfill` (2026-10-28): the same page fetches also write one CSV per past day from `monthlyPrices`. Every day
+  of a month repeats that month's quote mean, `notes` = "backfill: ..." and the today-only fields are empty.
+  Existing day files are kept. The first run wrote 365 files (2025-10-01 .. 2026-09-30, 65–69 rows each, ~7 MB)
+  and took 83.5 s.

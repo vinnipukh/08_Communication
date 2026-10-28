@@ -61,3 +61,20 @@ short; no absolute paths, usernames or cookies.
 - Reusable: the `PROVINCES` plate→name table and `plate_region()` in `LPG/scraper.py` for any per-province
   source; `Client.request()` there adds POST to the usual Client.
 - Open: no schedule yet. Milangaz gives no validity date (`valid_from` empty).
+
+## 2026-10-28 — 5 Home repair labour (Armut)
+- Data is in `__NEXT_DATA__` (`pricePageData`), not only the visible range: `monthlyPrices` gives 12 complete
+  months of quote avg/min/max/count per city, so `price` = newest month's mean (spec updated). The month can lag
+  (İzmir lock change: 2026-08 on 2026-10-28) when a month has no quotes. A 12-month backfill is possible from one
+  run's pages but is not written (one row per service × province only).
+- Means are outlier-heavy (quotes of 1–10 million TL; some months have 1 quote). The shown min–max range repeats
+  across cities for low-volume services (e.g. Sıvacı 5,000–520,000 in Ankara and İzmir): looks like a national
+  fallback. A consumer should weight by `month_quote_count` or prefer high-volume services.
+- Page URLs are resolved from `sitemap/price-arealevel1-*.xml` (+2 requests), so no city-slug table was needed and
+  `--provinces all` works. 23 services in `services.json`; 71 requests, 83 s measured. No new dependency.
+- Reusable: `page_urls()` pattern (sitemap → id-keyed URL map) for any site with id-suffixed URLs.
+- Open: no schedule yet; monthly is enough (data moves once a month). The service choice is a judgement call —
+  review `services.json` against the TÜİK item definition if the index team has one.
+- Backfill done (2026-10-28, `--backfill`): 365 daily CSVs 2025-10-01 .. 2026-09-30, each day = its month's
+  quote mean (monthly data repeated per day, marked `backfill:` in `notes`). 1–27 Oct 2026 have no file. A
+  service × city month with zero quotes has no row (65–69 rows/day). Existing day files are never overwritten.

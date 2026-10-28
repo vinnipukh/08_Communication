@@ -14,6 +14,9 @@
   Example plumber (`su-tesisatcisi_193`): Istanbul 1,000–5,500, Ankara 1,000–15,000, İzmir 1,110–8,000 TL.
 - Discovery: price sitemaps `sitemap/price-*.xml` (~6,760 services, ~45k city pages nationally).
 - CloudFront, no challenge seen on 2026-10-28.
+- Re-checked 2026-10-28: the numbers are in `<script id="__NEXT_DATA__">` → `props.pageProps.data.pricePageData`
+  (`minPrice`, `maxPrice`, `quoteCount`, `proCount`, rating, and `monthlyPrices` = last 12 complete months of
+  avg/min/max/quoteCount per city). City pages are in `sitemap/price-arealevel1-1.xml` (45,226 URLs).
 
 ## Service list (curate, ~15–25)
 
