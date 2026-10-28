@@ -57,7 +57,7 @@ ListingURL, Province, Neighborhood, PropertyType, AreaM2, Currency, ListingDate,
 | Log'da / ekranda | Anlamı | Ne yapmalı |
 |---|---|---|
 | `Cloudflare challenge passed` | Site bir doğrulama sayfası gösterdi, tarayıcı kendisi geçti | Hiçbir şey, normal |
-| `HTTP 429`, `blocked, waiting N min before retry` | Site hızı sınırlıyor; scraper tarayıcıyı kapatıp gittikçe uzayan sürelerle (30 sn → 30 dk, toplam ~2,5 saat) bekliyor | Bekle; bilgisayarı uyku moduna sokma, kapağı kapatma |
+| `HTTP 429`, `blocked, waiting N min before retry` | Site hızı sınırlıyor; scraper tarayıcıyı kapatıp gittikçe uzayan sürelerle (35 sn → 30 dk, toplam ~2,5 saat) bekliyor | Bekle; bilgisayarı uyku moduna sokma, kapağı kapatma |
 | `retired`, ardından `incomplete ... re-run with --resume` | IP ~2,5 saat boyunca engelli kaldı, tarama durdu | Daha sonra Run'a tekrar bas (kaldığı yerden devam eder) |
 | Devam eden taramada `page 30/?: 24 cards, 0 new` gibi satırlar | 2026-10-28 öncesi sürüm, yarım kalan ilçede son sayfayı geçip tekrar eden ilanları çekiyordu | `git pull` ile güncelle; yeni sürüm ilk "0 new" sayfasında durur |
 | `already running` ama tarama ilerlemiyor | Eski bir süreç asılı kalmış olabilir | Görev Yöneticisi'nde o pid'i kapat, Run'a bas |

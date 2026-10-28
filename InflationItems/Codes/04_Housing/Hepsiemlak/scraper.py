@@ -64,7 +64,7 @@ PAGE_SIZE = 24
 SPLIT_PAGES = 60  # a province above this many pages is crawled district by district
 # seconds waited after each blocked page (browser closed meanwhile), then retire: ~2.6 h in all, because a
 # per-IP block on a shared (dormitory) connection can last well over the first ~20 min
-BACKOFF = [30, 60, 120, 300, 600, 1200, 1800, 1800, 1800, 1800]
+BACKOFF = [35, 85, 140, 325, 600, 1200, 1800, 1800, 1800, 1800]
 MAX_WAIT = 1800
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
