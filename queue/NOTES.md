@@ -35,3 +35,15 @@ short; no absolute paths, usernames or cookies.
 - Measured ~7 s for ~11 requests; one bounded run took 36 s (a slow first connection, not reproduced).
 - Open: İzmirgaz's intermediate URL is a constant; a CA change needs an update. Başkentgaz split months
   (e.g. April 2026) pick the later PDF only. No schedule yet; monthly is enough (İGDAŞ answers future months).
+
+## 2026-10-28 — 3 Water (İSKİ, ASKİ, İZSU)
+- İSKİ's table is escaped inside a `<vue-markdown source='...'>` attribute, not a real `<table>`; the month
+  question is solved by matching the page's tier 1 against the yearly PDF's month columns (spec updated).
+  The page also has a KSUB "<year> Yılı" link list; the first link per year is the water PDF.
+- ASKİ's page link uses a relative `../Yukle/...` path (some links on that page use backslashes); `urljoin` after
+  replacing `\` with `/`. ASKİ also has "sosyal yardım alan konut" tiers (0–10 at 1.00 TL/m³) — written as
+  `subscriber_type` `sosyal konut`. İZSU's "2a ATIKSU KONUT" (own-well, wastewater only) rows are skipped.
+- 5 requests, ~3 s. No new dependency. Reusable: the RSC-chunk extraction in `izsu()` for any Next.js site
+  (`self.__next_f.push(...)` → `json.loads` → BeautifulSoup); the PDF month-column pairing in `iski_month()`.
+- Open: in January İSKİ fails until the new year's PDF is linked (a fallback to the HTML without a date was
+  not added). No schedule yet; monthly is enough (İSKİ changes around the 3rd–5th of each month).

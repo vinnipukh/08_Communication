@@ -586,3 +586,21 @@ only). The one-off conversion script was not added to the repository.
 - A failed source does not block the others: the CSV gets the rest and the run exits 1.
 - Verified 2026-10-28 by a live run: 15 rows; Kademe-1/Kademe-2 TL/m³ İstanbul 13.807908/21.182908,
   Ankara 14.468019/21.843019 (TL/Sm³), İzmir 15.650179/23.025179; abone bağlantı bedeli 8,066 TL in all three.
+
+## 3.7 Municipal water tariff scraper (2026-10-28)
+
+`InflationItems/Codes/04_Housing/Water/scraper.py` (TÜİK 0441101), output
+`InflationItems/Datas/04_Housing/Water/YYYY-MM-DD.csv`. Item 3 of the TÜİK 04 utilities queue (`queue/`).
+- Sources, one per city: İSKİ page + yearly monthly-tariff PDF, ASKİ tariff PDF (`/Yukle/Dosya/SuTarifesi.pdf`,
+  link taken from `tr/ucretler.aspx`), İZSU Next.js page. `curl_cffi` (Chrome impersonation), `pypdf`, no
+  browser, no new dependency; 5 requests, ~3 s.
+- İSKİ's table is HTML-escaped inside a `<vue-markdown source='...'>` attribute, so the attribute is parsed as
+  its own document. The page has no month, but prices change monthly: the yearly PDF's Konut 1.Kademe columns
+  are paired with its (sorted) date headers and the column equal to the page's tier 1 gives `effective_date`.
+  The page lists two "<year> Yılı" link sets (water, then KSUB); the first per year is the water PDF.
+- İZSU's tariff is an HTML string in a `self.__next_f.push([1, "..."])` RSC chunk: JSON-decode the chunk,
+  then parse it with BeautifulSoup.
+- Every row is checked: water + wastewater must equal the total (±0.02), and each city's tier count is fixed;
+  a mismatch fails that source instead of writing partial rows.
+- Verified 2026-10-28 by a live run: 14 rows; first konut tier TL/m³ (VAT excluded) İstanbul 65.52
+  (effective 2026-10-05), Ankara 58.13 (2026-10-05), İzmir 60.00 (2026-06-01).

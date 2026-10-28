@@ -10,13 +10,16 @@
 ## Sources
 
 ### İSKİ (Istanbul) — low
-- `https://iski.istanbul/abone-hizmetleri/abone-rehberi/su-birim-fiyatlari/` — server-rendered HTML table
-  (a Nuxt `payload.js` sits next to it). Heading "2026 SU SATIŞ TARİFELERİ (KDV HARİÇ)".
+- `https://iski.istanbul/abone-hizmetleri/abone-rehberi/su-birim-fiyatlari/` — server-rendered, but the
+  table is not real HTML: it is HTML-escaped inside `<vue-markdown source='...'>` (parse the attribute as its
+  own document; re-checked 2026-10-28). Heading "2026 SU SATIŞ TARİFELERİ (KDV HARİÇ)".
 - Konut: 3 tiers (0–15, 16–30, 31+ m³), each su / atık su / toplam. Tier 1 = 43.70 + 21.82 = 65.52.
-- Prices change **monthly** ((TÜFE + Yİ-ÜFE)/2). The HTML table has no month label — unverified that it
-  is the current month. The yearly PDF (hashed filename; take its link from the HTML, e.g.
-  `iskiapi.iski.gov.tr/uploads/2026_aylik_su_ve_atiksu_birim_fiyatlari_...pdf`) has one column per month;
-  its text extracts but month headers did not. Resolve which month the HTML shows before relying on it.
+- Prices change **monthly** ((TÜFE + Yİ-ÜFE)/2). The HTML table has no month label. The yearly PDF (hashed
+  filename; take its link from the HTML, e.g. `iskiapi.iski.gov.tr/uploads/2026_aylik_su_ve_atiksu_birim_fiyatlari_...pdf`)
+  has one column per month. Resolved 2026-10-28: pypdf does extract the date headers (5.01.2026 … 5.10.2026),
+  but glued and out of order, while the Konut 1.Kademe values stay in column order; sort the dates and pair
+  them. The HTML matched the newest column (5.10.2026). The page has a second "<year> Yılı" link list (KSUB
+  prices) after the water one — take the first link per year.
 - F5 BIG-IP ASM script present; did not block plain requests.
 
 ### ASKİ (Ankara) — low
