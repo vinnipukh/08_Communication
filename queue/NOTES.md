@@ -78,3 +78,20 @@ short; no absolute paths, usernames or cookies.
 - Backfill done (2026-10-28, `--backfill`): 365 daily CSVs 2025-10-01 .. 2026-09-30, each day = its month's
   quote mean (monthly data repeated per day, marked `backfill:` in `notes`). 1–27 Oct 2026 have no file. A
   service × city month with zero quotes has no row (65–69 rows/day). Existing day files are never overwritten.
+
+## 2026-10-28 — backfill 2025-01-01 → today (items 1–3)
+- `backfill.py` in Electricity, NaturalGas and Water; outputs `backfill_2025-01-01_2026-10-28.csv` (48 / 89 /
+  132 rows). Per-source coverage and gaps are in each README's "Backfill" section.
+- Correction to the item 1 note: the ≤8 / >8 kWh/gün AG mesken split already existed in 2024 (decision 12719);
+  only the prices changed on 04.04.2026. The 2024–2025 layout is now parsed (`parse_table_2024()`).
+- İGDAŞ: months with a mid-month change list each tier twice; the daily scraper failed on those (e.g. April 2026)
+  and now takes the row in force today. Başkentgaz: a single household price before 04.04.2026 (written as
+  Kademe-1), ÖTV 0.1187 → 0.1373 (03.07.2025) → 0.1468 (31.12.2025).
+- ASKİ history only via the Wayback Machine: nothing archived between 03.12.2024 and Dec 2025, and two copies
+  give only a month (written as the 1st). İZSU 01.01.2025 and 05.05.2025 exist only as images, transcribed into
+  `InflationItems/Datas/04_Housing/Water/izsu_transcribed.csv`.
+- Open: İzmir gas and the gas connection fees have no history source; for later items, check the Wayback CDX
+  (`web.archive.org/cdx/search/cdx?url=...&collapse=digest`) early when a site keeps no archive.
+- Day files added: 665 `YYYY-MM-DD.csv` per item (2025-01-01 .. 2026-10-27), version in force per city per day,
+  daily schema, marked by `collected_at` = backfill run time (no `notes` column, unlike Armut's `backfill:` mark).
+  Ankara water days in Jan–Nov 2025 carry the 03.12.2024 tariff because of the Wayback gap.

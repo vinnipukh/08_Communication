@@ -30,6 +30,37 @@ python InflationItems/Codes/04_Housing/Water/scraper.py --source izsu   # bounde
 | Ankara | ASKİ | `https://www.aski.gov.tr/tr/ucretler.aspx` → `/Yukle/Dosya/SuTarifesi.pdf` | text PDF (pypdf) |
 | İzmir | İZSU | `https://izsu.gov.tr/su-ve-atik-su-tarifesi` | HTML string in a Next.js `self.__next_f.push` chunk |
 
+## Backfill
+
+```bash
+python InflationItems/Codes/04_Housing/Water/backfill.py                        # from 2025-01-01
+python InflationItems/Codes/04_Housing/Water/backfill.py --start 2026-01-01 --source iski
+```
+
+Writes `backfill_<start>_<today>.csv` (same columns) with one row per tier and tariff version from `--start`
+to today, plus the version in force on `--start`; `source_url` names the PDF, Wayback snapshot or image each
+row came from. It then writes one `YYYY-MM-DD.csv` per day from `--start` to yesterday, like the daily
+scraper's files, holding per city the version in force that day. A backfilled day file is recognisable by
+`collected_at` (the backfill run time, not that day) and `effective_date`. Existing day files are never
+overwritten, and day files are written only when every source succeeded (`--no-daily` skips them). Run on
+2026-10-28 from 2025-01-01: 132 version rows, 665 day files (13–14 rows each), ~80 s (Wayback requests are 2 s
+apart).
+
+Because of the ASKİ gap below, Ankara's day files from 2025-01-01 to 2025-11-30 carry the 03.12.2024 tariff
+(26.88 TL/m³ first tier), although ASKİ probably changed its tariff during 2025 (it was 46.53 by December).
+Check `effective_date` before relying on Ankara rows in that period.
+
+| City | History source | Versions 2025-01-01 → 2026-10-28 | Gaps |
+|---|---|---|---|
+| İstanbul | yearly İSKİ PDFs, one column per month | 22 (every month) | none |
+| Ankara | Wayback Machine copies of `SuTarifesi.pdf` + live PDF | 7 (2024-12-03 … 2026-10-05) | nothing archived between 03.12.2024 and Dec 2025, so 2025 changes are missing; the Dec 2025 and Mar 2026 copies give only "ARALIK 2025" / "MART 2026", written as the 1st of the month |
+| İzmir | Wayback copies of the page (2026), live page, and `InflationItems/Datas/04_Housing/Water/izsu_transcribed.csv` | 5 (2025-01-01, 2025-05-05, 2025-12-01, 2026-05-01, 2026-06-01) | none known |
+
+`izsu_transcribed.csv` holds the konut rows of İZSU's 01.01.2025 and 05.05.2025 tariffs, which exist only as
+images on İZSU's history list. They were typed in by hand on 2026-10-28 (image URL per row); every row passes
+the water + wastewater = total check. İZSU's konut tiers changed on 05.05.2025 (0~4 / 5~10 / 11~20 / 21+ →
+0~10 / 11~20 / 21+) and again on 01.06.2026 (four tiers).
+
 ## Troubleshooting
 
 - `İSKİ: HTML tier 1 ... is in no month column` — the page and the yearly PDF disagree; open both and check

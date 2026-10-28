@@ -644,3 +644,23 @@ only). The one-off conversion script was not added to the repository.
   of a month repeats that month's quote mean, `notes` = "backfill: ..." and the today-only fields are empty.
   Existing day files are kept. The first run wrote 365 files (2025-10-01 .. 2026-09-30, 65–69 rows each, ~7 MB)
   and took 83.5 s.
+
+## 3.10 Price-history backfill for electricity, natural gas and water (2026-10-28)
+
+`backfill.py` next to the Electricity, NaturalGas and Water scrapers, run once from 2025-01-01. Each reuses its
+scraper's parsers and writes `InflationItems/Datas/04_Housing/<Source>/backfill_<start>_<today>.csv` in the
+daily schema, one row per tier and tariff version, including the version in force on the start date.
+- Electricity (48 rows): every EPDK decision stays in the tariff list; the 01.07.2024 and 05.04.2025 XLSX
+  tables use an older layout, now read by `parse_table_2024()`.
+- Natural gas (89 rows): İGDAŞ's API answers past months; Başkentgaz lists every monthly PDF since 2018, with
+  several period-line and split-month variants. İzmir (İzmirgaz) has no history anywhere, fees not backfilled.
+- Water (132 rows): İSKİ's yearly PDFs (every month); ASKİ only through the Wayback Machine
+  (`web.archive.org/cdx`, `id_` raw snapshots, 2 s apart), which misses its 2025 changes; İZSU through Wayback
+  copies of its page plus two image-only tariffs transcribed by hand into `izsu_transcribed.csv`.
+- Day files: each backfill then writes one `YYYY-MM-DD.csv` per day from the start date to yesterday (665 per
+  item), holding the version in force that day, in the daily schema. `collected_at` (the backfill run time) and
+  `effective_date`/`valid_from` mark them; existing day files are never overwritten, and water/gas write day
+  files only when every source succeeded. Ankara water carries the 03.12.2024 tariff through Nov 2025 (gap).
+- Daily scrapers changed along the way, outputs re-checked identical on 2026-10-28: İGDAŞ now takes the row in
+  force today when a month lists a mid-month change (it used to fail on such months); Başkentgaz parses the ÖTV
+  amount and accepts the older period lines; ASKİ accepts the older date wordings.

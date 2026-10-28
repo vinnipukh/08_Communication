@@ -21,10 +21,26 @@ python InflationItems/Codes/04_Housing/Electricity/scraper.py
 - Not covered: the last-resort tariff (son kaynak tedarik) for households above the annual limit; EPDK
   publishes it under a separate communiqué, not in this table.
 
+## Backfill
+
+```bash
+python InflationItems/Codes/04_Housing/Electricity/backfill.py                      # from 2025-01-01
+python InflationItems/Codes/04_Housing/Electricity/backfill.py --start 2024-01-01
+```
+
+Writes `backfill_<start>_<today>.csv` (same columns) with every decision that took effect from `--start` to
+today, plus the one in force on `--start`. It then writes one `YYYY-MM-DD.csv` per day from `--start` to
+yesterday, like the daily scraper's files, holding the decision in force that day (recognisable by
+`collected_at`, the backfill run time, and `effective_date`); existing day files are never overwritten
+(`--no-daily` skips them). Run on 2026-10-28 from 2025-01-01: 48 rows, decisions 12719 (01.07.2024), 13426
+(05.04.2025), 14461 (04.04.2026), 665 day files of 16 rows, 4 requests, ~6 s. Tables up to 05.04.2025 use an older
+layout (`parse_table_2024()`); the ≤8 / >8 kWh/gün AG mesken split already existed in 2024. Decisions before
+2024 are untested.
+
 ## Troubleshooting
 
-- `tariff sheet layout changed, missing headers: ...` — EPDK changed the XLSX layout (the 2025 table
-  had another one). Update `parse_table()`; no CSV is written for that run.
+- `tariff sheet layout changed, missing headers: ...` — EPDK changed the XLSX layout (tables up to 05.04.2025
+  are read by `parse_table_2024()`). Update the parser; no CSV is written for that run.
 - `tariff list is empty or changed shape` — the list endpoint's JSON changed; re-check it in the browser's
   network tab on the tariff page.
 - Needs `curl_cffi` and `openpyxl` (`requirements.txt`).

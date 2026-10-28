@@ -22,8 +22,9 @@ then tariff_group, voltage, time_band, energy_charge, distribution_charge, total
 vat_included, effective_date, decision_no, source_url, collected_at.
 
 The parser reads the sheet layout in use since 04.04.2026 (headers "Tek Zamanlı Enerji Bedeli",
-"Gündüz/Puant/Gece", "Dağıtım Bedeli"; tariff class in the column left of "Abone / Kullanıcı Grubu").
-Older tables (e.g. 05.04.2025) use another layout; a layout change stops the run with an error and no CSV.
+"Gündüz/Puant/Gece", "Dağıtım Bedeli"; tariff class in the column left of "Abone / Kullanıcı Grubu") and,
+for backfill.py, the layout of 01.07.2024 and 05.04.2025 ("Perakende ... Enerji Bedeli" headers, voltage
+and term as heading rows; ``parse_table_2024()``). Any other layout stops the run with an error and no CSV.
 
 Examples:
   python scraper.py                      # newest tariff table
@@ -136,6 +137,8 @@ def parse_table(content: bytes) -> tuple[str, list[dict]]:
     ws = openpyxl.load_workbook(io.BytesIO(content), data_only=True).worksheets[0]
     rows = [[c.value for c in r] for r in ws.iter_rows()]
     title = next((norm(v) for r in rows[:4] for v in r if v and "Tarife" in str(v)), "")
+    if any(norm(v).startswith("Perakende Tek Zamanlı") for r in rows[:8] for v in r):
+        return title, parse_table_2024(rows)
     # header cells -> column index (header text spans rows 3-5, merged)
     cols = {}
     for r in rows[:8]:
@@ -172,6 +175,45 @@ def parse_table(content: bytes) -> tuple[str, list[dict]]:
     return title, out
 
 
+def parse_table_2024(rows: list[list]) -> list[dict]:
+    """Mesken rows of the layout used up to 05.04.2025 (decisions 12719, 13426): one header row per user type
+    ("Perakende Tek Zamanlı Enerji Bedeli", ..., "Dağıtım Bedeli", then the same as totals), and the voltage and
+    term written as heading rows ("Orta Gerilim", "Çift Terimli") in the group column."""
+    header = next((r for r in rows if any(norm(v).startswith("Dağıtım Sistemi Kullanıcıları") for v in r)
+                   and any(norm(v).startswith("Perakende Tek Zamanlı") for v in r)), None)
+    if header is None:
+        raise RuntimeError("2024 tariff sheet layout: 'Dağıtım Sistemi Kullanıcıları' header row not found")
+    cols = {}
+    for i, v in enumerate(header):
+        t = norm(v).lower()
+        for band in ("tek zamanlı", "gündüz", "puant", "gece"):
+            if t == f"perakende {band} enerji bedeli":
+                cols.setdefault(band, i)
+        if t == "dağıtım bedeli":
+            cols.setdefault("dağıtım", i)
+    if len(cols) != 5:
+        raise RuntimeError(f"2024 tariff sheet layout changed, found columns {sorted(cols)}")
+    g = cols["tek zamanlı"] - 1  # group / heading column, left of the first price column
+    out, level, term = [], "", ""
+    for r in rows[rows.index(header) + 1:]:
+        label = norm(r[g])
+        if label in ("Orta Gerilim", "Alçak Gerilim"):
+            level, term = {"Orta Gerilim": "OG", "Alçak Gerilim": "AG"}[label], ""
+        elif label in ("Çift Terimli", "Tek Terimli"):
+            term = label[:-2]  # "Çift Terim" / "Tek Terim", as in the newer sheet
+        elif label.lower().startswith("mesken") and level and term:
+            dist = r[cols["dağıtım"]]
+            for band in ("tek zamanlı", "gündüz", "puant", "gece"):
+                energy = r[cols[band]]
+                if isinstance(energy, (int, float)) and isinstance(dist, (int, float)):
+                    out.append({"tariff_group": label, "voltage": f"{level} {term}", "time_band": band,
+                                "energy_charge": round(energy, 4), "distribution_charge": round(dist, 4),
+                                "total": round(energy + dist, 4)})
+    if not any(o["voltage"] == "AG Tek Terim" and o["time_band"] == "tek zamanlı" for o in out):
+        raise RuntimeError("no AG single-time residential row in the 2024 tariff sheet")
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--delay", type=float, default=1.0, help="seconds between requests (jittered)")
@@ -199,15 +241,18 @@ def main():
     with csv_path.open("w", encoding="utf-8", newline="") as fh:
         writer = csv.DictWriter(fh, fieldnames=COLUMNS)
         writer.writeheader()
-        for t in tariffs:
-            writer.writerow({
-                "product_name": f"Elektrik {t['voltage']} {t['tariff_group']} - {t['time_band']}",
-                "price": round(t["total"] / 100, 6), "category_number": CATEGORY_NUMBER,
-                "sub_category_number": SUB_CATEGORY_NUMBER, **t, "unit": "kuruş/kWh", "vat_included": "false",
-                "effective_date": eff, "decision_no": entry.get("Number"), "source_url": url,
-                "collected_at": collected_at,
-            })
+        for row in csv_rows(tariffs, eff, entry, url):
+            writer.writerow({**row, "collected_at": collected_at})
     log.info("wrote %d rows to %s in %.1f s", len(tariffs), csv_path, time.monotonic() - started)
+
+
+def csv_rows(tariffs: list[dict], eff: str, entry: dict, url: str) -> list[dict]:
+    return [{
+        "product_name": f"Elektrik {t['voltage']} {t['tariff_group']} - {t['time_band']}",
+        "price": round(t["total"] / 100, 6), "category_number": CATEGORY_NUMBER,
+        "sub_category_number": SUB_CATEGORY_NUMBER, **t, "unit": "kuruş/kWh", "vat_included": "false",
+        "effective_date": eff, "decision_no": entry.get("Number"), "source_url": url,
+    } for t in tariffs]
 
 
 if __name__ == "__main__":

@@ -158,7 +158,20 @@ def igdas(client: Client, today: date) -> tuple[list[dict], dict]:
         cells = [norm(c.get_text(" ")) for c in tr.find_all(["td", "th"])]
         if len(cells) == 2 and re.search(r"\d", cells[1]):
             fees[cells[0]] = tr_number(cells[1])
-    ayyil = f"{today.month:02d}{today.year}"
+    rows = igdas_month(client, today)
+    # a month with a mid-month change has two rows per tier; take the one in force today
+    latest = {}
+    for r in sorted(rows, key=lambda r: r["valid_from"]):
+        if r["valid_from"] <= today.isoformat():
+            latest[r["tier"]] = r
+    if len(latest) != 2:
+        raise RuntimeError(f"İGDAŞ {today:%m%Y}: no KONUT / KONUT KADEME-2 price in force on {today}")
+    return list(latest.values()), fees
+
+
+def igdas_month(client: Client, month: date) -> list[dict]:
+    """Every household row the API lists for the month (one per tier and ABDATUM valid-from date)."""
+    ayyil = f"{month.month:02d}{month.year}"
     data = client.request("POST", IGDAS_API, json={"AYYIL": ayyil},
                           headers={"Origin": "https://igdas.istanbul", "Referer": IGDAS_PRICE_PAGE}).json()
     rows = []
@@ -172,20 +185,21 @@ def igdas(client: Client, today: date) -> tuple[list[dict], dict]:
             continue
         rows.append(gas_row("İstanbul", "İGDAŞ", tier, d["SATIS_FIYATI"], d["SATIS_FIYATI_KWH"], "TL/m³", "",
                             d.get("ABDATUM", ""), IGDAS_PRICE_PAGE))
-    if len(rows) != 2:
+    if {r["tier"] for r in rows} != {"Konut Kademe-1", "Konut Kademe-2"}:
         raise RuntimeError(f"İGDAŞ {ayyil}: expected KONUT and KONUT KADEME-2, got {str(data)[:300]}")
-    return rows, fees
+    return rows
 
 
 # --- Başkentgaz (Ankara) ----------------------------------------------------------------------------------
 
 def baskent_month(title: str) -> date | None:
-    """'2026 Nisan Ayı Değerleri (04.Gün ve Sonrası İçin Geçerli) ...' -> 2026-04-04."""
+    """Valid-from date of a monthly tariff PDF: '2026 Nisan Ayı Değerleri (04.Gün ve Sonrası İçin Geçerli)' ->
+    2026-04-04; '(2.Gün İçin Geçerli)' / '(31.Gün Geçerli)' -> that day; '(30.Gün ve Öncesi ...)' or none -> 1st."""
     m = re.match(r"\s*(\d{4})\s+(\S+)\s+Ayı", title)
     if not m or not tr_month(m.group(2)):
         return None
-    day = re.search(r"\((\d{1,2})\.\s*Gün ve Sonrası", title)
-    return date(int(m.group(1)), tr_month(m.group(2)), int(day.group(1)) if day else 1)
+    day = re.search(r"\((\d{1,2})\.\s*Gün", title)
+    return date(int(m.group(1)), tr_month(m.group(2)), int(day.group(1)) if day and "Öncesi" not in title else 1)
 
 
 def baskentgaz(client: Client) -> list[dict]:
@@ -197,26 +211,41 @@ def baskentgaz(client: Client) -> list[dict]:
     if not live:
         raise RuntimeError(f"Başkentgaz: no monthly tariff PDF in {len(sections)} sections")
     sec = max(live, key=lambda s: (baskent_month(s["title"]), s.get("rowNumber", 0)))
+    rows = baskent_pdf(client, sec)
+    if len(rows) != 2:
+        raise RuntimeError(f"Başkentgaz {sec['title']!r}: expected Kademe-1 and Kademe-2, got {len(rows)} rows")
+    log.info("Başkentgaz: %s (%s)", norm(sec["title"]), rows[0]["source_url"])
+    return rows
+
+
+def baskent_pdf(client: Client, sec: dict) -> list[dict]:
+    """Household rows of one monthly tariff PDF: Kademe-1 and Kademe-2 since 04.04.2026, one price before."""
     valid_from = baskent_month(sec["title"])
     url = BASKENT_SITE + sec["imageUrl"]
     content = client.request("GET", url).content
     if not content.startswith(b"%PDF"):
         raise RuntimeError(f"{url} is not a PDF ({content[:40]!r})")
     text = "\n".join(p.extract_text() or "" for p in PdfReader(io.BytesIO(content)).pages)
-    m = re.search(r"YIL:\s*(\d{4})\s+AY:\s*(\S+)", text)
-    if not m or (int(m.group(1)), tr_month(m.group(2))) != (valid_from.year, valid_from.month):
+    # "YIL: 2026 AY: EKİM", split months "YIL : 2025 AY: 01-04 NİSAN" / "31 ARALIK", July 2025 only
+    # "02 TEMMUZ 2025 TARİHİ İÇİN GEÇERLİ" / "03-31 TEMMUZ 2025 TARİHLERİ ARASI GEÇERLİ"
+    m = re.search(r"YIL\s*:\s*(\d{4})\s+AY:\s*(?:[\d-]+\s+)?(\S+)", text)
+    period = (int(m.group(1)), tr_month(m.group(2))) if m else None
+    if not m and (m := re.search(r"[\d-]+ (\S+) (\d{4}) TARİH(?:İ İÇİN|LERİ ARASI) GEÇERLİ", text)):
+        period = (int(m.group(2)), tr_month(m.group(1)))
+    if period != (valid_from.year, valid_from.month):
         raise RuntimeError(f"Başkentgaz PDF period {m.group(0) if m else None!r} does not match {sec['title']!r}")
-    if not re.search(r"0,1468 TL/Sm3 ÖTV bedeli dahildir", text) or not re.search(r"KDV dahil değildir", text):
+    otv = re.search(r"([\d,]+) TL/Sm3 ÖTV bedeli dahildir", text)  # 0,1187 in 2025, 0,1468 since
+    if not otv or not re.search(r"KDV dahil değildir", text):
         raise RuntimeError("Başkentgaz PDF: ÖTV/KDV note changed; check what the prices include")
-    # ABONE household row: four numbers (K1 Sm³, K1 kWh, K2 Sm³, K2 kWh); the şehit/gazi row has only two
-    m = re.search(r"BASKENT\d+\s+0-75\.000\s+([\d,]+)\s+([\d,]+)\s+([\d,]+)\s+([\d,]+)", text)
+    # ABONE household row: K1 Sm³, K1 kWh[, K2 Sm³, K2 kWh]; the şehit/gazi row above it lacks "ABONE BASKENT01"
+    m = re.search(r"ABONE\s+BASKENT01\s*BASKENT02\s+0-75\.000\s+([\d,]+)\s+([\d,]+)(?:\s+([\d,]+)\s+([\d,]+))?", text)
     if not m:
         raise RuntimeError("Başkentgaz PDF: household (ABONE 0-75.000) row not found")
-    k1_m3, k1_kwh, k2_m3, k2_kwh = (tr_number(g) for g in m.groups())
-    log.info("Başkentgaz: %s (%s)", norm(sec["title"]), url)
+    prices = [(1, tr_number(m.group(1)), tr_number(m.group(2)))]
+    if m.group(3):
+        prices.append((2, tr_number(m.group(3)), tr_number(m.group(4))))
     return [gas_row("Ankara", "Başkentgaz", f"Konut Kademe-{k} (abone 0-75.000 Sm³/yıl)", m3, kwh, "TL/Sm³",
-                    "ötv=0.1468 (dahil)", valid_from.isoformat(), url)
-            for k, m3, kwh in ((1, k1_m3, k1_kwh), (2, k2_m3, k2_kwh))]
+                    f"ötv={tr_number(otv.group(1))} (dahil)", valid_from.isoformat(), url) for k, m3, kwh in prices]
 
 
 def baskentgaz_fees(client: Client) -> dict:

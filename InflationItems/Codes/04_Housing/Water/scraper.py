@@ -113,6 +113,15 @@ def tr_number(text: str) -> float:
     return float(re.sub(r"[^\d,]", "", text).replace(",", "."))
 
 
+TR_MONTHS = {m: i for i, m in enumerate(
+    ["ocak", "şubat", "mart", "nisan", "mayıs", "haziran", "temmuz", "ağustos", "eylül", "ekim", "kasım", "aralık"], 1)}
+
+
+def tr_month(name: str) -> int | None:
+    """'ARALIK' / 'Ekim' -> month number (str.lower() turns 'İ' into 'i' + a combining dot)."""
+    return TR_MONTHS.get(name.replace("İ", "i").replace("I", "ı").lower())
+
+
 def dmy(text: str) -> str:
     """'5.10.2026' / '05.10.2026' -> '2026-10-05'."""
     d, m, y = (int(x) for x in text.split("."))
@@ -148,8 +157,11 @@ def water_row(province, utility, subscriber_type, label, water, wastewater, tota
 
 # --- İSKİ (İstanbul) --------------------------------------------------------------------------------------
 
-def iski_month(client: Client, pdf_url: str, tier1: tuple[float, float, float]) -> str:
-    """Effective date of the yearly PDF's month column whose Konut 1.Kademe equals the HTML's tier 1."""
+ISKI_PDF_TIERS = {"Konut 1.Kademe": "0-15", "Konut 2.Kademe": "16-30", "Konut 3.Kademe": "31 ve üzeri"}
+
+
+def iski_pdf_months(client: Client, pdf_url: str) -> list[tuple[str, list[tuple]]]:
+    """The yearly PDF as [(effective date, [(tier label, water, wastewater, total) per Konut tier])]."""
     content = client.get(pdf_url).content
     if not content.startswith(b"%PDF"):
         raise RuntimeError(f"{pdf_url} is not a PDF ({content[:40]!r})")
@@ -158,14 +170,23 @@ def iski_month(client: Client, pdf_url: str, tier1: tuple[float, float, float]) 
         raise RuntimeError(f"{pdf_url}: not the monthly water tariff PDF (title not found)")
     # headers come out glued and out of order ("5.06.20264.05.2026"); the month columns themselves are in order
     dates = sorted({dmy(m.group(0)) for m in re.finditer(r"\d{1,2}\.\d{2}\.20\d{2}", text)})
-    triples = []
+    columns = {k: [] for k in ISKI_PDF_TIERS}  # each Konut tier line appears once per block of months
     for line in text.splitlines():
-        if line.startswith("Konut 1.Kademe"):
+        key = next((k for k in ISKI_PDF_TIERS if line.startswith(k)), None)
+        if key:
             nums = [tr_number(n) for n in re.findall(r"\d+,\d{2}", line)]
-            triples += [tuple(nums[i:i + 3]) for i in range(0, len(nums) - 2, 3)]
-    if not dates or len(dates) != len(triples):
-        raise RuntimeError(f"İSKİ PDF: {len(dates)} month dates but {len(triples)} Konut 1.Kademe columns")
-    matches = [d for d, t in zip(dates, triples) if t == tier1]
+            columns[key] += [tuple(nums[i:i + 3]) for i in range(0, len(nums) - 2, 3)]
+    if not dates or any(len(c) != len(dates) for c in columns.values()):
+        raise RuntimeError(f"İSKİ PDF: {len(dates)} month dates but Konut columns "
+                           f"{ {k: len(c) for k, c in columns.items()} }")
+    return [(d, [(ISKI_PDF_TIERS[k], *columns[k][i]) for k in ISKI_PDF_TIERS]) for i, d in enumerate(dates)]
+
+
+def iski_month(client: Client, pdf_url: str, tier1: tuple[float, float, float]) -> str:
+    """Effective date of the yearly PDF's month column whose Konut 1.Kademe equals the HTML's tier 1."""
+    months = iski_pdf_months(client, pdf_url)
+    dates = [d for d, _ in months]
+    matches = [d for d, tiers in months if tuple(tiers[0][1:]) == tier1]
     if not matches:
         raise RuntimeError(f"İSKİ: HTML tier 1 {tier1} is in no month column of {pdf_url}")
     if matches[-1] != dates[-1]:
@@ -173,10 +194,22 @@ def iski_month(client: Client, pdf_url: str, tier1: tuple[float, float, float]) 
     return matches[-1]
 
 
-def iski(client: Client) -> list[dict]:
+def iski_markup(client: Client) -> BeautifulSoup:
     page = BeautifulSoup(client.get(ISKI_URL).content.decode("utf-8"), "lxml")
     # the content is HTML-escaped inside <vue-markdown source='...'>; parse each source as its own document
-    markup = BeautifulSoup("".join(v.get("source", "") for v in page.find_all("vue-markdown")), "lxml")
+    return BeautifulSoup("".join(v.get("source", "") for v in page.find_all("vue-markdown")), "lxml")
+
+
+def iski_pdf_links(markup: BeautifulSoup) -> dict[int, str]:
+    pdfs = {}  # "Su Birim Fiyatları" links come first; a later "KSUB Birim Fiyatları" list reuses "<year> Yılı"
+    for a in markup.find_all("a", href=True):
+        if (m := re.fullmatch(r"(20\d{2}) Yılı", norm(a.get_text()))) and ".pdf" in a["href"]:
+            pdfs.setdefault(int(m.group(1)), a["href"])
+    return pdfs
+
+
+def iski(client: Client) -> list[dict]:
+    markup = iski_markup(client)
     table = next((t for t in markup.find_all("table") if "SU SATIŞ TARİFELERİ" in t.get_text()), None)
     if table is None:
         raise RuntimeError("İSKİ: 'SU SATIŞ TARİFELERİ' table not found")
@@ -196,10 +229,7 @@ def iski(client: Client) -> list[dict]:
             in_konut = False
     if len(tiers) != 3:
         raise RuntimeError(f"İSKİ: expected 3 Konut tiers, got {tiers}")
-    pdfs = {}  # "Su Birim Fiyatları" links come first; a later "KSUB Birim Fiyatları" list reuses "<year> Yılı"
-    for a in markup.find_all("a", href=True):
-        if (m := re.fullmatch(r"(20\d{2}) Yılı", norm(a.get_text()))) and ".pdf" in a["href"]:
-            pdfs.setdefault(int(m.group(1)), a["href"])
+    pdfs = iski_pdf_links(markup)
     if int(year.group(1)) not in pdfs:
         raise RuntimeError(f"İSKİ: no '{year.group(1)} Yılı' PDF link (found {sorted(pdfs)})")
     effective = iski_month(client, pdfs[int(year.group(1))], tiers[0][1:])
@@ -214,14 +244,27 @@ def aski(client: Client) -> list[dict]:
     url = urljoin(ASKI_PAGE, link.replace("\\", "/")) if link else ASKI_PDF
     if not link:
         log.warning("ASKİ: 'Güncel Su ve Atıksu Tarifesi' link not found; trying %s", ASKI_PDF)
-    content = client.get(url).content
+    return aski_parse(client.get(url).content, url)
+
+
+def aski_parse(content: bytes, url: str) -> list[dict]:
     if not content.startswith(b"%PDF"):
         raise RuntimeError(f"{url} is not a PDF ({content[:40]!r})")
     text = "\n".join(p.extract_text() or "" for p in PdfReader(io.BytesIO(content)).pages)
-    m = re.search(r"(\d{2}\.\d{2}\.\d{4}) TARİHİ İTİBARIYLA SU VE ATIKSU TARİFESİ", text)
+    # "05.10.2026 TARİHİ İTİBARIYLA SU VE ..." now, "03.12.2024 TARİHLİ SU VE ..." and
+    # "ARALIK 2025 TARİHLİ SU VE ..." / "MART 2026 SU VE ..." (month only; the 1st is used) in older copies
+    m = re.search(r"(\d{2}\.\d{2}\.\d{4}|[A-ZÇĞİÖŞÜ]+ \d{4})(?: TARİH(?:İ İTİBARIYLA|Lİ))? SU VE ATIKSU TARİFESİ",
+                  text)
     if not m or "KDV DAHİL DEĞİLDİR" not in text:
         raise RuntimeError("ASKİ PDF: effective date or 'KDV DAHİL DEĞİLDİR' note not found")
-    effective = dmy(m.group(1))
+    if m.group(1)[0].isdigit():
+        effective = dmy(m.group(1))
+    else:
+        month, year = m.group(1).split()
+        if not tr_month(month):
+            raise RuntimeError(f"ASKİ PDF: unknown month in {m.group(0)!r}")
+        effective = date(int(year), tr_month(month), 1).isoformat()
+        log.warning("ASKİ PDF %s gives only the month (%s); effective_date set to %s", url, m.group(1), effective)
     groups = {"KONUT ABONELERİ": "konut", "SOSYAL YARDIM ALAN KONUT ABONELERİ": "sosyal konut"}
     rows, current = [], None
     for line in text.splitlines():
@@ -244,7 +287,10 @@ def aski(client: Client) -> list[dict]:
 # --- İZSU (İzmir) -----------------------------------------------------------------------------------------
 
 def izsu(client: Client) -> list[dict]:
-    raw = client.get(IZSU_URL).content.decode("utf-8")
+    return izsu_parse(client.get(IZSU_URL).content.decode("utf-8"), IZSU_URL)
+
+
+def izsu_parse(raw: str, url: str) -> list[dict]:
     html = None
     for chunk in re.findall(r"self\.__next_f\.push\((\[.*?\])\)</script>", raw, re.S):
         payload = json.loads(chunk)
@@ -264,9 +310,9 @@ def izsu(client: Client) -> list[dict]:
         cells = [norm(c.get_text(" ")) for c in tr.find_all("td")]
         if len(cells) == 6 and cells[0] == "1a" and cells[1] == "KONUT ABONELERİ":
             rows.append(water_row("İzmir", "İZSU", "konut", cells[2], *(tr_number(c) for c in cells[3:]),
-                                  effective, IZSU_URL))
-    if len(rows) != 4:
-        raise RuntimeError(f"İZSU: expected 4 '1a KONUT ABONELERİ' tiers, got {len(rows)}")
+                                  effective, url))
+    if not 3 <= len(rows) <= 4:  # 4 tiers since 01.06.2026, 3 before (0~10, 11~20, 21~Üstü)
+        raise RuntimeError(f"İZSU: expected 3-4 '1a KONUT ABONELERİ' tiers, got {len(rows)}")
     return rows
 
 

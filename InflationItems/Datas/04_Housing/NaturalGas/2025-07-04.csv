@@ -1,0 +1,4 @@
+product_name,price,category_number,sub_category_number,province,distributor,tier,price_per_m3,price_per_kwh,unit,vat_included,components,valid_from,source_url,collected_at
+Doğal gaz İstanbul İGDAŞ Konut Kademe-1,9.81934,4,0452101,İstanbul,İGDAŞ,Konut Kademe-1,9.81934,0.9228703,TL/m³,false,,2025-07-03,https://igdas.istanbul/musteri-hizmetleri/fiyat-tarifeleri/perakende-satis-fiyatlari,2026-10-28T08:47:36+00:00
+Doğal gaz İstanbul İGDAŞ Konut Kademe-2,9.81934,4,0452101,İstanbul,İGDAŞ,Konut Kademe-2,9.81934,0.9228703,TL/m³,false,,2025-07-03,https://igdas.istanbul/musteri-hizmetleri/fiyat-tarifeleri/perakende-satis-fiyatlari,2026-10-28T08:47:36+00:00
+Doğal gaz Ankara Başkentgaz Konut Kademe-1 (abone 0-75.000 Sm³/yıl),10.571794,4,0452101,Ankara,Başkentgaz,Konut Kademe-1 (abone 0-75.000 Sm³/yıl),10.571794,0.99358966,TL/Sm³,false,ötv=0.1373 (dahil),2025-07-03,https://www.baskentdogalgaz.com.tr/uploads/bc5e6d0a-43ff-4415-8a04-dbe753452383.pdf,2026-10-28T08:47:36+00:00
