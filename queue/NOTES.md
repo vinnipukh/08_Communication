@@ -47,3 +47,17 @@ short; no absolute paths, usernames or cookies.
   (`self.__next_f.push(...)` → `json.loads` → BeautifulSoup); the PDF month-column pairing in `iski_month()`.
 - Open: in January İSKİ fails until the new year's PDF is linked (a fallback to the HTML without a date was
   not added). No schedule yet; monthly is enough (İSKİ changes around the 3rd–5th of each month).
+
+## 2026-10-28 — 4 LPG (Aygaz, Milangaz, Mogaz, İpragaz)
+- City codes differ per brand: Aygaz unpadded plates (`6`), Milangaz/Mogaz zero-padded (`06`; Milangaz answers
+  `null` to `6`). İstanbul Avrupa is `341` (Aygaz, Mogaz) but `134` (Milangaz). Aygaz lists `34` twice. Spec updated.
+- Mogaz answers `Price: ""` for İstanbul Avrupa; its own form sends the same request. Logged as a warning, no row.
+- Milangaz has two 12 kg products (VANALI, SİBOPLU, same price): both are written, so Milangaz has 2 rows per city.
+- İpragaz: 1680 TL in all 84 cities on 2026-10-28, but an unknown city name answers with no prices, so the
+  lookup is real; kept per-city instead of one fetch. Likitgaz: DNS does not resolve, dropped.
+- Brands run in parallel (ThreadPoolExecutor, one Client per brand/host, 1 s delay per host kept): 207 s for
+  ~336 requests, bounded by Milangaz (~2.5 s per request); sequential was 559 s. Same pattern fits any later
+  item with several hosts. One Aygaz HTTP 500 was retried fine.
+- Reusable: the `PROVINCES` plate→name table and `plate_region()` in `LPG/scraper.py` for any per-province
+  source; `Client.request()` there adds POST to the usual Client.
+- Open: no schedule yet. Milangaz gives no validity date (`valid_from` empty).

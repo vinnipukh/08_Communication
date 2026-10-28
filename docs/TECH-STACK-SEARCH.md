@@ -604,3 +604,21 @@ only). The one-off conversion script was not added to the repository.
   a mismatch fails that source instead of writing partial rows.
 - Verified 2026-10-28 by a live run: 14 rows; first konut tier TL/m³ (VAT excluded) İstanbul 65.52
   (effective 2026-10-05), Ankara 58.13 (2026-10-05), İzmir 60.00 (2026-06-01).
+
+## 3.8 LPG cylinder price scraper (2026-10-28)
+
+`InflationItems/Codes/04_Housing/LPG/scraper.py` (TÜİK 0452201), output
+`InflationItems/Datas/04_Housing/LPG/YYYY-MM-DD.csv`. Item 4 of the TÜİK 04 utilities queue (`queue/`).
+- Brands: Aygaz (Next.js `__NEXT_DATA__` city list + session-token JSON proxy with base64 `X-PARAMS`),
+  Milangaz (WordPress `admin-ajax.php`), Mogaz (`/processor/GetTupGazPrice` form POST), İpragaz
+  (server-rendered result page per city name). Likitgaz dropped (host does not resolve). `curl_cffi`
+  (Chrome impersonation), BeautifulSoup, no browser, no new dependency.
+- Every province each brand lists (81, İstanbul split Anadolu/Avrupa, İpragaz also Adalar and
+  Bozcaada-Gökçeada), mapped to a plate code via a fixed table; `--provinces 34 6 35` bounds a run.
+- ~336 requests, 1 s apart per host. The four brands (four hosts) run in parallel threads, one `Client` each:
+  207 s (~3.5 min) measured, bounded by Milangaz (~2.5 s per request); 559 s when run sequentially.
+- Mogaz answers an empty price for İstanbul Avrupa (its own form too): warning, no row. A price outside
+  300–20 000 TL fails that province; a failed province or brand exits 1 but the rest is written.
+- Verified 2026-10-28 by a full live run: 411 rows, all 81 provinces per brand; 12 kg TL (VAT incl.)
+  İstanbul Anadolu / Ankara / İzmir: Aygaz 1700/1645/1645 (deposit 320), Milangaz 1660/1650/1660,
+  Mogaz 1700/1645/1643, İpragaz 1680 everywhere.
