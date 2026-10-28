@@ -62,7 +62,10 @@ from cloakbrowser import launch_async
 BASE = "https://www.hepsiemlak.com"
 PAGE_SIZE = 24
 SPLIT_PAGES = 60  # a province above this many pages is crawled district by district
-BACKOFF = [30, 60, 120, 300, 600]  # seconds waited after each blocked page (browser restarted), then retire
+# seconds waited after each blocked page (browser closed meanwhile), then retire: ~2.6 h in all, because a
+# per-IP block on a shared (dormitory) connection can last well over the first ~20 min
+BACKOFF = [30, 60, 120, 300, 600, 1200, 1800, 1800, 1800, 1800]
+MAX_WAIT = 1800
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
 DATA_DIR = REPO_ROOT / "InflationItems" / "Datas" / "04_Housing" / "Hepsiemlak"
@@ -238,7 +241,9 @@ class Session:
             if attempt > len(BACKOFF):
                 break
             await self.close()
-            await asyncio.sleep(BACKOFF[attempt - 1] * random.uniform(0.8, 1.2))
+            wait = min(MAX_WAIT, BACKOFF[attempt - 1] * random.uniform(0.8, 1.2))
+            log.info("[%s] blocked, waiting %.0f min before retry %d/%d", self.name, wait / 60, attempt, len(BACKOFF))
+            await asyncio.sleep(wait)
         raise Blocked(f"giving up on {url}")
 
 

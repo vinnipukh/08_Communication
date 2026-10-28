@@ -533,8 +533,9 @@ only). The one-off conversion script was not added to the repository.
   largest ~40 pages). `--workers N` sessions share the queue (one browser each; one per proxy with
   `--proxies-file`, `geoip=True`). Homepage first, scroll per page, pause drawn from N(mid, range/4)
   clipped to `--delay-min`/`--delay-max` (default 2-4 s). A challenge page is waited on (45 s) instead of
-  restarting the browser, so `cf_clearance` is kept; a session still blocked after 30-600 s backoffs is
-  retired and its route (with progress) goes back to the queue. Checkpoint = done routes, per-route page
+  restarting the browser, so `cf_clearance` is kept; a session still blocked after its backoffs
+  (30 s rising to 30 min with the browser closed, ~2.6 h in all; 30-600 s / ~18 min until 2026-10-28, too
+  short for the dormitory blocks, which outlasted all six attempts) is retired and its route (with progress) goes back to the queue. Checkpoint = done routes, per-route page
   progress, queue (gitignored `checkpoints/`, also the first block page as `blocked-<status>.html`).
   Without proxies use one session: parallel sessions on one IP only reach the limit sooner.
 - Four-person split (2026-10-24): `shards.json` gives each of zelal / dani / neslihan / ekin a quarter of the
