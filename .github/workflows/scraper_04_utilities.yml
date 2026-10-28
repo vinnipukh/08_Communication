@@ -1,0 +1,100 @@
+name: TÜİK 04 Utilities, Fuels and Repair Labour
+
+on:
+  schedule:
+    # 09:00 Istanbul (UTC+3): after the monthly tariff changes of the night, before Emlakjet (16:00);
+    # see SCRAPER_TIMETABLE.md
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      scrapers:
+        description: Space-separated subset (Electricity NaturalGas Water LPG RepairLabor Coal Firewood); empty = all
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: utilities-04-scraper
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    # all seven take ~6 min locally (LPG ~3.5 min, Armut ~1.5 min, the rest seconds)
+    timeout-minutes: 45
+    env:
+      # the scrapers date their CSVs with date.today()
+      TZ: Europe/Istanbul
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      # requests-only scrapers (curl_cffi); openpyxl for EPDK, pypdf for Başkentgaz/ASKİ/İSKİ,
+      # rapidocr for a new TKİ price image
+      - name: Install dependencies
+        run: >-
+          pip install beautifulsoup4==4.15.0 lxml==6.1.3 curl-cffi==0.16.3 openpyxl==3.1.5 pypdf==6.21.3
+          certifi==2026.7.22 rapidocr-onnxruntime==1.4.4
+
+      # one scraper failing must not stop the others; the job fails at the end if any did
+      - name: Run scrapers
+        id: run
+        env:
+          SCRAPERS: ${{ inputs.scrapers || 'Electricity NaturalGas Water LPG RepairLabor Coal Firewood' }}
+        run: |
+          mkdir -p logs
+          failed=()
+          for s in $SCRAPERS; do
+            echo "::group::$s"
+            start=$(date +%s)
+            python -u "InflationItems/Codes/04_Housing/$s/scraper.py" 2>&1 | tee "logs/utilities_$s.log"
+            rc=${PIPESTATUS[0]}
+            echo "$s: exit $rc in $(( $(date +%s) - start )) s"
+            echo "::endgroup::"
+            if [ "$rc" = 2 ] && [ "$s" = Coal ]; then
+              echo "::warning::Coal: new TKİ price image needs review (pending_*.csv committed in the Coal folder)"
+              failed+=("$s(review)")
+            elif [ "$rc" != 0 ]; then
+              echo "::error::$s exited $rc"
+              failed+=("$s")
+            fi
+          done
+          echo "failed=${failed[*]}" >> "$GITHUB_OUTPUT"
+
+      # also after a failure: the scrapers write nothing for a source that failed, so whatever is on disk is good
+      - name: Commit and push data
+        if: ${{ always() }}
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          for d in EPDK IGDAS Baskentgaz Izmirgaz ISKI ASKI IZSU Aygaz Milangaz Mogaz Ipragaz Armut TKI \
+                   Odunal Ulusoy Komurdeposu Odunmarket Tetik Yakgelsin; do
+            [ -d "InflationItems/Datas/04_Housing/$d" ] && git add "InflationItems/Datas/04_Housing/$d"
+          done
+          # a new TKİ image: the image, an automatic transcription or a draft for review
+          git add InflationItems/Codes/04_Housing/Coal/images InflationItems/Codes/04_Housing/Coal/transcribed.csv
+          git add InflationItems/Codes/04_Housing/Coal/pending_*.csv 2>/dev/null || true
+          if git diff --staged --quiet; then
+            echo "No changes."
+            exit 0
+          fi
+          git commit -m "Auto-update: TÜİK 04 utilities $(date +%F) [skip ci]"
+          for attempt in 1 2 3 4 5; do
+            git pull --rebase --quiet && git push && exit 0
+            sleep $((attempt * 15))
+          done
+          exit 1
+
+      - name: Report failed scrapers
+        if: ${{ steps.run.outputs.failed != '' }}
+        run: |
+          echo "::error::failed: ${{ steps.run.outputs.failed }}"
+          exit 1
