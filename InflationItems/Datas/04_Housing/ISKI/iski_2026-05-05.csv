@@ -1,0 +1,4 @@
+product_name,price,category_number,sub_category_number,province,utility,subscriber_type,tier_from_m3,tier_to_m3,water_price,wastewater_price,total,unit,vat_included,ctv_included,effective_date,source_url,collected_at
+Su İstanbul İSKİ konut 0-15 m³,59.67,4,0441101,İstanbul,İSKİ,konut,0,15,39.79,19.88,59.67,TL/m³,false,false,2026-05-04,https://iskiapi.iski.gov.tr/uploads/2026_aylik_su_ve_atiksu_birim_fiyatlari_KLAS_Oe_R_cc27482ca8.pdf,2026-10-28T08:49:00+00:00
+Su İstanbul İSKİ konut 16-30 m³,90.9,4,0441101,İstanbul,İSKİ,konut,16,30,60.6,30.3,90.9,TL/m³,false,false,2026-05-04,https://iskiapi.iski.gov.tr/uploads/2026_aylik_su_ve_atiksu_birim_fiyatlari_KLAS_Oe_R_cc27482ca8.pdf,2026-10-28T08:49:00+00:00
+Su İstanbul İSKİ konut 31+ m³,131.5,4,0441101,İstanbul,İSKİ,konut,31,,87.67,43.83,131.5,TL/m³,false,false,2026-05-04,https://iskiapi.iski.gov.tr/uploads/2026_aylik_su_ve_atiksu_birim_fiyatlari_KLAS_Oe_R_cc27482ca8.pdf,2026-10-28T08:49:00+00:00

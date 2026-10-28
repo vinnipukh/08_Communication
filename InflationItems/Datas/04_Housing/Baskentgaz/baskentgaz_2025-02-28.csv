@@ -1,0 +1,2 @@
+product_name,price,category_number,sub_category_number,province,distributor,tier,price_per_m3,price_per_kwh,unit,vat_included,components,valid_from,source_url,collected_at
+Doğal gaz Ankara Başkentgaz Konut Kademe-1 (abone 0-75.000 Sm³/yıl),0.7578483,4,0452101,Ankara,Başkentgaz,Konut Kademe-1 (abone 0-75.000 Sm³/yıl),8.063506,0.7578483,TL/kWh,false,ötv=0.1187 (dahil),2025-02-01,https://www.baskentdogalgaz.com.tr/uploads/20ac05de-5cd3-4f69-882d-48bfb2eea355.pdf,2026-10-28T08:47:36+00:00
