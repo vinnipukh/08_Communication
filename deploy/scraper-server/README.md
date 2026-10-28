@@ -20,7 +20,7 @@ commit `9cb747a`, 2026-09-22, sunucu için düzenlendi).
   InflationItems/Codes/08_Communication/...              scraper kodu
   InflationItems/Datas/08_Communication/<Mağaza>/*.csv   çıktı
   server_logs/<scraper>_<tarih>.log   her çalıştırmanın tam logu
-  log.txt                  her çalıştırma için tek satır: OK / FAILED / TIMEOUT / SKIPPED
+  log.txt                  her çalıştırma için tek satır: OK / FAILED / TIMEOUT / SKIPPED (+ " · push: …")
 ```
 
 `bin/`, `venv/`, `server_logs/`, `export/`, `log.txt`, `.env` gitignore'da.
@@ -179,7 +179,9 @@ GIT_PUSH=1                # her scraper'dan sonra CSV'leri GitHub'a push'la (bin
 son başarılı push'tan (`.last_push`) beri yazılan CSV'leri güncel `origin/main`'in üstüne geçici bir index ile
 commit'ler ve push'lar. Çalışma dizinine, sparse checkout'a ve yerel `main`'e dokunmaz; silmeleri hiç
 commit'lemez (`export_data.sh --delete` sadece sunucudan siler). Push başarısız olursa dosyalar bir sonraki
-işte tekrar denenir; `log.txt`'de `PUSH FAILED` görünür.
+işte tekrar denenir. Push sonucu ayrı satıra değil, çalıştırma sonucunun aynı satırına eklenir
+(`OK in 3 min · push: 1 file(s) -> main abc1234` veya `… · PUSH FAILED`), böylece her scraper'ın
+`log.txt`'deki son satırı hep OK / FAILED / TIMEOUT ile başlar.
 
 Kimlik doğrulama: repo'ya yazma yetkili deploy key (`~/.ssh/github_08comm`, `~/.ssh/config`'te
 `Host github-08comm`), remote `git@github-08comm:vinnipukh/08_Communication.git`. Test:

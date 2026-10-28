@@ -67,18 +67,21 @@ pkill -9 -f 'undetected_chromedriver|chromedriver' 2>/dev/null
 pkill -9 -f '(google-chrome|chrome).*--headless' 2>/dev/null
 
 case $rc in
-  0)       status "OK in ${dur} min" ;;
-  124|137) status "TIMEOUT after ${dur} min (see $RUN_LOG)" ;;
-  *)       status "FAILED rc=$rc after ${dur} min (see $RUN_LOG)" ;;
+  0)       result="OK in ${dur} min" ;;
+  124|137) result="TIMEOUT after ${dur} min (see $RUN_LOG)" ;;
+  *)       result="FAILED rc=$rc after ${dur} min (see $RUN_LOG)" ;;
 esac
 
 # Optional: push the CSVs to GitHub (GIT_PUSH=1 in .env). Still inside the lock,
 # so two pushes never overlap; also after a failure (partial data is saved).
+# The push result goes on the same status line, after the run result, so the
+# last line per scraper in log.txt still starts with OK / FAILED / TIMEOUT.
 if [ "${GIT_PUSH:-0}" = 1 ]; then
   if timeout 10m "$ROOT/bin/push_data.sh" "$NAME" >> "$RUN_LOG" 2>&1; then
-    status "$(tail -n 1 "$RUN_LOG")"
+    result="$result · $(tail -n 1 "$RUN_LOG")"
   else
-    status "PUSH FAILED (see $RUN_LOG)"
+    result="$result · PUSH FAILED (see $RUN_LOG)"
   fi
 fi
+status "$result"
 exit $rc
