@@ -23,7 +23,7 @@ Inside `scraper.py`:
 - `EXTRACT_JS` reads each card (id, link, price, date, location, spec list); `parse_card` turns it into a CSV
   row. These two are what break when the site changes its markup.
 - `Session.fetch` loads a page; a Cloudflare "Just a moment..." page (served as HTTP 429) is waited on for
-  45 s, because a real browser usually solves it in place. Persistent 429 → browser closed, waits of 35 s rising to 30 min (`BACKOFF`, ~2.6 h in all), restart
+  45 s, because a real browser usually solves it in place. Persistent 429 → browser closed, waits of 35 s rising to 30 min (`BACKOFF`, ~2.6 h in all; each ×N(1, 0.1) clipped to ±20 %), restart
   backoffs → `Blocked` → the session retires and the run ends as incomplete (the launcher resumes it on the
   next Run).
 - `Crawler` holds the route queue, de-duplicates by `ilanId`, writes the CSV, saves the checkpoint

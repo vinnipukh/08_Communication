@@ -241,7 +241,8 @@ class Session:
             if attempt > len(BACKOFF):
                 break
             await self.close()
-            wait = min(MAX_WAIT, BACKOFF[attempt - 1] * random.uniform(0.8, 1.2))
+            jitter = min(1.2, max(0.8, random.gauss(1.0, 0.1)))  # normal, sigma 10 %, clipped to +-20 %
+            wait = min(MAX_WAIT, BACKOFF[attempt - 1] * jitter)
             log.info("[%s] blocked, waiting %.0f min before retry %d/%d", self.name, wait / 60, attempt, len(BACKOFF))
             await asyncio.sleep(wait)
         raise Blocked(f"giving up on {url}")
