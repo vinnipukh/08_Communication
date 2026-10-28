@@ -12,9 +12,10 @@ copies of these pages; each copy is parsed with the same function as the daily s
 
 Ulusoy, Yak Gelsin and Odunal have no copies.
 
-Output: one Datas/04_Housing/<Store>/<store>_YYYY-MM-DD.csv per store and **snapshot day** (no forward fill: a
-copy shows the price on that day only), ``source_url`` = the Wayback copy, ``collected_at`` = the copy's
-timestamp. Existing day files are never overwritten.
+Output: one Datas/04_Housing/<Store>/<store>_YYYY-MM-DD.csv per store and day from the first copy to yesterday,
+like the other 04 backfills: each day holds the newest copy on or before it (the price list in force as far as
+the copies show), ``source_url`` = that Wayback copy, ``collected_at`` = the copy's timestamp, so a day that is
+not a copy day can be told apart (``collected_at`` date != file date). Existing day files are never overwritten.
 
 Examples:
   python backfill.py                       # copies from 2025-01-01 on
@@ -24,9 +25,9 @@ Examples:
 import argparse
 import logging
 import sys
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 
-from scraper import (DATA_ROOT, KOMURDEPOSU_URL, ODUNMARKET, Client, day_path, komurdeposu_rows, odunmarket_rows,
+from scraper import (KOMURDEPOSU_URL, ODUNMARKET, Client, day_path, komurdeposu_rows, odunmarket_rows,
                      tetik_rows, write_csv)
 
 CDX = "https://web.archive.org/cdx/search/cdx"
@@ -71,16 +72,20 @@ def main():
                 log.info("%s %s: %d rows", store, copy, len(rows))
                 prev_ts, prev_rows = by_day.get(day, ("", []))
                 by_day[day] = (max(prev_ts, ts), prev_rows + rows)
-        written = 0
-        for day, (ts, rows) in sorted(by_day.items()):
-            path = day_path(store, day)
-            if day >= today or path.exists() or not rows:
-                continue
-            stamp = datetime.strptime(ts, "%Y%m%d%H%M%S").replace(tzinfo=timezone.utc).isoformat()
-            write_csv(path, rows, stamp)
-            written += 1
-            log.info("wrote %s (%d rows)", path.relative_to(DATA_ROOT), len(rows))
-        log.info("%s: %d snapshot days, %d day files written", store, len(by_day), written)
+        copies = {d: v for d, v in by_day.items() if v[1] and d < today}
+        written = kept = 0
+        day = date.fromisoformat(min(copies)) if copies else date.today()
+        while day < date.today():  # every day up to yesterday holds the newest copy on or before it
+            path = day_path(store, day.isoformat())
+            ts, rows = copies[max(d for d in copies if d <= day.isoformat())]
+            if path.exists():
+                kept += 1
+            else:
+                write_csv(path, rows, datetime.strptime(ts, "%Y%m%d%H%M%S").replace(tzinfo=timezone.utc).isoformat())
+                written += 1
+            day += timedelta(days=1)
+        log.info("%s: %d copy days (%s), %d day files written, %d kept", store, len(copies),
+                 ", ".join(sorted(copies)), written, kept)
 
 
 if __name__ == "__main__":

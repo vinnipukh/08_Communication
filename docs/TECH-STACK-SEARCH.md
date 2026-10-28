@@ -774,7 +774,8 @@ for all six:
 - Unit: TL/kg everywhere (§3.14). A package with no single stated weight is left out (çuval without weight,
   "20-25kg" ranges). No seller sells by ster or çeki.
 - History: new `Firewood/backfill.py` parses Wayback copies (CDX `collapse=digest`, from 2025) with the daily
-  parsers and writes one file per snapshot day, without forward fill: Komurdeposu 3 days, Odunmarket 3, Tetik 6
+  parsers; every day from the first copy to yesterday holds the newest copy on or before it (filled daily like the
+  other 04 backfills; `collected_at` = the copy's timestamp). Copies: Komurdeposu 3 days, Odunmarket 3, Tetik 6
   (meşe 1 ton 8,000 → 9,500 → 13,000 TL). Ulusoy and Yak Gelsin have no copies.
 - Verified 2026-10-28 by live runs: Ulusoy 2 rows, Komurdeposu 4, Odunmarket 5, Tetik 1, Yakgelsin 11, Odunal 14;
   1 ton meşe 6.6–13.2 TL/kg across sellers.

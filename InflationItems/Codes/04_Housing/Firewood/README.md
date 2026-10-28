@@ -93,8 +93,10 @@ python InflationItems/Codes/04_Housing/Firewood/backfill.py                 # Wa
 ```
 
 No seller keeps a price history. The Wayback Machine has copies of three of them; each copy is parsed with the
-daily parser and written as **that day's** file, with no forward fill (`source_url` = the Wayback copy,
-`collected_at` = its timestamp). Existing day files are never overwritten. Written on 2026-10-28 (46 s):
+daily parser. Like the other 04 backfills, every day from the first copy to yesterday gets a file holding the
+newest copy on or before it (`source_url` = that Wayback copy, `collected_at` = its timestamp, so a filled day
+has a `collected_at` date before the file date). Existing day files are never overwritten. Written on 2026-10-28:
+Komurdeposu 2025-11-12 .. (350 days), Odunmarket 2025-08-07 .. (447), Tetik 2025-05-13 .. (533). Copy days:
 
 | Store | Days | Prices |
 |---|---|---|
