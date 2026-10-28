@@ -17,4 +17,5 @@ dependencies = [
     "seleniumbase>=4.20",
     "tqdm>=4.66",
     "undetected-chromedriver>=3.5",
+    "rapidocr-onnxruntime>=1.4",
 ]

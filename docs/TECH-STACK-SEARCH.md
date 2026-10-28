@@ -478,6 +478,10 @@ survived), so the scraper was rewritten from §3.1/§3.2 and the old CSV schema:
   `Neighborhood` is filled when the crawl reaches district scope. `ilanId` de-duplicates across scopes.
 - Checkpoint = completed scope URLs, in gitignored `Codes/04_Housing/Emlakjet/checkpoints/`;
   `--resume` also re-reads today's CSV for seen ids.
+- 2026-10-28, upstream file rule (`<store>_YYYY-MM-DD.csv`, one file per store and day): the output is now
+  `Datas/04_Housing/Emlakjet/emlakjet_YYYY-MM-DD.csv` (scraper and `scraper_emlakjet.yml`); the 44 existing CSVs
+  were renamed with content unchanged, and the old scraper's leftover `Datas/04_Housing/Emlakjet/state/` (an
+  untracked checkpoint of 2026-10-18) was moved out of Datas.
 - Verified live on 2026-10-23: Isparta (253 listings, `--max-pages-per-scope 2`: 60 rows) and Ankara
   (4,019 listings split into 25 district scopes; bounded run, 157 unique rows, correct district and
   neighbourhood fields). Full single-worker crawl 2026-10-23: 51,122 unique listings in 63 min, no
@@ -556,8 +560,7 @@ only). The one-off conversion script was not added to the repository.
 ## 3.5 EPDK electricity tariff scraper (2026-10-28)
 
 `InflationItems/Codes/04_Housing/Electricity/scraper.py` (TÜİK 0451001), output
-`InflationItems/Datas/04_Housing/Electricity/YYYY-MM-DD.csv`. First item of the TÜİK 04 utilities queue
-(`queue/`).
+`InflationItems/Datas/04_Housing/EPDK/epdk_YYYY-MM-DD.csv` (store layout, §3.13).
 - Source: the tariff page's list comes from `POST /Detay/GetFastAccessList` (`{"fId":"1327"}`, answers
   `{"Type", "model": [...]}`); the newest decision's XLSX is `GET /Detay/DownloadDocument?id=<ContentId>`
   (`+`/`=` URL-encoded). `curl_cffi` (Chrome impersonation), page first for the F5 "TS" cookies; no
@@ -571,7 +574,8 @@ only). The one-off conversion script was not added to the repository.
 ## 3.6 Natural gas price + connection fee scraper (2026-10-28)
 
 `InflationItems/Codes/04_Housing/NaturalGas/scraper.py` (TÜİK 0452101, 0452102), output
-`InflationItems/Datas/04_Housing/NaturalGas/YYYY-MM-DD.csv`. Item 2 of the TÜİK 04 utilities queue (`queue/`).
+`InflationItems/Datas/04_Housing/{IGDAS,Baskentgaz,Izmirgaz}/<store>_YYYY-MM-DD.csv` (store layout, §3.13; fee
+rows in the İzmirgaz file).
 - Sources, one per city: İGDAŞ JSON API (`POST api.igdas.istanbul/Sap/Sap/PerakendeSatisFiyati`,
   `{"AYYIL":"MMYYYY"}`), Başkentgaz monthly tariff PDF (list from `bskapiv1.baskentdogalgaz.com.tr/api/menus/31/
   sections`, text read with `pypdf`, new dependency), İzmirgaz HTML fragment (`pages/musteri_hizmetleri/konut.php`).
@@ -590,7 +594,7 @@ only). The one-off conversion script was not added to the repository.
 ## 3.7 Municipal water tariff scraper (2026-10-28)
 
 `InflationItems/Codes/04_Housing/Water/scraper.py` (TÜİK 0441101), output
-`InflationItems/Datas/04_Housing/Water/YYYY-MM-DD.csv`. Item 3 of the TÜİK 04 utilities queue (`queue/`).
+`InflationItems/Datas/04_Housing/{ISKI,ASKI,IZSU}/<store>_YYYY-MM-DD.csv` (store layout, §3.13).
 - Sources, one per city: İSKİ page + yearly monthly-tariff PDF, ASKİ tariff PDF (`/Yukle/Dosya/SuTarifesi.pdf`,
   link taken from `tr/ucretler.aspx`), İZSU Next.js page. `curl_cffi` (Chrome impersonation), `pypdf`, no
   browser, no new dependency; 5 requests, ~3 s.
@@ -608,25 +612,32 @@ only). The one-off conversion script was not added to the repository.
 ## 3.8 LPG cylinder price scraper (2026-10-28)
 
 `InflationItems/Codes/04_Housing/LPG/scraper.py` (TÜİK 0452201), output
-`InflationItems/Datas/04_Housing/LPG/YYYY-MM-DD.csv`. Item 4 of the TÜİK 04 utilities queue (`queue/`).
+`InflationItems/Datas/04_Housing/{Aygaz,Milangaz,Mogaz,Ipragaz}/<store>_YYYY-MM-DD.csv` (store layout, §3.13).
 - Brands: Aygaz (Next.js `__NEXT_DATA__` city list + session-token JSON proxy with base64 `X-PARAMS`),
   Milangaz (WordPress `admin-ajax.php`), Mogaz (`/processor/GetTupGazPrice` form POST), İpragaz
-  (server-rendered result page per city name). Likitgaz dropped (host does not resolve). `curl_cffi`
+  (server-rendered result page per city name). `curl_cffi`
   (Chrome impersonation), BeautifulSoup, no browser, no new dependency.
 - Every province each brand lists (81, İstanbul split Anadolu/Avrupa, İpragaz also Adalar and
   Bozcaada-Gökçeada), mapped to a plate code via a fixed table; `--provinces 34 6 35` bounds a run.
 - ~336 requests, 1 s apart per host. The four brands (four hosts) run in parallel threads, one `Client` each:
   207 s (~3.5 min) measured, bounded by Milangaz (~2.5 s per request); 559 s when run sequentially.
-- Mogaz answers an empty price for İstanbul Avrupa (its own form too): warning, no row. A price outside
+- Mogaz İstanbul Avrupa is not requested (always an empty price, its own form too). A price outside
   300–20 000 TL fails that province; a failed province or brand exits 1 but the rest is written.
 - Verified 2026-10-28 by a full live run: 411 rows, all 81 provinces per brand; 12 kg TL (VAT incl.)
   İstanbul Anadolu / Ankara / İzmir: Aygaz 1700/1645/1645 (deposit 320), Milangaz 1660/1650/1660,
   Mogaz 1700/1645/1643, İpragaz 1680 everywhere.
+- History: only Aygaz serves past prices (validity dates back to 2013-01-04). `--backfill-from YYYY-MM-DD`
+  runs Aygaz only and writes `logs/backfill/aygaz_<from>_<today>.csv` (gitignored) plus one
+  `Aygaz/aygaz_YYYY-MM-DD.csv` per day up to yesterday
+  (prices in force that day, existing day files kept), like items 1–3; `--days-from` rebuilds the day files
+  from a saved history CSV without requests. 665 day files 2025-01-01 .. 2026-10-27 written (82 Aygaz rows each). Backfill from 2025-01-01: 1 804 rows
+  (22 dates × 82 cities), 2 278 s; Ankara 12 kg went 867 TL (2025-01-01) → 1645 TL (2026-10-02).
+  Mogaz answers empty prices for past dates; Milangaz and İpragaz take no date.
 
 ## 3.9 Armut home repair labour price scraper (2026-10-28)
 
 `InflationItems/Codes/04_Housing/RepairLabor/scraper.py` (TÜİK 0432015), output
-`InflationItems/Datas/04_Housing/RepairLabor/YYYY-MM-DD.csv`. Item 5 of the TÜİK 04 utilities queue (`queue/`).
+`InflationItems/Datas/04_Housing/Armut/armut_YYYY-MM-DD.csv` (store layout, §3.13).
 - Source: Armut.com city price pages `https://armut.com/fiyatlari/{city}-{slug}_{serviceId}_{plate}`; page URLs
   come from the `sitemap/price-arealevel1-*.xml` sitemaps (one ~45k-URL file on 2026-10-28), data from the
   Next.js `__NEXT_DATA__` JSON (`pricePageData`: shown min–max range, quote/pro counts, rating, and
@@ -648,19 +659,98 @@ only). The one-off conversion script was not added to the repository.
 ## 3.10 Price-history backfill for electricity, natural gas and water (2026-10-28)
 
 `backfill.py` next to the Electricity, NaturalGas and Water scrapers, run once from 2025-01-01. Each reuses its
-scraper's parsers and writes `InflationItems/Datas/04_Housing/<Source>/backfill_<start>_<today>.csv` in the
-daily schema, one row per tier and tariff version, including the version in force on the start date.
+scraper's parsers and writes a versions file `logs/backfill/{epdk,natural_gas,water}_<start>_<today>.csv`
+(gitignored since §3.13; first written to the data folders) in the daily schema, one row per tier and tariff version, including the version in force on the start date.
 - Electricity (48 rows): every EPDK decision stays in the tariff list; the 01.07.2024 and 05.04.2025 XLSX
   tables use an older layout, now read by `parse_table_2024()`.
 - Natural gas (89 rows): İGDAŞ's API answers past months; Başkentgaz lists every monthly PDF since 2018, with
-  several period-line and split-month variants. İzmir (İzmirgaz) has no history anywhere, fees not backfilled.
+  several period-line and split-month variants. İzmir and the fees were added later (§3.13).
 - Water (132 rows): İSKİ's yearly PDFs (every month); ASKİ only through the Wayback Machine
   (`web.archive.org/cdx`, `id_` raw snapshots, 2 s apart), which misses its 2025 changes; İZSU through Wayback
-  copies of its page plus two image-only tariffs transcribed by hand into `izsu_transcribed.csv`.
-- Day files: each backfill then writes one `YYYY-MM-DD.csv` per day from the start date to yesterday (665 per
-  item), holding the version in force that day, in the daily schema. `collected_at` (the backfill run time) and
+  copies of its page plus two image-only tariffs transcribed by hand into `izsu_transcribed.csv` (now in
+  `Codes/04_Housing/Water/`).
+- Day files: each backfill then writes one day file per store from the start date to yesterday (665 per
+  store), holding the version in force that day, in the daily schema. `collected_at` (the backfill run time) and
   `effective_date`/`valid_from` mark them; existing day files are never overwritten, and water/gas write day
   files only when every source succeeded. Ankara water carries the 03.12.2024 tariff through Nov 2025 (gap).
 - Daily scrapers changed along the way, outputs re-checked identical on 2026-10-28: İGDAŞ now takes the row in
   force today when a month lists a mid-month change (it used to fail on such months); Başkentgaz parses the ÖTV
   amount and accepts the older period lines; ASKİ accepts the older date wordings.
+
+## 3.11 TKİ coal price list scraper, semi-manual (2026-10-28)
+
+`InflationItems/Codes/04_Housing/Coal/scraper.py` (TÜİK 0454101), output
+`InflationItems/Datas/04_Housing/TKI/tki_YYYY-MM-DD.csv` (store layout, §3.13).
+- Source: `https://www.tki.gov.tr/komur-fiyatlarips`; the price table is one webp image (`webim.tki.gov.tr/file/<uuid>`),
+  found as the `Image` component outside a `Link` in `__NEXT_DATA__`. `curl_cffi` (Chrome impersonation), 2 requests,
+  ~3 s measured. Mine-gate (FOB) prices of GLİ Tunçbilek, ELİ Soma and ÇLİ Çan, not city retail prices.
+- Semi-manual: each distinct image (SHA-256; `Last-Modified` changes on every fetch, no ETag) is transcribed once
+  into `transcribed.csv` (in the code folder) and reviewed; runs re-emit the reviewed list with today's date while the hash is unchanged.
+  A new hash saves the image under `images/` and OCRs it; `auto_transcription()` accepts the result without a person
+  (`entry_method` = ocr-auto) when it maps one to one onto the newest reviewed product list, otherwise the run writes a
+  `pending_<sha12>.csv` draft and exits 2 without a daily CSV.
+- OCR: RapidOCR (`rapidocr-onnxruntime`, ONNX PP-OCR models, pip-only, no system Tesseract), a project dependency since
+  2026-10-28 (automatic transcription; before that only `uv run --with`). Rows are paired by splitting the amounts into
+  the three price columns (line grouping by y lost rows on 6 of 8 historical images). On the 2026-10-28 image it read all
+  42 amounts correctly (separators mixed up, fixed by parsing digits / 100) and dropped Turkish letters from names.
+  Each OCR line must pass price × VAT rate = VAT and price + VAT = incl. VAT, otherwise its numbers stay empty;
+  transcribed rows are checked the same way on every run. Replay over the 2024–2026 lists: 5 of 7 auto-accepted, all
+  equal to the hand-checked transcription; 2 sent to review (products dropped / renamed).
+- Verified 2026-10-28 by live runs: 14 rows valid from 2026-09-15, e.g. Tunçbilek yıkanmış +18 mm 6,000 TL/ton
+  (7,200 incl. VAT), Çan 0-18 mm (toz) 4,600 (5,520).
+
+## 3.12 Odunal.com firewood price scraper (2026-10-28)
+
+`InflationItems/Codes/04_Housing/Firewood/scraper.py` (TÜİK 0454201), output
+`InflationItems/Datas/04_Housing/Odunal/odunal_YYYY-MM-DD.csv` (store layout, §3.13).
+- Source: the Shopify public catalogue `https://www.odunal.com/products.json?limit=250` (Cloudflare in front, plain
+  HTTP 200 to `curl_cffi` Chrome impersonation). 1 request, 0.7 s in-script / ~3 s wall measured. One seller in
+  Ağva/Şile (İstanbul) shipping nationwide; no per-city prices.
+- Filter: `product_type` "Yakacak Odun" / "Şömine Odunu", kindling ("çıra" in the title) skipped; unknown
+  firewood-like types are logged. All prices include VAT (`vat_included` always "true"); shipping and the 500 TL İstanbul delivery fee are parsed from `body_html`.
+  Shopify's `updated_at` equals the response time on every product, so `published_at` is written instead.
+- Verified 2026-10-28 by a live run: 14 rows, main series Kuru Meşe Yakacak Odun 1 Ton 7,500 TL (7.5 TL/kg) + 500 TL
+  delivery; range 7.5–120 TL/kg (10 kg şömine box).
+
+## 3.13 04 utilities: upstream store layout (2026-10-28)
+
+The seven TÜİK 04 scrapers above (§3.5–3.12) now follow the upstream rule "one CSV per store and day in
+`InflationItems/Datas/<Category>/<Store>/`, named `<store>_YYYY-MM-DD.csv`". Code folders keep their item names
+(like `Codes/08_Communication/Telecom`, which writes several store folders).
+- Stores: Electricity → `EPDK`; NaturalGas → `IGDAS`, `Baskentgaz`, `Izmirgaz` (fee rows); Water → `ISKI`,
+  `ASKI`, `IZSU`; LPG → `Aygaz`, `Milangaz`, `Mogaz`, `Ipragaz`; RepairLabor → `Armut`; Coal → `TKI`;
+  Firewood → `Odunal`. Existing day files were moved and renamed.
+- Backfill version-history files moved out of Datas to gitignored `logs/backfill/<name>_<start>_<today>.csv`
+  (`epdk_`, `natural_gas_`, `water_`, `aygaz_`); the old `Datas/04_Housing/LPG/backfill/` folder is gone.
+- `--output <path>` on every scraper writes all rows to that CSV instead of the store day files (test runs).
+- Hand-made inputs moved from Datas to the code folders: `Coal/transcribed.csv`, `Coal/images/`,
+  `Coal/pending_<sha12>.csv`; `Water/izsu_transcribed.csv`; new `NaturalGas/fees_transcribed.csv`.
+- New backfills (2025-01-01 .. 2026-10-27, one file per store and day):
+  - İzmirgaz: archive fragments `tarifeler_arsiv_konut.php` / `tarifeler_arsiv_konut_kwh.php` list monthly
+    versions back to 2021; the K1 band is written as Kademe-1. Kademe-2 (since 04.04.2026) has no archive.
+  - Gas fees (0452102): 2026 caps from İzmirgaz's live fee pages (valid from 2026-01-01); the three 2025
+    connection caps (6,154 / 5,353 per 100 m² / 3,471 first 100 m) from `fees_transcribed.csv` (Bloomberg HT
+    31.12.2024, same in YatırımX). The 2025 deposit caps are not written (no second source).
+  - TKİ coal: new `Coal/backfill.py` walks the Wayback CDX copies of `www.tki.gov.tr/komur-fiyatlarips`, takes
+    each copy's price image (`price_image_url()`), downloads it from `webim.tki.gov.tr` (Wayback fallback) and
+    reuses the transcription / VAT-check flow. Lists valid from 2024-05-31, 2025-01-01, 2025-05-15 (a same-date
+    image without the ara ürün / şist rows, from its first Wayback copy), 2025-07-01, 2025-10-01, 2026-01-01,
+    2026-06-02, 2026-09-15; 665 day files. OCR'd with RapidOCR and checked against each image by eye.
+- No history possible (checked): Milangaz (no Wayback copies), Mogaz (Wayback copies have no prices, which load by
+  XHR; its API answers empty prices for past dates), İpragaz (scattered Wayback copies, not the three cities),
+  Odunal (no Wayback copies), Armut beyond its 12 months.
+- No schedule (cron or Actions) exists yet for these scrapers.
+
+## 3.14 04 utilities: one price unit per item (2026-10-28)
+
+`price` now has one unit per TÜİK item across all stores, and `unit` names it:
+- Natural gas (IGDAS, Baskentgaz, Izmirgaz): TL/kWh (was TL/m³, and TL/Sm³ for Başkentgaz). Bills are in kWh and
+  every source gives a kWh price; the volume price stays in `price_per_m3`. Fee rows stay TL.
+- Electricity (EPDK): `energy_charge`, `distribution_charge`, `total` converted from EPDK's kuruş/kWh to TL/kWh, so
+  `unit` = TL/kWh describes `price` and the charge columns alike.
+- Firewood (Odunal): TL/kg (`price` = package price / weight); new columns `package_price` and `unit`. A package
+  without a weight is skipped.
+- Unchanged: water TL/m³ (İSKİ, ASKİ, İZSU), LPG TL per 12 kg cylinder (four brands), coal TL/ton (TKİ),
+  repair labour TL per job (Armut).
+- All history files (2025-01-01 ..) were rewritten in place with the same columns. TÜİK's older electricity and
+  gas bulletins quote households per kWh (electricity) and per m³ (gas); the kWh gas unit is a project decision.

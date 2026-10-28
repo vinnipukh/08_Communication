@@ -25,7 +25,8 @@ Rows written: household (konut) tiers per city, plus ASKİ's sosyal yardım konu
 for the open top tier; "30 m³ üzeri" is written as from 31. ``price`` = total = water + wastewater, TL/m³,
 VAT and ÇTV excluded.
 
-Output: InflationItems/Datas/04_Housing/Water/YYYY-MM-DD.csv
+Output (upstream layout: one CSV per store and day): InflationItems/Datas/04_Housing/<Store>/<store>_YYYY-MM-DD.csv
+with Store = ISKI, ASKI, IZSU.
 Columns: product_name, price, category_number (4), sub_category_number (0441101), province, utility,
 subscriber_type, tier_from_m3, tier_to_m3, water_price, wastewater_price, total, unit, vat_included,
 ctv_included, effective_date, source_url, collected_at.
@@ -63,7 +64,9 @@ BACKOFF = [2, 5, 10]  # seconds waited after each failed request, then give up
 SOURCES = ["iski", "aski", "izsu"]
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
-DATA_DIR = REPO_ROOT / "InflationItems" / "Datas" / "04_Housing" / "Water"
+DATAS_DIR = REPO_ROOT / "InflationItems" / "Datas" / "04_Housing"
+STORES = {"İSKİ": "ISKI", "ASKİ": "ASKI", "İZSU": "IZSU"}  # row "utility" -> store folder
+BACKFILL_DIR = REPO_ROOT / "logs" / "backfill"  # version histories; Datas holds only one CSV per store and day
 
 CATEGORY_NUMBER = 4
 WATER_ITEM = "0441101"  # TÜİK item "Belediye suyu"
@@ -231,7 +234,13 @@ def iski(client: Client) -> list[dict]:
         raise RuntimeError(f"İSKİ: expected 3 Konut tiers, got {tiers}")
     pdfs = iski_pdf_links(markup)
     if int(year.group(1)) not in pdfs:
-        raise RuntimeError(f"İSKİ: no '{year.group(1)} Yılı' PDF link (found {sorted(pdfs)})")
+        # early in a year the new year's PDF is not linked yet: write the last month of the newest earlier PDF
+        last = max((y for y in pdfs if y < int(year.group(1))), default=None)
+        if last is None:
+            raise RuntimeError(f"İSKİ: no '{year.group(1)} Yılı' PDF link and no earlier one (found {sorted(pdfs)})")
+        effective, last_tiers = iski_pdf_months(client, pdfs[last])[-1]
+        log.warning("İSKİ: no %s PDF yet; writing the %s PDF's last month (%s)", year.group(1), last, effective)
+        return [water_row("İstanbul", "İSKİ", "konut", *t, effective, pdfs[last]) for t in last_tiers]
     effective = iski_month(client, pdfs[int(year.group(1))], tiers[0][1:])
     return [water_row("İstanbul", "İSKİ", "konut", *t, effective, ISKI_URL) for t in tiers]
 
@@ -320,7 +329,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--source", nargs="+", choices=SOURCES, default=SOURCES, help="sources to fetch (default: all)")
     ap.add_argument("--delay", type=float, default=1.0, help="seconds between requests to one host (jittered)")
-    ap.add_argument("--output", default=None, help="CSV file name inside the data dir (default: YYYY-MM-DD.csv)")
+    ap.add_argument("--output", default=None, help="write all rows to this CSV path instead of the store files (test runs)")
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
     started = time.monotonic()
@@ -341,17 +350,38 @@ def main():
         log.error("every source failed; no CSV written")
         sys.exit(1)
     collected_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    csv_path = DATA_DIR / (args.output or f"{date.today().isoformat()}.csv")
-    with csv_path.open("w", encoding="utf-8", newline="") as fh:
+    if args.output:
+        write_csv(Path(args.output), rows, collected_at)
+        paths = [args.output]
+    else:
+        paths = write_store_csvs(rows, date.today().isoformat(), collected_at)
+    log.info("wrote %d rows to %s in %.1f s", len(rows), ", ".join(map(str, paths)), time.monotonic() - started)
+    if failed:
+        log.error("incomplete run, failed: %s", ", ".join(failed))
+        sys.exit(1)
+
+
+def write_csv(path: Path, rows: list[dict], collected_at: str):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="") as fh:
         writer = csv.DictWriter(fh, fieldnames=COLUMNS)
         writer.writeheader()
         for row in rows:
             writer.writerow({**row, "collected_at": collected_at})
-    log.info("wrote %d rows to %s in %.1f s", len(rows), csv_path, time.monotonic() - started)
-    if failed:
-        log.error("incomplete run, failed: %s", ", ".join(failed))
-        sys.exit(1)
+
+
+def write_store_csvs(rows: list[dict], day: str, collected_at: str, keep_existing=False) -> list[Path]:
+    """One ``Datas/04_Housing/<Store>/<store>_<day>.csv`` per store; ``keep_existing`` skips files already there."""
+    by_store = {}
+    for r in rows:
+        by_store.setdefault(STORES[r["utility"]], []).append(r)
+    paths = []
+    for store, store_rows in by_store.items():
+        path = DATAS_DIR / store / f"{store.lower()}_{day}.csv"
+        if not (keep_existing and path.exists()):
+            write_csv(path, store_rows, collected_at)
+            paths.append(path)
+    return paths
 
 
 if __name__ == "__main__":

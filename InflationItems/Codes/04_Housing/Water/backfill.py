@@ -9,12 +9,12 @@ Sources (checked 2026-10-28):
   were never archived are missing (2025 has none between 03.12.2024 and the December 2025 copy).
 - İZSU: Wayback copies of the tariff page (2026 only), plus the live page. Older tariffs are images on İZSU's
   history list; their konut rows are transcribed by hand in
-  ``InflationItems/Datas/04_Housing/Water/izsu_transcribed.csv`` (source image URL per row, totals checked).
+  ``izsu_transcribed.csv`` next to this script (source image URL per row, totals checked).
 
-Output: InflationItems/Datas/04_Housing/Water/backfill_<start>_<today>.csv (one row per tier and version),
-columns as in scraper.py; ``source_url`` is the PDF, Wayback snapshot or image the row came from. Then one
-YYYY-MM-DD.csv per day from <start> to yesterday, like the daily scraper's files, holding per city the version in
-force that day (``effective_date`` shows which; ``collected_at`` is the backfill run time). Existing day files
+Output: logs/backfill/water_<start>_<today>.csv (one row per tier and version, gitignored), columns as in
+scraper.py; ``source_url`` is the PDF, Wayback snapshot or image the row came from. Then one
+Datas/04_Housing/<Store>/<store>_YYYY-MM-DD.csv per store (ISKI, ASKI, IZSU) and day from <start> to yesterday,
+like the daily scraper's files, holding the version in force that day (``effective_date`` shows which; ``collected_at`` is the backfill run time). Existing day files
 are never overwritten. ``--no-daily`` skips the day files.
 
 Examples:
@@ -29,12 +29,14 @@ import sys
 import time
 from datetime import date, datetime, timedelta, timezone
 
-from scraper import (ASKI_PDF, COLUMNS, DATA_DIR, IZSU_URL, REPO_ROOT, Client, aski, aski_parse, iski,
-                     iski_markup, iski_pdf_links, iski_pdf_months, izsu, izsu_parse, water_row)
+from pathlib import Path
+
+from scraper import (ASKI_PDF, BACKFILL_DIR, IZSU_URL, REPO_ROOT, Client, aski, aski_parse, iski, iski_markup,
+                     iski_pdf_links, iski_pdf_months, izsu, izsu_parse, water_row, write_csv, write_store_csvs)
 
 WAYBACK_CDX = "https://web.archive.org/cdx/search/cdx?url={url}&output=json&collapse=digest&from={year}"
 WAYBACK_RAW = "https://web.archive.org/web/{ts}id_/{url}"
-TRANSCRIBED = DATA_DIR / "izsu_transcribed.csv"
+TRANSCRIBED = Path(__file__).resolve().parent / "izsu_transcribed.csv"
 SOURCES = ["iski", "aski", "izsu"]
 
 log = logging.getLogger("water_backfill")
@@ -108,28 +110,22 @@ def izsu_history(client: Client, wayback: Client, start: str) -> list[dict]:
 
 
 def write_daily(rows: list[dict], start: str, collected_at: str) -> tuple[int, int]:
-    """One ``YYYY-MM-DD.csv`` per day from ``start`` to yesterday with, per city, the version in force that day.
-    Existing day files (real daily runs) are kept. Returns (written, skipped)."""
+    """One ``<store>_YYYY-MM-DD.csv`` per store and day from ``start`` to yesterday with the version in force that
+    day. Existing day files (real daily runs) are kept. Returns (written, skipped) file counts."""
     versions = {}  # (province, utility) -> effective date -> rows
     for r in rows:
         versions.setdefault((r["province"], r["utility"]), {}).setdefault(r["effective_date"], []).append(r)
     written = skipped = 0
     day, end = date.fromisoformat(start), date.today() - timedelta(days=1)
     while day <= end:
-        path = DATA_DIR / f"{day.isoformat()}.csv"
-        if path.exists():
-            skipped += 1
-        else:
-            out = []
-            for by_date in versions.values():
-                in_force = max((d for d in by_date if d <= day.isoformat()), default=None)
-                out += by_date[in_force] if in_force else []
-            with path.open("w", encoding="utf-8", newline="") as fh:
-                writer = csv.DictWriter(fh, fieldnames=COLUMNS)
-                writer.writeheader()
-                for row in out:
-                    writer.writerow({**row, "collected_at": collected_at})
-            written += 1
+        out = []
+        for by_date in versions.values():
+            in_force = max((d for d in by_date if d <= day.isoformat()), default=None)
+            out += by_date[in_force] if in_force else []
+        stores = {r["utility"] for r in out}
+        new = write_store_csvs(out, day.isoformat(), collected_at, keep_existing=True)
+        written += len(new)
+        skipped += len(stores) - len(new)
         day += timedelta(days=1)
     return written, skipped
 
@@ -165,12 +161,8 @@ def main():
         log.error("every source failed; no CSV written")
         sys.exit(1)
     collected_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
-    csv_path = DATA_DIR / f"backfill_{start}_{date.today().isoformat()}.csv"
-    with csv_path.open("w", encoding="utf-8", newline="") as fh:
-        writer = csv.DictWriter(fh, fieldnames=COLUMNS)
-        writer.writeheader()
-        for row in rows:
-            writer.writerow({**row, "collected_at": collected_at})
+    csv_path = BACKFILL_DIR / f"water_{start}_{date.today().isoformat()}.csv"
+    write_csv(csv_path, rows, collected_at)
     log.info("wrote %d rows to %s in %.1f s", len(rows), csv_path.relative_to(REPO_ROOT), time.monotonic() - started)
     if args.no_daily:
         pass

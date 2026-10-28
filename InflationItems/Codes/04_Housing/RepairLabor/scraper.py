@@ -19,7 +19,7 @@ Recon (2026-10-28):
 midpoint of ``minPrice``-``maxPrice`` when the page has no monthly data (``notes`` says which). Quote means are
 noisy (single quotes of 500,000 TL occur), so the range, the month's min/max and quote counts are kept too.
 
-Output: InflationItems/Datas/04_Housing/RepairLabor/YYYY-MM-DD.csv
+Output: InflationItems/Datas/04_Housing/Armut/armut_YYYY-MM-DD.csv (upstream layout: one CSV per store and day)
 Columns: product_name, price, category_number (4), sub_category_number (0432015), service, service_id, province,
 plate, price_min, price_max, price_avg, avg_month, month_min, month_max, month_quote_count, quote_count,
 pro_count, rating_avg, rating_count, notes, source_url, collected_at.
@@ -58,7 +58,8 @@ BACKOFF = [2, 5, 10]  # seconds waited after each failed request, then give up
 DEFAULT_PROVINCES = [34, 6, 35]
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
-DATA_DIR = REPO_ROOT / "InflationItems" / "Datas" / "04_Housing" / "RepairLabor"
+STORE = "Armut"
+DATA_DIR = REPO_ROOT / "InflationItems" / "Datas" / "04_Housing" / STORE
 SERVICES_FILE = Path(__file__).resolve().parent / "services.json"
 
 CATEGORY_NUMBER = 4
@@ -178,6 +179,7 @@ def history_rows(row: dict, months: list[dict]) -> dict[str, list[dict]]:
 
 
 def write_csv(csv_path: Path, rows: list[dict], collected_at: str):
+    csv_path.parent.mkdir(parents=True, exist_ok=True)
     with csv_path.open("w", encoding="utf-8", newline="") as fh:
         writer = csv.DictWriter(fh, fieldnames=COLUMNS)
         writer.writeheader()
@@ -192,7 +194,7 @@ def main():
     ap.add_argument("--services", nargs="+", type=int, default=None,
                     help="Armut service ids from services.json (default: all of them)")
     ap.add_argument("--delay", type=float, default=1.0, help="seconds between requests (jittered)")
-    ap.add_argument("--output", default=None, help="CSV file name inside the data dir (default: YYYY-MM-DD.csv)")
+    ap.add_argument("--output", default=None, help="write this CSV path instead of the store's day file (test runs)")
     ap.add_argument("--backfill", action="store_true",
                     help="also write one CSV per past day from the pages' 12-month history (existing files are kept)")
     args = ap.parse_args()
@@ -235,14 +237,13 @@ def main():
         log.error("every page failed; no CSV written")
         sys.exit(1)
     collected_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    csv_path = DATA_DIR / (args.output or f"{date.today().isoformat()}.csv")
+    csv_path = Path(args.output) if args.output else day_path(date.today().isoformat())
     write_csv(csv_path, rows, collected_at)
     log.info("wrote %d rows to %s", len(rows), csv_path)
     if args.backfill:
         written = kept = 0
         for day, day_rows in sorted(history.items()):
-            path = DATA_DIR / f"{day}.csv"
+            path = day_path(day)
             if path.exists():  # never replace a real daily snapshot with backfilled values
                 kept += 1
                 continue
@@ -254,6 +255,10 @@ def main():
     if failures:
         log.error("incomplete run: %d pages failed", failures)
         sys.exit(1)
+
+
+def day_path(day: str) -> Path:
+    return DATA_DIR / f"{STORE.lower()}_{day}.csv"
 
 
 if __name__ == "__main__":

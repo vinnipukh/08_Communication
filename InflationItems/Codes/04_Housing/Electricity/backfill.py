@@ -7,8 +7,8 @@ Tables up to 05.04.2025 use an older layout, read by ``parse_table_2024()`` in s
 and 2026-10-28 there were two decisions: 13426 (05.04.2025) and 14461 (04.04.2026); 12719 (01.07.2024) was in
 force on 2025-01-01.
 
-Output: InflationItems/Datas/04_Housing/Electricity/backfill_<start>_<today>.csv (one row per tariff row and
-decision), columns as in scraper.py. Then one YYYY-MM-DD.csv per day from <start> to yesterday, like the daily
+Output: logs/backfill/epdk_<start>_<today>.csv (one row per tariff row and decision, gitignored), columns as
+in scraper.py. Then one Datas/04_Housing/EPDK/epdk_YYYY-MM-DD.csv per day from <start> to yesterday, like the daily
 scraper's files, holding the decision in force that day (``effective_date`` / ``decision_no`` show which;
 ``collected_at`` is the backfill run time). Existing day files are never overwritten. ``--no-daily`` skips them.
 
@@ -18,21 +18,20 @@ Examples:
 """
 
 import argparse
-import csv
 import logging
 import re
 import time
 from datetime import date, datetime, timedelta, timezone
 from urllib.parse import quote
 
-from scraper import (COLUMNS, DATA_DIR, DOWNLOAD_URL, REPO_ROOT, Client, csv_rows, decisions, effective_date,
-                     parse_table, table_file)
+from scraper import (BACKFILL_DIR, DOWNLOAD_URL, REPO_ROOT, Client, csv_rows, day_path, decisions, effective_date,
+                     parse_table, table_file, write_csv)
 
 log = logging.getLogger("electricity_backfill")
 
 
 def write_daily(rows: list[dict], start: str, collected_at: str) -> tuple[int, int]:
-    """One ``YYYY-MM-DD.csv`` per day from ``start`` to yesterday with the decision in force that day.
+    """One ``epdk_YYYY-MM-DD.csv`` per day from ``start`` to yesterday with the decision in force that day.
     Existing day files (real daily runs) are kept. Returns (written, skipped)."""
     by_date = {}  # effective date -> rows of that decision
     for r in rows:
@@ -40,16 +39,12 @@ def write_daily(rows: list[dict], start: str, collected_at: str) -> tuple[int, i
     written = skipped = 0
     day, end = date.fromisoformat(start), date.today() - timedelta(days=1)
     while day <= end:
-        path = DATA_DIR / f"{day.isoformat()}.csv"
+        path = day_path(day.isoformat())
         in_force = max((d for d in by_date if d <= day.isoformat()), default=None)
         if path.exists():
             skipped += 1
         elif in_force:
-            with path.open("w", encoding="utf-8", newline="") as fh:
-                writer = csv.DictWriter(fh, fieldnames=COLUMNS)
-                writer.writeheader()
-                for row in by_date[in_force]:
-                    writer.writerow({**row, "collected_at": collected_at})
+            write_csv(path, by_date[in_force], collected_at)
             written += 1
         day += timedelta(days=1)
     return written, skipped
@@ -90,12 +85,8 @@ def main():
         rows += csv_rows(tariffs, eff, entry, url)
 
     collected_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
-    csv_path = DATA_DIR / f"backfill_{start}_{date.today().isoformat()}.csv"
-    with csv_path.open("w", encoding="utf-8", newline="") as fh:
-        writer = csv.DictWriter(fh, fieldnames=COLUMNS)
-        writer.writeheader()
-        for row in rows:
-            writer.writerow({**row, "collected_at": collected_at})
+    csv_path = BACKFILL_DIR / f"epdk_{start}_{date.today().isoformat()}.csv"
+    write_csv(csv_path, rows, collected_at)
     log.info("wrote %d rows to %s in %.1f s", len(rows), csv_path.relative_to(REPO_ROOT), time.monotonic() - started)
     if not args.no_daily:
         written, skipped = write_daily(rows, start, collected_at)

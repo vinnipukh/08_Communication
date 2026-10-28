@@ -8,13 +8,21 @@ Sources (checked 2026-10-28):
 - Başkentgaz: the monthly PDF list (``menus/31/sections``) goes back to 2018; split months have one PDF per
   part ("4.Gün ve Öncesi", "5.Gün ve Sonrası", "2.Gün İçin Geçerli"). Before 04.04.2026 the household row
   has one price, written as Kademe-1. ÖTV was 0.1187 TL/Sm³ in 2025.
-- İzmirgaz: shows only the current price and the Wayback Machine has no copy of its tariff fragment, so İzmir
-  cannot be backfilled. Connection fees (0452102) are not backfilled either.
+- İzmirgaz: the archive fragments ``tarifeler_arsiv_konut.php`` (TL/m³) and ``tarifeler_arsiv_konut_kwh.php``
+  (TL/kWh) list every monthly version back to 2021, annual bands K1..K5; K1 (the household band) is written as
+  Kademe-1. Kademe-2 (since 04.04.2026) has no archive (its "Arşiv" link points to the şehit ve gazi archive),
+  so İzmir Kademe-2 starts with the daily scraper.
+- Connection fees (0452102, EPDK national caps, VAT excluded, written to the İzmirgaz files like the daily run):
+  the 2026 caps from İzmirgaz's fee pages (valid from 2026-01-01). No site keeps the 2025 caps and the Wayback
+  Machine has no copy, so the three connection caps of 2025 (effective 01.01.2025, Bloomberg HT 31.12.2024 and
+  YatırımX give the same figures) are transcribed in ``fees_transcribed.csv`` next to this script. The 2025
+  deposit (güvence) caps were found in no second source and are not written.
 
-Output: InflationItems/Datas/04_Housing/NaturalGas/backfill_<start>_<today>.csv (one row per tier and version),
-columns as in scraper.py. Then one YYYY-MM-DD.csv per day from <start> to yesterday, like the daily scraper's
-files, holding per city the version in force that day (``valid_from`` shows which; ``collected_at`` is the
-backfill run time). These day files have no İzmir and no fee rows. Existing day files are never overwritten.
+Output: logs/backfill/natural_gas_<start>_<today>.csv (one row per tier and version, gitignored), columns as in
+scraper.py. Then one Datas/04_Housing/<Store>/<store>_YYYY-MM-DD.csv per store (IGDAS, Baskentgaz, Izmirgaz) and day from
+<start> to yesterday, like the daily scraper's files, holding the version in force that day (``valid_from`` shows
+which; ``collected_at`` is the backfill run time). Existing day files
+are never overwritten.
 ``--no-daily`` skips the day files.
 
 Examples:
@@ -23,16 +31,22 @@ Examples:
 """
 
 import argparse
-import csv
 import logging
 import sys
 import time
 from datetime import date, datetime, timedelta, timezone
 
-from scraper import (BASKENT_API, BASKENT_PRICE_MENU, COLUMNS, DATA_DIR, REPO_ROOT, Client, baskent_month,
-                     baskent_pdf, igdas_month)
+import csv
+import re
+from pathlib import Path
 
-SOURCES = ["igdas", "baskentgaz"]
+from scraper import (BACKFILL_DIR, BASKENT_API, BASKENT_PRICE_MENU, CATEGORY_NUMBER, FEE_ITEM, IZMIRGAZ, REPO_ROOT,
+                     STORES, Client, baskent_month, baskent_pdf, gas_row, igdas_month, izmirgaz_client,
+                     izmirgaz_fees, norm, write_csv, write_store_csvs)
+
+SOURCES = ["igdas", "baskentgaz", "izmirgaz", "fees"]
+FEES_TRANSCRIBED = Path(__file__).resolve().parent / "fees_transcribed.csv"
+IZMIRGAZ_ARCHIVE = f"{IZMIRGAZ}/pages/musteri_hizmetleri/tarifeler_arsiv_konut{{unit}}.php"  # "" = TL/m³, "_kwh" = TL/kWh
 
 log = logging.getLogger("natural_gas_backfill")
 
@@ -80,29 +94,68 @@ def baskentgaz_history(client: Client, start: str) -> list[dict]:
     return in_window(versions, start)
 
 
+def izmirgaz_archive(client: Client, unit: str) -> dict[str, tuple[str, list[str]]]:
+    """valid-from date -> (annual band, cells) of the K1 row. The fragment's rows often miss their ``<tr>``,
+    so the ``<td>`` cells are read in order, six per row (band, date, gas, ÖTV, SKB, sales price)."""
+    html = client.request("GET", IZMIRGAZ_ARCHIVE.format(unit=unit)).content.decode("utf-8")
+    cells = [norm(c) for c in re.findall(r"<td[^>]*>(.*?)</td>", html, re.S)]
+    out = {}
+    for i in range(0, len(cells) - 5):
+        band, when = cells[i], cells[i + 1]
+        if band.endswith("(K1)") and re.fullmatch(r"\d{2}\.\d{2}\.\d{4}", when):
+            d, m, y = when.split(".")
+            out.setdefault(f"{y}-{m}-{d}", (re.sub(r"\s*\(K1\)", "", band), cells[i + 2:i + 6]))
+    if not out:
+        raise RuntimeError(f"İzmirgaz archive{unit}: no K1 rows found")
+    return out
+
+
+def izmirgaz_history(client: Client, start: str) -> list[dict]:
+    client = izmirgaz_client(client.delay)
+    m3, kwh = izmirgaz_archive(client, ""), izmirgaz_archive(client, "_kwh")
+    versions = {}
+    for d, (band, (gas, otv, skb, price)) in m3.items():
+        if d not in kwh:  # price is TL/kWh; a version without it cannot be written
+            log.warning("İzmirgaz archive: %s has no TL/kWh price, skipped", d)
+            continue
+        url = IZMIRGAZ_ARCHIVE.format(unit="")
+        versions[d] = [gas_row("İzmir", "İzmirgaz", f"Konut Kademe-1 ({band} m³/yıl)", float(price),
+                               float(kwh[d][1][3]), f"gas={gas};ötv={otv};skb={skb}", d, url)]
+    return in_window(versions, start)
+
+
+def fees_history(client: Client, start: str) -> list[dict]:
+    versions = {}
+    for r in izmirgaz_fees(izmirgaz_client(client.delay)):
+        versions.setdefault(r["valid_from"], []).append(r)
+    with FEES_TRANSCRIBED.open(encoding="utf-8", newline="") as fh:
+        for t in csv.DictReader(fh):
+            versions.setdefault(t["valid_from"], []).append({
+                "product_name": f"Doğal gaz {t['label']}", "price": float(t["price"]),
+                "category_number": CATEGORY_NUMBER, "sub_category_number": FEE_ITEM, "province": "Türkiye",
+                "distributor": "EPDK üst sınır (İzmirgaz)", "tier": t["label"], "price_per_m3": "",
+                "price_per_kwh": "", "unit": "TL", "vat_included": "false", "components": "",
+                "valid_from": t["valid_from"], "source_url": t["source_url"]})
+    return in_window(versions, start)
+
+
 def write_daily(rows: list[dict], start: str, collected_at: str) -> tuple[int, int]:
-    """One ``YYYY-MM-DD.csv`` per day from ``start`` to yesterday with, per city, the version in force that day.
-    Existing day files (real daily runs) are kept. Returns (written, skipped)."""
+    """One ``<store>_YYYY-MM-DD.csv`` per store and day from ``start`` to yesterday with the version in force that
+    day. Existing day files (real daily runs) are kept. Returns (written, skipped) file counts."""
     versions = {}  # (province, distributor) -> valid-from date -> rows
     for r in rows:
         versions.setdefault((r["province"], r["distributor"]), {}).setdefault(r["valid_from"], []).append(r)
     written = skipped = 0
     day, end = date.fromisoformat(start), date.today() - timedelta(days=1)
     while day <= end:
-        path = DATA_DIR / f"{day.isoformat()}.csv"
-        if path.exists():
-            skipped += 1
-        else:
-            out = []
-            for by_date in versions.values():
-                in_force = max((d for d in by_date if d <= day.isoformat()), default=None)
-                out += by_date[in_force] if in_force else []
-            with path.open("w", encoding="utf-8", newline="") as fh:
-                writer = csv.DictWriter(fh, fieldnames=COLUMNS)
-                writer.writeheader()
-                for row in out:
-                    writer.writerow({**row, "collected_at": collected_at})
-            written += 1
+        out = []
+        for by_date in versions.values():
+            in_force = max((d for d in by_date if d <= day.isoformat()), default=None)
+            out += by_date[in_force] if in_force else []
+        stores = {STORES[r["distributor"]] for r in out}
+        new = write_store_csvs(out, day.isoformat(), collected_at, keep_existing=True)
+        written += len(new)
+        skipped += len(stores) - len(new)
         day += timedelta(days=1)
     return written, skipped
 
@@ -118,7 +171,8 @@ def main():
     start = date.fromisoformat(args.start).isoformat()
     started = time.monotonic()
 
-    steps = {"igdas": ("İGDAŞ", igdas_history), "baskentgaz": ("Başkentgaz", baskentgaz_history)}
+    steps = {"igdas": ("İGDAŞ", igdas_history), "baskentgaz": ("Başkentgaz", baskentgaz_history),
+             "izmirgaz": ("İzmirgaz", izmirgaz_history), "fees": ("fees", fees_history)}
     rows, failed = [], []
     for src in [s for s in SOURCES if s in args.source]:
         name, fetch = steps[src]
@@ -135,12 +189,8 @@ def main():
         log.error("every source failed; no CSV written")
         sys.exit(1)
     collected_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
-    csv_path = DATA_DIR / f"backfill_{start}_{date.today().isoformat()}.csv"
-    with csv_path.open("w", encoding="utf-8", newline="") as fh:
-        writer = csv.DictWriter(fh, fieldnames=COLUMNS)
-        writer.writeheader()
-        for row in rows:
-            writer.writerow({**row, "collected_at": collected_at})
+    csv_path = BACKFILL_DIR / f"natural_gas_{start}_{date.today().isoformat()}.csv"
+    write_csv(csv_path, rows, collected_at)
     log.info("wrote %d rows to %s in %.1f s", len(rows), csv_path.relative_to(REPO_ROOT), time.monotonic() - started)
     if args.no_daily:
         pass

@@ -21,28 +21,38 @@ Recon (2026-10-28):
   /evde/tupgaz-fiyatlari-sonuc?city=<name>`` → server-rendered "Tüpgaz fiyatları 02.10.2026 tarihinden
   itibaren <city> ilinde geçerli KDV dahil tavan satış fiyatlarıdır ... Ev Tüpü 12 kg ₺1680.0". An unknown
   name answers the page without prices, so the city is looked up; every city tried had the same price.
-- Likitgaz: host does not resolve (DNS), skipped.
 All four answered curl_cffi with HTTP 200, no anti-bot.
+
+History: only Aygaz serves past prices — its ``expiryDates`` list goes back to 2013-01-04 (22 dates from
+2025-01-01 to 2026-10-02) and the proxy answers any of them. Mogaz answers an empty price for every past
+``expiryDate`` tried; Milangaz and İpragaz take no date. ``--backfill-from`` therefore runs Aygaz only. It writes
+``logs/backfill/aygaz_<from>_<today>.csv`` (one row per city and validity date, gitignored), then one
+``Aygaz/aygaz_YYYY-MM-DD.csv`` per day from
+<from> to yesterday holding the Aygaz prices in force that day (``valid_from`` shows which; ``collected_at`` is the
+backfill run time). Existing day files are never overwritten, so past days hold Aygaz only.
 
 ``price`` = TL per 12 kg cylinder, VAT included (each brand's ceiling / recommended retail price).
 ``province_code`` is the plate number; ``region`` splits İstanbul (Anadolu / Avrupa / Adalar) and Çanakkale
 (Bozcaada-Gökçeada) where the brand does; empty otherwise.
 
-Output: InflationItems/Datas/04_Housing/LPG/YYYY-MM-DD.csv
+Output (upstream layout: one CSV per store and day): InflationItems/Datas/04_Housing/<Store>/<store>_YYYY-MM-DD.csv
+with Store = Aygaz, Milangaz, Mogaz, Ipragaz.
 Columns: product_name, price, category_number (4), sub_category_number (0452201), brand, province, region,
 province_code, product, deposit, valid_from, source_url, collected_at.
 
 The four brands are four hosts, so they run in parallel threads (one Client each, 1 s apart per host); a
 full run takes as long as the slowest brand (Milangaz).
 
-Mogaz answers an empty price for İstanbul Avrupa (code 341; its own form shows nothing either): logged as a
-warning, no row. A province that fails is logged and skipped; a brand that fails is logged; the rest is still written and the
+Mogaz answers an empty price for İstanbul Avrupa (code 341; its own form shows nothing either), so that city
+is not requested; Mogaz İstanbul is Anadolu only. A province that fails is logged and skipped; a brand that fails is logged; the rest is still written and the
 run exits with status 1. Nothing is written when every brand fails.
 
 Examples:
   python scraper.py                                  # all brands, all provinces (~340 requests)
   python scraper.py --provinces 34 6 35              # bounded run: İstanbul, Ankara, İzmir
   python scraper.py --brand mogaz --provinces 6
+  python scraper.py --backfill-from 2025-01-01          # Aygaz history -> logs/backfill/ + day files
+  python scraper.py --days-from <history.csv>           # day files only, from a saved history CSV, no requests
 """
 
 import argparse
@@ -55,7 +65,7 @@ import re
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from bs4 import BeautifulSoup
@@ -75,7 +85,9 @@ BRANDS = ["aygaz", "milangaz", "mogaz", "ipragaz"]
 PRICE_RANGE = (300, 20000)  # TL per 12 kg cylinder; outside means a parse error
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
-DATA_DIR = REPO_ROOT / "InflationItems" / "Datas" / "04_Housing" / "LPG"
+DATAS_DIR = REPO_ROOT / "InflationItems" / "Datas" / "04_Housing"
+STORES = {"Aygaz": "Aygaz", "Milangaz": "Milangaz", "Mogaz": "Mogaz", "İpragaz": "Ipragaz"}  # row "brand" -> folder
+BACKFILL_DIR = REPO_ROOT / "logs" / "backfill"  # version histories; Datas holds only one CSV per store and day
 
 CATEGORY_NUMBER = 4
 LPG_ITEM = "0452201"  # TÜİK item "LPG tüp"
@@ -196,20 +208,24 @@ def per_city(brand: str, cities: list, wanted: set | None, fetch) -> tuple[list[
 
 # --- Aygaz ------------------------------------------------------------------------------------------------
 
-def aygaz(client: Client, wanted: set | None):
+def aygaz(client: Client, wanted: set | None, since: str | None = None):
+    """Newest validity date, or with ``since`` (YYYY-MM-DD) every validity date from then on (backfill)."""
     raw = client.get(AYGAZ_PAGE).text
     m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', raw, re.S)
     if not m:
         raise RuntimeError("Aygaz: __NEXT_DATA__ not found")
     props = json.loads(m.group(1))["props"]["pageProps"]
-    validity = max(d["value"] for d in props["expiryDates"])
+    dates = sorted(d["value"] for d in props["expiryDates"])
+    validities = [v for v in dates if v[:10] >= since] if since else dates[-1:]
+    if not validities:
+        raise RuntimeError(f"Aygaz: no validity date on or after {since} (newest {dates[-1]})")
     cities = []
     for c in props["cities"]:
         if c["value"] not in [x[0] for x in cities]:  # "34" is listed twice (Anadolu and plain İstanbul)
             cities.append((c["value"], *plate_region(c["value"])))
     token = client.get(AYGAZ_TOKEN).json()["Data"]["SessionToken"]
 
-    def fetch(code, plate, region):
+    def fetch(code, plate, region, validity):
         params = json.dumps({"cityId": code, "validityDate": validity, "productId": "1"})
         headers = {"X-CALL-TYPE": "68", "X-SessionToken": token,
                    "X-PARAMS": base64.b64encode(params.encode()).decode(), "Referer": AYGAZ_PAGE}
@@ -220,7 +236,21 @@ def aygaz(client: Client, wanted: set | None):
         return [lpg_row("Aygaz", plate, region, "12 kg tüp", data["Price"], data.get("DepositPrice", ""),
                         data["ValidityDate"][:10], AYGAZ_PAGE)]
 
-    return per_city("Aygaz", cities, wanted, fetch)
+    rows, failures = [], 0
+    for validity in validities:
+        try:
+            got, failed = per_city("Aygaz", cities, wanted, lambda *c: fetch(*c, validity))
+        except Exception as exc:  # one bad date should not cost the rest of a backfill
+            log.error("Aygaz %s failed: %s", validity[:10], exc)
+            failures += 1
+            continue
+        if since:
+            log.info("Aygaz %s: %d rows", validity[:10], len(got))
+        rows += got
+        failures += failed
+    if not rows:
+        raise RuntimeError("Aygaz: no validity date returned a price")
+    return rows, failures
 
 
 # --- Milangaz ---------------------------------------------------------------------------------------------
@@ -250,19 +280,23 @@ def milangaz(client: Client, wanted: set | None):
 
 # --- Mogaz ------------------------------------------------------------------------------------------------
 
+MOGAZ_SKIP = "341"  # İstanbul Avrupa: always an empty price, the site's own form shows nothing either
+
+
 def mogaz(client: Client, wanted: set | None):
     page = BeautifulSoup(client.get(MOGAZ_PAGE).text, "lxml")
     city_sel, date_sel = page.find("select", id="city"), page.find("select", id="expiryDate")
     if city_sel is None or date_sel is None:
         raise RuntimeError("Mogaz: city / expiryDate select not found")
     expiry = max((o["value"] for o in date_sel.find_all("option") if o.get("value")), key=dmy)
-    cities = [(o["value"], *plate_region(o["value"])) for o in city_sel.find_all("option") if o.get("value")]
+    cities = [(o["value"], *plate_region(o["value"])) for o in city_sel.find_all("option")
+              if o.get("value") and o["value"] != MOGAZ_SKIP]
 
     def fetch(code, plate, region):
         body = client.post(MOGAZ_API, data={"city": code, "tubeType": "FIYAT12", "expiryDate": expiry}).json()
         if body.get("StatusMessage") != "TRUE":
             raise RuntimeError(f"no price ({body})")
-        if not body.get("Price"):  # the site's own form shows nothing either (İstanbul Avrupa, 2026-10-28)
+        if not body.get("Price"):
             log.warning("Mogaz lists no price for %s %s", PROVINCES[plate], region)
             return []
         return [lpg_row("Mogaz", plate, region, "12 kg tüp", body["Price"], "", dmy(expiry), MOGAZ_PAGE)]
@@ -297,17 +331,55 @@ def ipragaz(client: Client, wanted: set | None):
     return per_city("İpragaz", cities, wanted, fetch)
 
 
+def write_daily(rows: list[dict], start: str) -> tuple[int, int]:
+    """One ``<store>_YYYY-MM-DD.csv`` per store and day from ``start`` to yesterday with the prices in force that
+    day (newest ``valid_from`` on or before it; rows keep their ``collected_at``). Existing day files (real daily
+    runs) are kept. Returns (written, skipped) file counts."""
+    by_date = {}  # valid_from -> rows of that price list
+    for r in rows:
+        by_date.setdefault(r["valid_from"], []).append(r)
+    written = skipped = 0
+    day, end = date.fromisoformat(start), date.today() - timedelta(days=1)
+    while day <= end:
+        in_force = max((d for d in by_date if d <= day.isoformat()), default=None)
+        if in_force:
+            stores = {r["brand"] for r in by_date[in_force]}
+            new = write_store_csvs(by_date[in_force], day.isoformat(), keep_existing=True)
+            written += len(new)
+            skipped += len(stores) - len(new)
+        day += timedelta(days=1)
+    return written, skipped
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--brand", nargs="+", choices=BRANDS, default=BRANDS, help="brands to fetch (default: all)")
     ap.add_argument("--provinces", nargs="+", type=int, default=None,
                     help="plate codes to fetch, e.g. 34 6 35 (default: every province a brand lists)")
     ap.add_argument("--delay", type=float, default=1.0, help="seconds between requests to one host (jittered)")
-    ap.add_argument("--output", default=None, help="CSV file name inside the data dir (default: YYYY-MM-DD.csv)")
+    ap.add_argument("--backfill-from", default=None, metavar="YYYY-MM-DD",
+                    help="every past price from this date on; only Aygaz serves history, so only Aygaz runs; "
+                         "writes logs/backfill/aygaz_<from>_<today>.csv and one aygaz_YYYY-MM-DD.csv per day up to yesterday")
+    ap.add_argument("--days-from", default=None, metavar="CSV",
+                    help="no requests: write the per-day files from a saved history CSV (a --backfill-from output)")
+    ap.add_argument("--output", default=None, help="write all rows to this CSV path instead of the store files (test runs)")
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
     started = time.monotonic()
+    if args.days_from:
+        with open(args.days_from, encoding="utf-8", newline="") as fh:
+            history = list(csv.DictReader(fh))
+        start = min(r["valid_from"] for r in history)
+        written, skipped = write_daily(history, start)
+        log.info("day files %s .. yesterday from %s: %d written, %d already existed (kept)", start, args.days_from,
+                 written, skipped)
+        return
     wanted = set(args.provinces) if args.provinces else None
+    if args.backfill_from:
+        date.fromisoformat(args.backfill_from)  # fail early on a malformed date
+        if args.brand != ["aygaz"]:
+            log.warning("backfill: Milangaz, Mogaz and İpragaz serve only the current price; running Aygaz only")
+        args.brand = ["aygaz"]
 
     steps = {"aygaz": ("Aygaz", aygaz), "milangaz": ("Milangaz", milangaz), "mogaz": ("Mogaz", mogaz),
              "ipragaz": ("İpragaz", ipragaz)}
@@ -315,7 +387,8 @@ def main():
     def run(brand):
         name, fetch = steps[brand]
         t0 = time.monotonic()
-        got, failures = fetch(Client(args.delay), wanted)  # own Client per brand: 1 s delay per host still holds
+        client = Client(args.delay)  # own Client per brand: 1 s delay per host still holds
+        got, failures = fetch(client, wanted, args.backfill_from) if brand == "aygaz" else fetch(client, wanted)
         log.info("%s: %d rows in %.1f s, valid from %s", name, len(got), time.monotonic() - t0,
                  got[0]["valid_from"] or "(not given)")
         return got, failures
@@ -331,7 +404,7 @@ def main():
                 got, failures = future.result()
                 rows += got
                 if failures:
-                    failed.append(f"{name} ({failures} cities)")
+                    failed.append(f"{name} ({failures} cities/dates)")
             except Exception as exc:
                 log.error("%s failed: %s", name, exc)
                 failed.append(name)
@@ -340,17 +413,44 @@ def main():
         log.error("every brand failed; no CSV written")
         sys.exit(1)
     collected_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    csv_path = DATA_DIR / (args.output or f"{date.today().isoformat()}.csv")
-    with csv_path.open("w", encoding="utf-8", newline="") as fh:
-        writer = csv.DictWriter(fh, fieldnames=COLUMNS)
-        writer.writeheader()
-        for row in rows:
-            writer.writerow({**row, "collected_at": collected_at})
-    log.info("wrote %d rows to %s in %.1f s", len(rows), csv_path, time.monotonic() - started)
+    rows = [{**row, "collected_at": collected_at} for row in rows]
+    # a backfill writes one file of every validity date (outside Datas), then the day files from it
+    if args.output or args.backfill_from:
+        path = (Path(args.output) if args.output
+                else BACKFILL_DIR / f"aygaz_{args.backfill_from}_{date.today().isoformat()}.csv")
+        write_csv(path, rows)
+        paths = [path]
+    else:
+        paths = write_store_csvs(rows, date.today().isoformat())
+    log.info("wrote %d rows to %s in %.1f s", len(rows), ", ".join(map(str, paths)), time.monotonic() - started)
+    if args.backfill_from:
+        written, skipped = write_daily(rows, args.backfill_from)
+        log.info("day files: %d written, %d already existed (kept)", written, skipped)
     if failed:
         log.error("incomplete run, failed: %s", ", ".join(failed))
         sys.exit(1)
+
+
+def write_csv(path: Path, rows: list[dict]):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="") as fh:
+        writer = csv.DictWriter(fh, fieldnames=COLUMNS)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def write_store_csvs(rows: list[dict], day: str, keep_existing=False) -> list[Path]:
+    """One ``Datas/04_Housing/<Store>/<store>_<day>.csv`` per brand; ``keep_existing`` skips files already there."""
+    by_store = {}
+    for r in rows:
+        by_store.setdefault(STORES[r["brand"]], []).append(r)
+    paths = []
+    for store, store_rows in by_store.items():
+        path = DATAS_DIR / store / f"{store.lower()}_{day}.csv"
+        if not (keep_existing and path.exists()):
+            write_csv(path, store_rows)
+            paths.append(path)
+    return paths
 
 
 if __name__ == "__main__":

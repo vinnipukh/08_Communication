@@ -12,10 +12,15 @@ python InflationItems/Codes/04_Housing/NaturalGas/scraper.py --source izmirgaz f
 - Requests: ~11 (İGDAŞ fee page + price API; Başkentgaz PDF list + PDF + fee section; İzmirgaz certificate
   check, intermediate certificate, page, tariff fragment, two fee fragments), 1 s apart per host.
   Runtime ~7 s (measured 2026-10-28).
-- Output: `InflationItems/Datas/04_Housing/NaturalGas/YYYY-MM-DD.csv`, written every run (dense time series).
+- Output (upstream layout: one CSV per store and day): `InflationItems/Datas/04_Housing/<Store>/<store>_YYYY-MM-DD.csv`
+  with Store = `IGDAS`, `Baskentgaz`, `Izmirgaz` (`igdas_`, `baskentgaz_`, `izmirgaz_`), written every run
+  (dense time series). The fee rows come from İzmirgaz's site and go to the İzmirgaz file. `--output <path>`
+  writes all rows to that one CSV instead of the store files (test runs).
 - Gas rows (0452101): Kademe-1 and Kademe-2 per city for the household tier. Kademe-2 applies to the whole
   month's consumption once it passes the city's monthly limit (EPDK, since 04.04.2026). Prices include ÖTV
-  (0.1468 TL/m³) and exclude 20 % VAT; `price` = TL/m³ (Başkentgaz quotes TL/Sm³).
+  (0.1468 TL/m³) and exclude 20 % VAT. `price` = TL/kWh for all three distributors (`unit` = `TL/kWh`): bills are
+  in kWh, and the volume prices are not one unit (Başkentgaz quotes TL/Sm³, the others TL/m³). The volume price
+  stays in `price_per_m3`. All history files were converted on 2026-10-28.
 - Fee rows (0452102): the EPDK caps from İzmirgaz (connection, extra connection per 100 m², connection
   inspection, deposits per appliance), province `Türkiye`, VAT excluded. The run compares the connection fee
   and the kombi deposit with İGDAŞ and Başkentgaz (VAT-included connection fee / 1.2) and logs a warning if
@@ -42,13 +47,16 @@ python InflationItems/Codes/04_Housing/NaturalGas/backfill.py                   
 python InflationItems/Codes/04_Housing/NaturalGas/backfill.py --start 2026-01-01 --source igdas
 ```
 
-Writes `backfill_<start>_<today>.csv` (same columns) with one row per tier and price version (`valid_from`)
-from `--start` to today, plus the version in force on `--start`. It then writes one `YYYY-MM-DD.csv` per day
-from `--start` to yesterday, like the daily scraper's files, holding per city the version in force that day
-(recognisable by `collected_at`, the backfill run time, and `valid_from`). These day files have only İstanbul
-and Ankara and no fee rows. Existing day files are never overwritten, and day files are written only when every
-source succeeded (`--no-daily` skips them). Run on 2026-10-28 from 2025-01-01: 89 version rows, 665 day files
-(3 rows a day before 04.04.2026, 4 after), ~60 s, ~50 requests (İGDAŞ 27 versions, Başkentgaz 28).
+Writes `logs/backfill/natural_gas_<start>_<today>.csv` (gitignored, same columns) with one row per tier and
+price version (`valid_from`) from `--start` to today, plus the version in force on `--start`. It then writes one
+`<Store>/<store>_YYYY-MM-DD.csv` per store and day from `--start` to yesterday, like the daily scraper's files,
+holding the version in force that day (recognisable by `collected_at`, the backfill run time, and
+`valid_from`). Existing day files are never overwritten, and day files are written only when every source
+succeeded (`--no-daily` skips them). Sources (`--source`): `igdas`, `baskentgaz`, `izmirgaz`, `fees`.
+
+Run on 2026-10-28 from 2025-01-01 (all four sources): 129 version rows, 665 day files per store
+(2025-01-01 .. 2026-10-27). İGDAŞ 2 rows a day; Başkentgaz 1 row before 04.04.2026, 2 after; İzmirgaz
+Kademe-1 plus the fee rows (4 rows a day in 2025, 10 in 2026).
 
 - İGDAŞ: the price API answers past months; a month with a mid-month change lists each tier twice
   (`ABDATUM`). Before 04.04.2026 KONUT and KONUT KADEME-2 carry the same price (both are written).
@@ -56,8 +64,16 @@ source succeeded (`--no-daily` skips them). Run on 2026-10-28 from 2025-01-01: 8
   "2.Gün İçin Geçerli", "3.Gün ve Sonrası"). Before 04.04.2026 the household row has a single price, written
   as `Konut Kademe-1`. The ÖTV in `components` is read from each PDF (0.1187 → 0.1373 on 03.07.2025 → 0.1468
   on 31.12.2025).
-- Not backfilled: İzmir (İzmirgaz shows only the current price; the Wayback Machine has no copy of its tariff
-  fragment) and the connection fees (0452102).
+- İzmirgaz: the archive fragments `tarifeler_arsiv_konut.php` (TL/m³) and `tarifeler_arsiv_konut_kwh.php`
+  (TL/kWh) list every monthly version back to 2021 in annual bands K1..K5; K1 (the household band) is written as
+  Kademe-1. Kademe-2 (since 04.04.2026) has no archive (its "Arşiv" link points to the şehit ve gazi archive), so
+  İzmir Kademe-2 starts with the daily scraper.
+- Fees (0452102, EPDK national caps, VAT excluded, written to the İzmirgaz files): the 2026 caps from
+  İzmirgaz's live fee pages, valid from 2026-01-01. No site keeps the 2025 caps and the Wayback Machine has no
+  copy, so the three 2025 connection caps (6,154 TL connection, 5,353 TL per extra 100 m², 3,471 TL inspection
+  for the first 100 m; effective 01.01.2025) are transcribed in `fees_transcribed.csv` next to the script
+  (source: Bloomberg HT, 31.12.2024; YatırımX gives the same figures). The 2025 deposit (güvence) caps were
+  found in no second source and are not written, so 2025 day files have no deposit rows.
 
 ## Troubleshooting
 
@@ -75,3 +91,16 @@ source succeeded (`--no-daily` skips them). Run on 2026-10-28 from 2025-01-01: 8
 - `İzmirgaz konut.php: tariff tables changed` — the "Konut Tüketicileri Kademe-1/2" tables moved or were renamed.
 - Needs `curl_cffi`, `beautifulsoup4`, `lxml`, `pypdf`, `certifi` (`requirements.txt`).
 - Git Bash on Windows garbles Turkish output; set `PYTHONIOENCODING=utf-8`.
+
+## Notes
+
+- Schedule: none yet (no cron or Actions job). Monthly is enough; İGDAŞ already answers future months.
+- İGDAŞ has no tax footnote; its prices are ÖTV-included and VAT-excluded by arithmetic (Kademe-1 − gas − ÖTV
+  = SKB, as at the other two). İGDAŞ's fee page has no year or VAT note, so the fee rows come from İzmirgaz.
+  Başkentgaz grosses its connection fee up by VAT but not its deposits.
+- Reusable: `izmirgaz_client()` (adds a missing intermediate from the AIA URL, verification stays on) for any
+  host without an intermediate certificate; `tr_month()` for Turkish month names (`"EKİM".lower()` is not
+  `"ekim"` because of the dotted İ); `tr_number()` for "14,468019" / "₺9.679,20" / "8.066".
+- `pypdf` and `certifi` were added to `requirements.txt`, `pyproject.toml` and `uv.lock` for this scraper.
+- Open: İzmirgaz's intermediate URL is a constant, so a CA change needs a code update. Başkentgaz split months
+  (e.g. April 2026) take the later PDF only in the daily run.

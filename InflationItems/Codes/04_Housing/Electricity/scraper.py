@@ -16,9 +16,10 @@ Rows written: every "Mesken" row of the table (OG çift terim, OG tek terim, AG 
 the OG çift terim power charge (kr/kW/ay) is not added. A file is written every run even when the
 decision is unchanged, to keep the time series dense.
 
-Output: InflationItems/Datas/04_Housing/Electricity/YYYY-MM-DD.csv
+Output: InflationItems/Datas/04_Housing/EPDK/epdk_YYYY-MM-DD.csv (upstream layout: one CSV per store and day)
 Columns: product_name, price (total in TL/kWh), category_number (4), sub_category_number (0451001),
-then tariff_group, voltage, time_band, energy_charge, distribution_charge, total (kuruş/kWh), unit,
+then tariff_group, voltage, time_band, energy_charge, distribution_charge, total (TL/kWh, converted from
+EPDK's kuruş/kWh), unit (TL/kWh),
 vat_included, effective_date, decision_no, source_url, collected_at.
 
 The parser reads the sheet layout in use since 04.04.2026 (headers "Tek Zamanlı Enerji Bedeli",
@@ -52,7 +53,9 @@ FAST_ACCESS_ID = "1327"
 BACKOFF = [2, 5, 10]  # seconds waited after each failed request, then give up
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
-DATA_DIR = REPO_ROOT / "InflationItems" / "Datas" / "04_Housing" / "Electricity"
+STORE = "EPDK"
+DATA_DIR = REPO_ROOT / "InflationItems" / "Datas" / "04_Housing" / STORE
+BACKFILL_DIR = REPO_ROOT / "logs" / "backfill"  # version histories; Datas holds only one CSV per store and day
 
 CATEGORY_NUMBER = 4
 SUB_CATEGORY_NUMBER = "0451001"  # TÜİK item "Elektrik"
@@ -217,7 +220,7 @@ def parse_table_2024(rows: list[list]) -> list[dict]:
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--delay", type=float, default=1.0, help="seconds between requests (jittered)")
-    ap.add_argument("--output", default=None, help="CSV file name inside the data dir (default: YYYY-MM-DD.csv)")
+    ap.add_argument("--output", default=None, help="write this CSV path instead of the store's day file (test runs)")
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
     started = time.monotonic()
@@ -236,21 +239,32 @@ def main():
     log.info("decision %s, effective %s: %d residential rows (%s)", entry.get("Number"), eff, len(tariffs), title)
 
     collected_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    csv_path = DATA_DIR / (args.output or f"{date.today().isoformat()}.csv")
-    with csv_path.open("w", encoding="utf-8", newline="") as fh:
-        writer = csv.DictWriter(fh, fieldnames=COLUMNS)
-        writer.writeheader()
-        for row in csv_rows(tariffs, eff, entry, url):
-            writer.writerow({**row, "collected_at": collected_at})
+    csv_path = Path(args.output) if args.output else day_path(date.today().isoformat())
+    write_csv(csv_path, csv_rows(tariffs, eff, entry, url), collected_at)
     log.info("wrote %d rows to %s in %.1f s", len(tariffs), csv_path, time.monotonic() - started)
 
 
+def day_path(day: str) -> Path:
+    return DATA_DIR / f"{STORE.lower()}_{day}.csv"
+
+
+def write_csv(path: Path, rows: list[dict], collected_at: str):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="") as fh:
+        writer = csv.DictWriter(fh, fieldnames=COLUMNS)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow({**row, "collected_at": collected_at})
+
+
 def csv_rows(tariffs: list[dict], eff: str, entry: dict, url: str) -> list[dict]:
+    """Output rows; EPDK's kuruş/kWh charges are written in TL/kWh, the unit of ``price``."""
     return [{
         "product_name": f"Elektrik {t['voltage']} {t['tariff_group']} - {t['time_band']}",
         "price": round(t["total"] / 100, 6), "category_number": CATEGORY_NUMBER,
-        "sub_category_number": SUB_CATEGORY_NUMBER, **t, "unit": "kuruş/kWh", "vat_included": "false",
+        "sub_category_number": SUB_CATEGORY_NUMBER, **t,
+        **{k: round(t[k] / 100, 6) for k in ("energy_charge", "distribution_charge", "total")},
+        "unit": "TL/kWh", "vat_included": "false",
         "effective_date": eff, "decision_no": entry.get("Number"), "source_url": url,
     } for t in tariffs]
 

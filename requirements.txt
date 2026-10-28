@@ -5,6 +5,7 @@ curl-cffi>=0.7
 lxml>=5.0
 openpyxl>=3.1  # EPDK electricity tariff XLSX
 pypdf>=5.0  # Başkentgaz natural gas tariff PDF
+rapidocr-onnxruntime>=1.4  # TKİ coal price image OCR (automatic transcription)
 requests>=2.32
 
 # Browser automation

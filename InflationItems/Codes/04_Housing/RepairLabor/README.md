@@ -16,7 +16,7 @@ python InflationItems/Codes/04_Housing/RepairLabor/scraper.py --backfill        
 ## Backfill
 
 `--backfill` uses the same page fetches (no extra requests) and also writes one CSV per past day that the pages'
-12-month history covers. Run on 2026-10-28 it wrote 365 files, `2025-10-01.csv` .. `2026-09-30.csv`. 1–27
+12-month history covers. Run on 2026-10-28 it wrote 365 files, `armut_2025-10-01.csv` .. `armut_2026-09-30.csv`. 1–27
 October 2026 have no files: the month is not in the history yet, and the daily series starts with the
 2026-10-28 run.
 
@@ -32,7 +32,9 @@ October 2026 have no files: the month is not in the history yet, and the daily s
 
 - Requests: sitemap index + `price-arealevel1-*` sitemap(s) + one page per service × province; ~71 for the
   default scope, 1 s apart. Default run 83 s (measured 2026-10-28); `--provinces all` ~40 min.
-- Output: `InflationItems/Datas/04_Housing/RepairLabor/YYYY-MM-DD.csv`, one row per service × province.
+- Output: `InflationItems/Datas/04_Housing/Armut/armut_YYYY-MM-DD.csv` (upstream layout: one CSV per store and
+  day, store = Armut), one row per service × province. `--output <path>` writes that CSV instead of the day
+  file (test runs).
 - `price` = mean of the newest month's quotes in that city (`price_avg`, month in `avg_month`, normally the
   previous calendar month). When a page has no monthly data, the midpoint of `price_min`–`price_max`; `notes`
   says which was used.
@@ -65,3 +67,14 @@ October 2026 have no files: the month is not in the history yet, and the daily s
 - `service ids not in services.json` — `--services` takes only ids listed in `services.json`.
 - Needs `curl_cffi` (`requirements.txt`).
 - Git Bash on Windows garbles Turkish output; set `PYTHONIOENCODING=utf-8`.
+
+## Notes
+
+- Schedule: none yet (no cron or Actions job). Monthly is enough; the data moves once a month.
+- No history beyond the 12 months in `monthlyPrices` (checked 2026-10-28).
+- The newest month can lag when a month has no quotes (İzmir lock change showed 2026-08 on 2026-10-28). A
+  consumer should weight by `month_quote_count` or prefer high-volume services.
+- Reusable: the `page_urls()` pattern (sitemap → id-keyed URL map) for any site with id-suffixed URLs; no
+  city-slug table is needed.
+- Open: the service choice in `services.json` is a judgement call; review it against the TÜİK item definition
+  if the index team has one.
