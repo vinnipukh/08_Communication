@@ -1,8 +1,10 @@
 # HTTP clients and parsing
 beautifulsoup4>=4.12
+certifi  # CA bundle; natural gas adds İzmirgaz's missing intermediate to it
 curl-cffi>=0.7
 lxml>=5.0
 openpyxl>=3.1  # EPDK electricity tariff XLSX
+pypdf>=5.0  # Başkentgaz natural gas tariff PDF
 requests>=2.32
 
 # Browser automation

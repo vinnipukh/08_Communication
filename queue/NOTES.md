@@ -21,3 +21,17 @@ short; no absolute paths, usernames or cookies.
   jittered ~1 s delay, `Retry-After`, fail after 3 backoffs) is small enough to copy for items 2–7.
 - Git Bash on Windows garbles Turkish characters in Python output; set `PYTHONIOENCODING=utf-8` when reading logs.
 - Not done: no schedule (cron/Actions) yet for the 04 utilities scrapers.
+
+## 2026-10-28 — 2 Natural gas (İGDAŞ, Başkentgaz, İzmirgaz)
+- `www.igdas.istanbul` drops curl_cffi connections; use `igdas.istanbul`. İGDAŞ has no tax footnote; prices
+  are ÖTV-incl / VAT-excl by arithmetic (spec updated). İGDAŞ's fee page has no year/VAT, so fees come from
+  İzmirgaz; Başkentgaz grosses up connection fees by VAT but not deposits. All three fees matched.
+- İzmirgaz omits its intermediate certificate: `izmirgaz_client()` in `NaturalGas/scraper.py` retries with the
+  AIA issuer added to the certifi bundle (verification stays on). Copy it for any other host with this problem.
+- Python's `"EKİM".lower()` != `"ekim"` (dotted İ). Use the `tr_month()` helper from `NaturalGas/scraper.py`
+  for Turkish month names (Electricity's `effective_date()` would hit it only with upper-case names like
+  "EKİM"; its sheet uses title case, and its fallback catches a miss). Also reusable there: `tr_number()` for "14,468019" / "₺9.679,20" / "8.066".
+- Added `pypdf` (text PDFs) and `certifi` to `requirements.txt`, `pyproject.toml`, `uv.lock`.
+- Measured ~7 s for ~11 requests; one bounded run took 36 s (a slow first connection, not reproduced).
+- Open: İzmirgaz's intermediate URL is a constant; a CA change needs an update. Başkentgaz split months
+  (e.g. April 2026) pick the later PDF only. No schedule yet; monthly is enough (İGDAŞ answers future months).

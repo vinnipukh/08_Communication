@@ -10,7 +10,7 @@ endpoint with no extra code, take them all; never add work just to cover other p
 | # | Spec | TÜİK items | Est. requests / run | Est. runtime | Status |
 |---|---|---|---|---|---|
 | 1 | [01_electricity_epdk.md](01_electricity_epdk.md) | 0451001 | 3 | ~4 s (measured) | done (2026-10-28) |
-| 2 | [02_natural_gas.md](02_natural_gas.md) | 0452101, 0452102 | ~7 | ~20 s | todo |
+| 2 | [02_natural_gas.md](02_natural_gas.md) | 0452101, 0452102 | ~11 | ~7 s (measured) | done (2026-10-28) |
 | 3 | [03_water.md](03_water.md) | 0441101 | ~4 | ~15 s | todo |
 | 4 | [04_lpg.md](04_lpg.md) | 0452201 | ~330 (81 provinces × 4 brands) | ~5–7 min | todo |
 | 5 | [05_repair_labor_armut.md](05_repair_labor_armut.md) | 0432015 | ~60 | ~1–2 min | todo |

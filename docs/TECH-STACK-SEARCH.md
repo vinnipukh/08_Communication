@@ -567,3 +567,22 @@ only). The one-off conversion script was not added to the repository.
   instead of writing a CSV.
 - Verified 2026-10-28 by a live run: decision 14461 (effective 2026-04-04), 16 rows, AG tek terim mesken
   tek zamanlı 291.8965 kr/kWh (≤8 kWh/gün) and 432.0708 kr/kWh (>8 kWh/gün), matching the sheet.
+
+## 3.6 Natural gas price + connection fee scraper (2026-10-28)
+
+`InflationItems/Codes/04_Housing/NaturalGas/scraper.py` (TÜİK 0452101, 0452102), output
+`InflationItems/Datas/04_Housing/NaturalGas/YYYY-MM-DD.csv`. Item 2 of the TÜİK 04 utilities queue (`queue/`).
+- Sources, one per city: İGDAŞ JSON API (`POST api.igdas.istanbul/Sap/Sap/PerakendeSatisFiyati`,
+  `{"AYYIL":"MMYYYY"}`), Başkentgaz monthly tariff PDF (list from `bskapiv1.baskentdogalgaz.com.tr/api/menus/31/
+  sections`, text read with `pypdf`, new dependency), İzmirgaz HTML fragment (`pages/musteri_hizmetleri/konut.php`).
+  Fees (EPDK caps) from İzmirgaz's decision-text fragments, cross-checked against İGDAŞ and Başkentgaz.
+  `curl_cffi` (Chrome impersonation) throughout, no browser; ~11 requests, ~7 s.
+- `www.igdas.istanbul` drops curl_cffi connections (all impersonation profiles); the bare `igdas.istanbul` works.
+- İzmirgaz serves no intermediate certificate. Instead of `verify=False`, the client fetches the issuer from
+  the certificate's AIA URL (Sectigo DV R36), appends it to the `certifi` bundle (explicit dependency now) in a
+  temporary file and keeps verification on; it only does this after a normal verification fails.
+- Turkish month names: `"EKİM".lower()` is `"eki̇m"` (dotted İ → i + U+0307), so month lookups go through
+  `tr_month()`, which maps İ/I before lowercasing.
+- A failed source does not block the others: the CSV gets the rest and the run exits 1.
+- Verified 2026-10-28 by a live run: 15 rows; Kademe-1/Kademe-2 TL/m³ İstanbul 13.807908/21.182908,
+  Ankara 14.468019/21.843019 (TL/Sm³), İzmir 15.650179/23.025179; abone bağlantı bedeli 8,066 TL in all three.
