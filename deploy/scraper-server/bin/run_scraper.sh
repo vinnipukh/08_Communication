@@ -12,6 +12,7 @@ ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)"  # <rep
 PY="$ROOT/venv/bin/python"
 CODES="$ROOT/InflationItems/Codes/08_Communication"
 TELECOM="$CODES/Telecom"
+HOUSING="$ROOT/InflationItems/Codes/04_Housing"
 LOG_DIR="$ROOT/server_logs"
 STATUS_LOG="$ROOT/log.txt"
 LOCK=/tmp/scraper.lock
@@ -29,7 +30,10 @@ case "$NAME" in
   internet) TIMEOUT=75m;  CMD=("$PY" -u "$TELECOM/internet.py") ;;
   streaming) TIMEOUT=15m; CMD=("$PY" -u "$TELECOM/streaming.py") ;;
   repair)   TIMEOUT=90m;  CMD=("$PY" -u "$TELECOM/repair.py") ;;
-  *) echo "usage: $0 {samsung|huawei|pozitif|beymen|dr|vatan|telecom|internet|streaming|repair}"; exit 2 ;;
+  # TÜİK 04 sources that time out from GitHub runner IPs (the rest run in scraper_04_utilities.yml)
+  naturalgas) TIMEOUT=15m; CMD=("$PY" -u "$HOUSING/NaturalGas/scraper.py") ;;
+  iski)     TIMEOUT=10m;  CMD=("$PY" -u "$HOUSING/Water/scraper.py" --source iski) ;;
+  *) echo "usage: $0 {samsung|huawei|pozitif|beymen|dr|vatan|telecom|internet|streaming|repair|naturalgas|iski}"; exit 2 ;;
 esac
 
 cd "$ROOT" || exit 1

@@ -12,11 +12,10 @@ One public page per service, plain HTTP (recon 2026-10-09, docs/site-analysis/te
   mubi        api.mubi.com/v4/subscription_plans with Client-Country: TR (the page's plans follow the IP)
   tvplus      tvplus.com.tr/paketler RSC payload (stickyBarData + Turkcell x HBO Max packages)
   tivibu      tivibu.com.tr/paketler .item-container / .priceSelect cards
-  tod         todtv.com.tr/satinal .package-card cards
   gain        destek.gain.tv/sss.html FAQ ("Aylık abonelik 149 TL, yıllık abonelik ise 1.490 TL")
   tabii       tabii.com/tr rendered plan cards via one headless Chrome visit (price is filled client-side)
-Not collected: Exxen and Hepsiburada Premium (price only after sign-up / login), Paramount+ (not sold
-in Türkiye).
+Not collected: TOD (todtv.com.tr gives the server IP a CloudFront 403; removed 2026-10-28), Exxen and
+Hepsiburada Premium (price only after sign-up / login), Paramount+ (not sold in Türkiye).
 
 Output: InflationItems/Datas/08_Communication/<Service>/<service>_YYYY-MM-DD.csv
 Usage:  python streaming.py [--operator netflix|...|all] [--limit N]
@@ -27,7 +26,7 @@ import re
 
 from bs4 import BeautifulSoup
 
-from scraper import OUT_ROOT, Blocked, Fetcher, Skipped, row, run, tl, tr_lower
+from scraper import OUT_ROOT, Blocked, Fetcher, row, run, tl, tr_lower
 
 import tuik08  # noqa: E402  (scraper.py put 08_Communication/ on sys.path)
 
@@ -215,40 +214,6 @@ def tivibu(limit):
     return need(rows, "tivibu")
 
 
-def tod(limit):
-    url = "https://www.todtv.com.tr/satinal"
-    # the homepage redirects to a small "/mac-basliyor/" splash on match days -> open the shop page directly
-    try:
-        html = page(url, url)
-    except Blocked as e:
-        if "-> 403" in str(e):  # CloudFront refuses datacenter IPs (all paths, every TLS fingerprint)
-            raise Skipped(f"{e}; IP blocked by CloudFront, no row written") from e
-        raise
-    soup = BeautifulSoup(html, "html.parser")
-    rows, seen = [], set()
-    for card in soup.select(".package-card[data-item-name]"):
-        name = card["data-item-name"]
-        for pr in card.select(".subscribe-accordion-collapse-pricing"):
-            price = pr.select_one(".subscribe-accordion-collapse-price")
-            inst = (pr.select_one(".subscribe-accordion-collapse-installment") or pr).get_text(" ", strip=True)
-            if not price:
-                continue
-            # "/Ayda 12 TAKSİTLE" = yearly/seasonal plan paid in instalments, "/Aylık" = cancel-anytime monthly
-            kind = f"taksitli ({tr_lower(inst)})" if inst else "aylık"
-            key = (name, kind)
-            if key in seen:
-                continue
-            seen.add(key)
-            price_text = price.get_text(strip=True)
-            later = re.search(r"Sonraki Aylar\s*([\d.,]+)\s*₺", card.get_text(" ", strip=True))
-            if not inst and later:  # "İlk Ay 9₺ Sonraki Aylar 129₺": record the regular monthly price
-                kind, price_text = f"aylık (ilk ay {price_text})", later.group(1)
-            rows.append(srow("tod", f"TOD {name} {kind}", price_text, "1_ay", url,
-                             group=card.get("data-item-category", ""),
-                             pid=f"{card.get('data-item-id')}-{'taksit' if inst else 'aylik'}"))
-    return need(rows, "tod")
-
-
 def gain(limit):
     url = "https://destek.gain.tv/sss.html"
     t = text_of(page("https://destek.gain.tv/", url, min_len=1000))
@@ -273,10 +238,10 @@ def tabii(limit):
 
 SERVICES = {"netflix": netflix, "disney": disney, "hbomax": hbomax, "prime": prime, "appletv": appletv,
             "youtube": youtube, "spotify": spotify, "mubi": mubi, "tvplus": tvplus, "tivibu": tivibu,
-            "tod": tod, "gain": gain, "tabii": tabii}
+            "gain": gain, "tabii": tabii}
 DIR_NAMES = {"netflix": "Netflix", "disney": "DisneyPlus", "hbomax": "HBOMax", "prime": "AmazonPrime",
              "appletv": "AppleTVPlus", "youtube": "YouTubePremium", "spotify": "Spotify", "mubi": "MUBI",
-             "tvplus": "TVPlus", "tivibu": "Tivibu", "tod": "TOD", "gain": "GAIN", "tabii": "Tabii"}
+             "tvplus": "TVPlus", "tivibu": "Tivibu", "gain": "GAIN", "tabii": "Tabii"}
 
 if __name__ == "__main__":
     run(SERVICES, DIR_NAMES, OUT_ROOT, FIELDS, "telecom_streaming", __doc__, tuik08.DIGITAL_CONTENT)

@@ -392,7 +392,9 @@ def netgsm(limit):
 
 # ---------------------------------------------------------------- main
 
-OPERATORS = {"turkcell": turkcell, "vodafone": vodafone, "turktelekom": turktelekom, "netgsm": netgsm}
+# netgsm (one page) before turktelekom (~490 slow pages): a TT slowdown that hits the job timeout
+# must not cost NetGSM's CSV as well (2026-10-28)
+OPERATORS = {"turkcell": turkcell, "vodafone": vodafone, "netgsm": netgsm, "turktelekom": turktelekom}
 DIR_NAMES = {"turkcell": "Turkcell", "vodafone": "Vodafone", "turktelekom": "TurkTelekom", "netgsm": "NetGSM"}
 
 

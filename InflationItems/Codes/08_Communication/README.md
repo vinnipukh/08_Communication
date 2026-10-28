@@ -97,6 +97,5 @@ küçük ev aletleri, beyaz eşya, kişisel bakım cihazları ve yazılım lisan
 - Mobil tarifelerde faturalı ve faturasız tarifeler ile ek paketler ayrı satırdır.
 - Onarımda her model + hizmet (örneğin "iPhone 15 ekran değişimi") bir satırdır. Sepet henüz
   belirlenmedi, kaynakların yayımladığı her şey toplanıyor.
-- Streaming'de her plan ve periyot (aylık / yıllık) bir satırdır. `streaming.py` TOD'u da
-  destekliyor (2026-10-09 yerel çalıştırmada 8 satır), ama sunucunun 2026-10-10 çıktısında TOD dosyası
-  yok; sunucu logunda kontrol edilmeli.
+- Streaming'de her plan ve periyot (aylık / yıllık) bir satırdır. TOD 2026-10-28'de çıkarıldı
+  (todtv.com.tr sunucu IP'sine CloudFront 403 veriyor).

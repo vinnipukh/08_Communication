@@ -10,7 +10,14 @@
 set -u
 
 ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)"  # <repo-root>: bin/ lives directly under it
-DATA=InflationItems/Datas/08_Communication
+# Only the folders this server writes; the other 04_Housing stores come from Actions or people.
+DATA=(
+  InflationItems/Datas/08_Communication
+  InflationItems/Datas/04_Housing/IGDAS
+  InflationItems/Datas/04_Housing/Baskentgaz
+  InflationItems/Datas/04_Housing/Izmirgaz
+  InflationItems/Datas/04_Housing/ISKI
+)
 STAMP="$ROOT/.last_push"
 BRANCH=main
 LABEL="${1:-manual}"
@@ -26,7 +33,8 @@ NEXT="$WORK/stamp"
 touch "$NEXT"
 INDEX="$WORK/index"  # must not exist yet: git rejects an empty index file
 
-mapfile -t FILES < <(find "$DATA" -type f -name '*.csv' -newer "$STAMP" | sort)
+mapfile -t DIRS < <(for d in "${DATA[@]}"; do [ -d "$d" ] && echo "$d"; done)
+mapfile -t FILES < <([ ${#DIRS[@]} -gt 0 ] && find "${DIRS[@]}" -type f -name '*.csv' -newer "$STAMP" | sort)
 if [ ${#FILES[@]} -eq 0 ]; then
   echo "push: no new CSVs since $(date -r "$STAMP" '+%F %T')"
   exit 0

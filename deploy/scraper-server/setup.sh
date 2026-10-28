@@ -56,7 +56,7 @@ if [ -x venv/bin/python ] && ! venv/bin/python -c 'import sys; sys.exit(sys.vers
 fi
 [ -x venv/bin/python ] || "$UV" venv --python 3.11 venv
 "$UV" pip install --python venv/bin/python -r "$HERE/requirements.txt"
-venv/bin/python -c 'import requests, bs4, lxml, pandas, curl_cffi, undetected_chromedriver; print("python packages OK")'
+venv/bin/python -c 'import requests, bs4, lxml, pandas, curl_cffi, undetected_chromedriver, pypdf, certifi; print("python packages OK")'
 
 echo "== 6/6 crontab (replaces only our block, keeps your other jobs)"
 {

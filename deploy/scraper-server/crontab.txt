@@ -2,19 +2,22 @@
 # Installed by setup.sh (it replaces only the block between the BEGIN/END markers).
 # Each job takes a global lock, so even if one runs late they never overlap.
 # Durations measured 2026-09-28 (full runs): samsung 1 min, huawei 1, pozitif 1,
-# dr 1, beymen 11, vatan 19. Start times leave room for a slower server.
+# dr 1, beymen 11, vatan 19; naturalgas and iski (TÜİK 04) under 1 min. Each job starts after the previous
+# one's timeout (+2 min kill grace) plus at least 8 min has passed, so even a job that hits its timeout never delays the next one.
 # BEGIN inflation-scrapers
 SHELL=/bin/bash
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 30 0 * * * @ROOT@/bin/cleanup.sh >> @ROOT@/log.txt 2>&1
 0  1 * * * @ROOT@/bin/run_scraper.sh samsung >> @ROOT@/log.txt 2>&1
-10 1 * * * @ROOT@/bin/run_scraper.sh huawei  >> @ROOT@/log.txt 2>&1
-20 1 * * * @ROOT@/bin/run_scraper.sh pozitif >> @ROOT@/log.txt 2>&1
-30 1 * * * @ROOT@/bin/run_scraper.sh dr      >> @ROOT@/log.txt 2>&1
-0  2 * * * @ROOT@/bin/run_scraper.sh beymen  >> @ROOT@/log.txt 2>&1
-0  4 * * * @ROOT@/bin/run_scraper.sh vatan   >> @ROOT@/log.txt 2>&1
-0  6 * * * @ROOT@/bin/run_scraper.sh telecom  >> @ROOT@/log.txt 2>&1
-30 7 * * * @ROOT@/bin/run_scraper.sh internet >> @ROOT@/log.txt 2>&1
-45 8 * * * @ROOT@/bin/run_scraper.sh streaming >> @ROOT@/log.txt 2>&1
-0  9 * * * @ROOT@/bin/run_scraper.sh repair    >> @ROOT@/log.txt 2>&1
+35 1 * * * @ROOT@/bin/run_scraper.sh huawei  >> @ROOT@/log.txt 2>&1
+55 1 * * * @ROOT@/bin/run_scraper.sh pozitif >> @ROOT@/log.txt 2>&1
+20 2 * * * @ROOT@/bin/run_scraper.sh dr      >> @ROOT@/log.txt 2>&1
+50 2 * * * @ROOT@/bin/run_scraper.sh naturalgas >> @ROOT@/log.txt 2>&1
+15 3 * * * @ROOT@/bin/run_scraper.sh iski    >> @ROOT@/log.txt 2>&1
+35 3 * * * @ROOT@/bin/run_scraper.sh beymen  >> @ROOT@/log.txt 2>&1
+35 4 * * * @ROOT@/bin/run_scraper.sh vatan   >> @ROOT@/log.txt 2>&1
+55 6 * * * @ROOT@/bin/run_scraper.sh telecom  >> @ROOT@/log.txt 2>&1
+35 8 * * * @ROOT@/bin/run_scraper.sh internet >> @ROOT@/log.txt 2>&1
+0  10 * * * @ROOT@/bin/run_scraper.sh streaming >> @ROOT@/log.txt 2>&1
+25 10 * * * @ROOT@/bin/run_scraper.sh repair    >> @ROOT@/log.txt 2>&1
 # END inflation-scrapers
