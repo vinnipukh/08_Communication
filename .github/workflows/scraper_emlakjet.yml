@@ -68,7 +68,7 @@ jobs:
       - name: Commit and push data
         if: ${{ always() }}
         run: |
-          f="InflationItems/Datas/04_Housing/Emlakjet/$(date +%F).csv"
+          f="InflationItems/Datas/04_Housing/Emlakjet/emlakjet_$(date +%F).csv"
           if [ ! -f "$f" ] || [ "$(wc -l < "$f")" -lt 10000 ]; then
             echo "No complete-enough CSV ($f), not committing."
             exit 0

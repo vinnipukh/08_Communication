@@ -8,7 +8,7 @@ pages (1,500 cards), so a scope above the cap is split: country -> provinces ->
 districts -> neighbourhoods (links of the scope page itself). Only ``?sayfa=`` is
 used; robots.txt disallows ``?filtreler=*``.
 
-Output: InflationItems/Datas/04_Housing/Emlakjet/YYYY-MM-DD.csv
+Output: InflationItems/Datas/04_Housing/Emlakjet/emlakjet_YYYY-MM-DD.csv (upstream: <store>_YYYY-MM-DD.csv)
 Columns: product_name ("District / Neighborhood - Rooms"), price (number), category_number (4),
 sub_category_number (0411001), then ilanId, District, Rooms, ListingURL, Province,
 Neighborhood, PropertyType, AreaM2, Currency, ListingDate, CollectedAt.
@@ -189,7 +189,7 @@ class Crawler:
         self.day = date.today().isoformat()
         DATA_DIR.mkdir(parents=True, exist_ok=True)
         CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
-        self.csv_path = DATA_DIR / (f"{self.day}.csv" if not args.output else args.output)
+        self.csv_path = DATA_DIR / (f"emlakjet_{self.day}.csv" if not args.output else args.output)
         self.ckpt_path = CHECKPOINT_DIR / f"{self.day}.json"
         self.seen: set[str] = set()
         self.done: set[str] = set()
@@ -326,7 +326,7 @@ def main():
     ap.add_argument("--delay", type=float, default=1.5, help="seconds between requests (jittered)")
     ap.add_argument("--workers", type=int, default=1, help="parallel request streams; per-IP request rate scales with N")
     ap.add_argument("--resume", action="store_true", help="continue today's CSV/checkpoint")
-    ap.add_argument("--output", default=None, help="CSV file name inside the data dir (default: YYYY-MM-DD.csv)")
+    ap.add_argument("--output", default=None, help="CSV file name inside the data dir (default: emlakjet_YYYY-MM-DD.csv)")
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
     crawler = Crawler(args)
