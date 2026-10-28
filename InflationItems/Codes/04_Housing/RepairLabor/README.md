@@ -70,7 +70,7 @@ October 2026 have no files: the month is not in the history yet, and the daily s
 
 ## Notes
 
-- Schedule: none yet (no cron or Actions job). Monthly is enough; the data moves once a month.
+- Schedule: daily 09:00 Istanbul on GitHub Actions (`.github/workflows/scraper_04_utilities.yml`, since 2026-10-28).
 - No history beyond the 12 months in `monthlyPrices` (checked 2026-10-28).
 - The newest month can lag when a month has no quotes (İzmir lock change showed 2026-08 on 2026-10-28). A
   consumer should weight by `month_quote_count` or prefer high-volume services.

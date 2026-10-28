@@ -49,8 +49,7 @@ layout (`parse_table_2024()`); the ≤8 / >8 kWh/gün AG mesken split already ex
 
 ## Notes
 
-- Schedule: none yet (no cron or Actions job). No frequency was settled; EPDK changes the table a few times a
-  year, so a daily run only keeps the series dense.
+- Schedule: daily 09:00 Istanbul on GitHub Actions (`.github/workflows/scraper_04_utilities.yml`, since 2026-10-28).
 - `GetFastAccessList` answers an object; the decisions are under `model`, not a bare array. Per decision,
   `IsFileType` 1 = decision PDF, 2 = XLSX table.
 - Reusable: the `Client` class in `scraper.py` (curl_cffi Chrome session, page first, jittered ~1 s delay,

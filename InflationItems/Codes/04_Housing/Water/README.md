@@ -79,8 +79,9 @@ the water + wastewater = total check. İZSU's konut tiers changed on 05.05.2025 
 
 ## Notes
 
-- Schedule: none yet (no cron or Actions job). Monthly is enough; İSKİ changes its prices around the 3rd–5th
-  of each month.
+- Schedule: ASKİ and İZSU daily 09:00 Istanbul on GitHub Actions (`scraper_04_utilities.yml`, `--source aski izsu`).
+  İSKİ times out from runner IPs (test run 2026-10-28) and is to run from the cron server (`--source iski`), not set
+  up yet.
 - The İSKİ page also has a KSUB "<year> Yılı" link list; the first link per year is the water PDF.
 - ASKİ's page links the PDF with a relative `../Yukle/...` path, and some links on that page use backslashes:
   replace `\` with `/`, then `urljoin`. İZSU's "2a ATIKSU KONUT" rows (own well, wastewater only) are skipped.

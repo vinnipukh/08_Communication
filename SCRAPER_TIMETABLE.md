@@ -6,7 +6,7 @@ All times in **Istanbul time (UTC+3)**. Türkiye uses UTC+3 year-round (no dayli
 
 | Istanbul Time (UTC+3) | UTC  | Scraper        | Workflow File         | Script                                   | Output Data                      |
 |-----------------------|------|----------------|-----------------------|------------------------------------------|----------------------------------|
-| 09:00                | 06:00 | TÜİK 04 utilities, fuels, repair labour (EPDK, İGDAŞ, Başkentgaz, İzmirgaz, İSKİ, ASKİ, İZSU, Aygaz, Milangaz, Mogaz, İpragaz, Armut, TKİ, six firewood sellers) | `scraper_04_utilities.yml` | `InflationItems/Codes/04_Housing/{Electricity,NaturalGas,Water,LPG,RepairLabor,Coal,Firewood}/scraper.py` (in that order) | `InflationItems/Datas/04_Housing/<Store>/` (committed) |
+| 09:00                | 06:00 | TÜİK 04 utilities, fuels, repair labour (EPDK, ASKİ, İZSU, Aygaz, Milangaz, Mogaz, İpragaz, Armut, TKİ, six firewood sellers) | `scraper_04_utilities.yml` | `InflationItems/Codes/04_Housing/{Electricity,Water,LPG,RepairLabor,Coal,Firewood}/scraper.py` (in that order; Water with `--source aski izsu`). Natural gas (İGDAŞ, Başkentgaz, İzmirgaz) and İSKİ time out from runner IPs: cron server | `InflationItems/Datas/04_Housing/<Store>/` (committed) |
 | 16:00                | 13:00 | Emlakjet (rentals, TÜİK 04) | `scraper_emlakjet.yml` | `InflationItems/Codes/04_Housing/Emlakjet/scraper.py` | `InflationItems/Datas/04_Housing/Emlakjet/` (committed) |
 
 ## Notes

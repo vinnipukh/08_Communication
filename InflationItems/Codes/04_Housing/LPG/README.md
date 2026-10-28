@@ -75,7 +75,7 @@ list is shared with other Aygaz products.
 
 ## Notes
 
-- Schedule: none yet (no cron or Actions job); no frequency was settled.
+- Schedule: daily 09:00 Istanbul on GitHub Actions (`.github/workflows/scraper_04_utilities.yml`, since 2026-10-28).
 - No history for the other brands (checked 2026-10-28): Milangaz has no Wayback copies; Mogaz's Wayback copies
   have no prices (they load by XHR) and its API answers empty prices for past dates; İpragaz has scattered
   Wayback copies, not of the three cities.

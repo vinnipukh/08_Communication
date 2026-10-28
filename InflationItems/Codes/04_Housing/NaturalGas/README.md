@@ -94,7 +94,8 @@ Kademe-1 plus the fee rows (4 rows a day in 2025, 10 in 2026).
 
 ## Notes
 
-- Schedule: none yet (no cron or Actions job). Monthly is enough; İGDAŞ already answers future months.
+- Schedule: not on GitHub Actions — İGDAŞ, Başkentgaz and İzmirgaz time out from runner IPs (every attempt,
+  test run 2026-10-28); to be run daily from the cron server (`deploy/scraper-server`), not set up yet.
 - İGDAŞ has no tax footnote; its prices are ÖTV-included and VAT-excluded by arithmetic (Kademe-1 − gas − ÖTV
   = SKB, as at the other two). İGDAŞ's fee page has no year or VAT note, so the fee rows come from İzmirgaz.
   Başkentgaz grosses its connection fee up by VAT but not its deposits.

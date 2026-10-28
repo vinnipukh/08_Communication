@@ -8,8 +8,11 @@ on:
   workflow_dispatch:
     inputs:
       scrapers:
-        description: Space-separated subset (Electricity NaturalGas Water LPG RepairLabor Coal Firewood); empty = all
+        description: Space-separated subset (Electricity Water LPG RepairLabor Coal Firewood); empty = all
         required: false
+
+# Natural gas (İGDAŞ, Başkentgaz, İzmirgaz) and İSKİ water time out from GitHub runner IPs (every attempt, test run
+# 2026-10-28): they run on the cron server instead (deploy/scraper-server). Water here fetches ASKİ and İZSU only.
 
 permissions:
   contents: write
@@ -21,7 +24,7 @@ concurrency:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    # all seven take ~6 min locally (LPG ~3.5 min, Armut ~1.5 min, the rest seconds)
+    # ~6 min on a runner (LPG ~3.5 min, Armut ~1.5 min, the rest seconds; test run 2026-10-28)
     timeout-minutes: 45
     env:
       # the scrapers date their CSVs with date.today()
@@ -48,14 +51,16 @@ jobs:
       - name: Run scrapers
         id: run
         env:
-          SCRAPERS: ${{ inputs.scrapers || 'Electricity NaturalGas Water LPG RepairLabor Coal Firewood' }}
+          SCRAPERS: ${{ inputs.scrapers || 'Electricity Water LPG RepairLabor Coal Firewood' }}
         run: |
           mkdir -p logs
           failed=()
           for s in $SCRAPERS; do
             echo "::group::$s"
             start=$(date +%s)
-            python -u "InflationItems/Codes/04_Housing/$s/scraper.py" 2>&1 | tee "logs/utilities_$s.log"
+            args=()
+            [ "$s" = Water ] && args=(--source aski izsu)  # İSKİ runs on the cron server
+            python -u "InflationItems/Codes/04_Housing/$s/scraper.py" "${args[@]}" 2>&1 | tee "logs/utilities_$s.log"
             rc=${PIPESTATUS[0]}
             echo "$s: exit $rc in $(( $(date +%s) - start )) s"
             echo "::endgroup::"
@@ -75,7 +80,7 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          for d in EPDK IGDAS Baskentgaz Izmirgaz ISKI ASKI IZSU Aygaz Milangaz Mogaz Ipragaz Armut TKI \
+          for d in EPDK ASKI IZSU Aygaz Milangaz Mogaz Ipragaz Armut TKI \
                    Odunal Ulusoy Komurdeposu Odunmarket Tetik Yakgelsin; do
             [ -d "InflationItems/Datas/04_Housing/$d" ] && git add "InflationItems/Datas/04_Housing/$d"
           done

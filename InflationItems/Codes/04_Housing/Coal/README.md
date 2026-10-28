@@ -120,7 +120,7 @@ browser.
 
 ## Notes
 
-- Schedule: none yet (no cron or Actions job). Weekly is enough.
+- Schedule: daily 09:00 Istanbul on GitHub Actions (`.github/workflows/scraper_04_utilities.yml`, since 2026-10-28).
 - RapidOCR reads the amounts right but mixes `.` and `,`, so amounts are parsed as digits / 100.
 - Reusable for any image price list: `ocr_draft()` in `scraper.py` (amounts split into three price columns and
   paired top to bottom, label blocks by vertical gaps), `check()` (VAT arithmetic as the OCR trust test) and

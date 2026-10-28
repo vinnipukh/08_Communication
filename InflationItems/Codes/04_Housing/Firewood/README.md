@@ -109,8 +109,7 @@ Earlier copies exist (Tetik 1 kg at 5.5 TL in 2024-05 and 7 TL in 2024-12; Odunm
 
 ## Notes
 
-- Schedule: none yet (no cron or Actions job). Weekly is enough; the table sellers change prices a few times a
-  season.
+- Schedule: daily 09:00 Istanbul on GitHub Actions (`.github/workflows/scraper_04_utilities.yml`, since 2026-10-28).
 - Cities: İzmir (Ulusoy, Tetik, Yak Gelsin), Bolu (Kömür Deposu), nationwide (Odunal, Odunmarket). No Ankara
   seller yet.
 - Git Bash on Windows garbles Turkish output; set `PYTHONIOENCODING=utf-8`.
