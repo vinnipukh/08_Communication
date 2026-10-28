@@ -2,6 +2,7 @@
 beautifulsoup4>=4.12
 curl-cffi>=0.7
 lxml>=5.0
+openpyxl>=3.1  # EPDK electricity tariff XLSX
 requests>=2.32
 
 # Browser automation

@@ -552,3 +552,18 @@ only). The one-off conversion script was not added to the repository.
   `Hepsiemlak/AGENTS.md`, linked from the root `AGENTS.md`.
 - CSV schema is the Emlakjet one (§3.3.1); `AreaM2` is the card's gross m² (no net on cards), `ListingDate`
   the card date, `ilanId` the card id (de-duplicates pages shifted by new listings).
+
+## 3.5 EPDK electricity tariff scraper (2026-10-28)
+
+`InflationItems/Codes/04_Housing/Electricity/scraper.py` (TÜİK 0451001), output
+`InflationItems/Datas/04_Housing/Electricity/YYYY-MM-DD.csv`. First item of the TÜİK 04 utilities queue
+(`queue/`).
+- Source: the tariff page's list comes from `POST /Detay/GetFastAccessList` (`{"fId":"1327"}`, answers
+  `{"Type", "model": [...]}`); the newest decision's XLSX is `GET /Detay/DownloadDocument?id=<ContentId>`
+  (`+`/`=` URL-encoded). `curl_cffi` (Chrome impersonation), page first for the F5 "TS" cookies; no
+  challenge seen. 3 requests, ~4 s.
+- Parsing: `openpyxl` (new dependency), header cells located by text, tariff class column forward-filled
+  across merged cells; all `Mesken` rows × time bands. A layout change (the 2025 table differs) raises
+  instead of writing a CSV.
+- Verified 2026-10-28 by a live run: decision 14461 (effective 2026-04-04), 16 rows, AG tek terim mesken
+  tek zamanlı 291.8965 kr/kWh (≤8 kWh/gün) and 432.0708 kr/kWh (>8 kWh/gün), matching the sheet.
