@@ -719,7 +719,7 @@ The seven TÜİK 04 scrapers above (§3.5–3.12) now follow the upstream rule "
 (like `Codes/08_Communication/Telecom`, which writes several store folders).
 - Stores: Electricity → `EPDK`; NaturalGas → `IGDAS`, `Baskentgaz`, `Izmirgaz` (fee rows); Water → `ISKI`,
   `ASKI`, `IZSU`; LPG → `Aygaz`, `Milangaz`, `Mogaz`, `Ipragaz`; RepairLabor → `Armut`; Coal → `TKI`;
-  Firewood → `Odunal`. Existing day files were moved and renamed.
+  Firewood → `Odunal` (plus five sellers since §3.15). Existing day files were moved and renamed.
 - Backfill version-history files moved out of Datas to gitignored `logs/backfill/<name>_<start>_<today>.csv`
   (`epdk_`, `natural_gas_`, `water_`, `aygaz_`); the old `Datas/04_Housing/LPG/backfill/` folder is gone.
 - `--output <path>` on every scraper writes all rows to that CSV instead of the store day files (test runs).
@@ -754,3 +754,27 @@ The seven TÜİK 04 scrapers above (§3.5–3.12) now follow the upstream rule "
   repair labour TL per job (Armut).
 - All history files (2025-01-01 ..) were rewritten in place with the same columns. TÜİK's older electricity and
   gas bulletins quote households per kWh (electricity) and per m³ (gas); the kWh gas unit is a project decision.
+
+## 3.15 Five more firewood sellers (2026-10-28)
+
+`InflationItems/Codes/04_Housing/Firewood/scraper.py` now has one fetch function per seller (`--store`, default
+all) and writes six store folders. All are plain HTTP via `curl_cffi` (no browser), 1 s jittered delay, ~13 s wall
+for all six:
+- `Ulusoy` (Bornova, İzmir) and `Komurdeposu` (Bolu): WordPress HTML price tables, parsed by one function
+  (`price_table_rows`). Only the "1 ton" column is written; çuval/torba columns have no weight.
+- `Odunmarket` (Ticimax, nationwide free cargo): category page `/odun` + `var productDetailModel = {...}` JSON on
+  each product page (variants with option type "Kilogram"; `indirimliFiyatiStr` = sale price incl. VAT). All
+  variants out of stock since at least 2025-08.
+- `Tetik` (Bornova, İzmir; WooCommerce): `wp-json/wc/store/v1/products?search=odun` + product page JSON-LD. Only
+  the 1 ton product states a weight. WooCommerce stopped emitting `valueAddedTaxIncluded` after 2026-06.
+- `Yakgelsin` (Ödemiş, İzmir; Next.js): server-rendered table with KDV hariç / dahil per option; the VAT-included
+  price is written.
+- New column `province` (last, also for Odunal): the province the price applies to, "Türkiye" for nationwide
+  sellers. `--output <path>` writes all chosen stores to one CSV, as in §3.13.
+- Unit: TL/kg everywhere (§3.14). A package with no single stated weight is left out (çuval without weight,
+  "20-25kg" ranges). No seller sells by ster or çeki.
+- History: new `Firewood/backfill.py` parses Wayback copies (CDX `collapse=digest`, from 2025) with the daily
+  parsers and writes one file per snapshot day, without forward fill: Komurdeposu 3 days, Odunmarket 3, Tetik 6
+  (meşe 1 ton 8,000 → 9,500 → 13,000 TL). Ulusoy and Yak Gelsin have no copies.
+- Verified 2026-10-28 by live runs: Ulusoy 2 rows, Komurdeposu 4, Odunmarket 5, Tetik 1, Yakgelsin 11, Odunal 14;
+  1 ton meşe 6.6–13.2 TL/kg across sellers.
