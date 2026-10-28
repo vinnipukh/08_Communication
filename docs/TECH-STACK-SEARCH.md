@@ -556,6 +556,17 @@ only). The one-off conversion script was not added to the repository.
   `Hepsiemlak/AGENTS.md`, linked from the root `AGENTS.md`.
 - CSV schema is the Emlakjet one (§3.3.1); `AreaM2` is the card's gross m² (no net on cards), `ListingDate`
   the card date, `ilanId` the card id (de-duplicates pages shifted by new listings).
+- Resume fix (2026-10-28): past a route's last page the site does not return an empty page, it repeats
+  listings (Üsküdar, 22 pages, resumed at page 20: pages 21-48 gave 24 cards with 0 new until 429). A resumed
+  route stopped only at an empty page, so it ran on until blocked, and every later Run repeated it. The
+  checkpoint now stores each unfinished route's page count (`pages`); a checkpoint without it stops at the
+  first page with no new `ilanId`. The saved queue (highest priority first) was also loaded unsorted, so a
+  resumed run took the smallest provinces first and the interrupted route last; it is sorted on load.
+  Verified live on `sile-kiralik` (3 pages): capped at 30 rows, then `--resume` fetched only page 3; with
+  `pages` removed from the checkpoint it fetched pages 3-4 and stopped at page 4 (0 new).
+- Same-day comparison (2026-10-28, zelal's shard, same code and 2-4 s pause): from a home connection one
+  session ran ~600 pages in 96 min with no 429 (16,824 rows, 24 challenges passed); from dormitory
+  connections the first long 429 came after ~26 and ~90 pages. The difference is the IP, not the code.
 
 ## 3.5 EPDK electricity tariff scraper (2026-10-28)
 

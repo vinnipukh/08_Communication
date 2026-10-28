@@ -59,6 +59,7 @@ ListingURL, Province, Neighborhood, PropertyType, AreaM2, Currency, ListingDate,
 | `Cloudflare challenge passed` | Site bir doğrulama sayfası gösterdi, tarayıcı kendisi geçti | Hiçbir şey, normal |
 | `HTTP 429` (ara sıra) | Site hızı sınırlıyor; scraper bekleyip tekrar deniyor | Bekle |
 | `retired`, ardından `incomplete ... re-run with --resume` | IP bir süreliğine engellendi, tarama durdu | 30–60 dk sonra Run'a tekrar bas (kaldığı yerden devam eder) |
+| Devam eden taramada `page 30/?: 24 cards, 0 new` gibi satırlar | 2026-10-28 öncesi sürüm, yarım kalan ilçede son sayfayı geçip tekrar eden ilanları çekiyordu | `git pull` ile güncelle; yeni sürüm ilk "0 new" sayfasında durur |
 | `already running` ama tarama ilerlemiyor | Eski bir süreç asılı kalmış olabilir | Görev Yöneticisi'nde o pid'i kapat, Run'a bas |
 | `Timeout ... li.listingCard` her sayfada, sayfa `HTTP 200` | Site tasarımı değişmiş, ilan kartları bulunamıyor | Koda bakılmalı (aşağıya bak) |
 | Satırlarda boş fiyat/oda/m² | Kart içindeki alanlar değişmiş | Koda bakılmalı |

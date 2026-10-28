@@ -26,7 +26,10 @@ Inside `scraper.py`:
   45 s, because a real browser usually solves it in place. Persistent 429 → browser restart with 30–600 s
   backoffs → `Blocked` → the session retires and the run ends as incomplete (the launcher resumes it on the
   next Run).
-- `Crawler` holds the route queue, de-duplicates by `ilanId`, writes the CSV, saves the checkpoint.
+- `Crawler` holds the route queue, de-duplicates by `ilanId`, writes the CSV, saves the checkpoint
+  (`done`, `progress` = last finished page per unfinished route, `pages` = that route's page count, `queue`).
+  Past the last page the site does not return an empty page, it repeats listings: a resumed route stops at
+  its saved page count, or, for a checkpoint without `pages`, at the first page with no new `ilanId`.
 
 ## Site facts (2026-10-23/24, verify before relying on them)
 

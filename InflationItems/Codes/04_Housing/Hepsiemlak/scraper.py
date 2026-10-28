@@ -248,6 +248,7 @@ class Crawler:
         self.seen: set[str] = set()
         self.done: set[str] = set()        # finished routes
         self.progress: dict[str, int] = {}  # route -> last finished page
+        self.pages: dict[str, int] = {}     # route -> page count reported by the site (for resuming)
         self.sizes: dict[str, int] = {}     # route -> listing count reported by the site
         self.queue: list[tuple[int, str]] = []  # (priority, route), highest taken first
         self.active = 0
@@ -263,7 +264,8 @@ class Crawler:
             if ckpt_path.exists():
                 ck = json.loads(ckpt_path.read_text(encoding="utf-8"))
                 self.done, self.progress = set(ck.get("done", [])), ck.get("progress", {})
-                self.queue = [tuple(x) for x in ck.get("queue", [])]
+                self.pages = ck.get("pages", {})
+                self.queue = sorted(tuple(x) for x in ck.get("queue", []))  # saved highest first
                 for route in self.progress:  # routes a stopped session was in the middle of
                     self.push(route, 10**6)
             log.info("resuming: %d routes done, %d in progress, %d listings in %s",
@@ -277,6 +279,7 @@ class Crawler:
     def save_ckpt(self):
         self.ckpt_path.write_text(json.dumps({
             "date": date.today().isoformat(), "done": sorted(self.done), "progress": self.progress,
+            "pages": {r: n for r, n in self.pages.items() if r in self.progress},
             "queue": sorted(self.queue, reverse=True)}), encoding="utf-8")
 
     def save_block(self, status, html: str):
@@ -313,7 +316,7 @@ class Crawler:
     async def crawl_route(self, s: Session, route: str):
         """Crawl one route, or split it; raises Blocked with progress saved."""
         page = self.progress.get(route, 0) + 1
-        total = None
+        total = self.pages.get(route) if page > 1 else None
         while total is None or page <= total:
             if self.args.limit and page > self.args.limit:
                 break
@@ -321,7 +324,7 @@ class Crawler:
                 return  # route stays in progress
             cards, scope = await s.fetch(route, page, self)
             if page == 1:
-                total = scope.get("pages", 1)
+                total = self.pages[route] = scope.get("pages", 1)
                 self.sizes[route] = scope.get("count", 0)
                 children = [l for l in scope.get("links", []) if l != route and "sezonluk" not in l]
                 if total > SPLIT_PAGES and children and self.is_province(route):
@@ -334,7 +337,7 @@ class Crawler:
                     return
                 log.info("[%s] %s: %d listings, %d pages", s.name, route, self.sizes[route], total)
             elif total is None:
-                total = 10**6  # resumed mid-route: stop at the first empty page
+                total = 10**6  # resumed from a checkpoint without page counts: see the stop below
             new = self.write(cards)
             self.progress[route] = page
             self.save_ckpt()
@@ -343,6 +346,8 @@ class Crawler:
                          s.name, route, page, total if total < 10**6 else "?", len(cards), new, len(self.seen))
             if not cards:
                 break
+            if total == 10**6 and not new and not self.capped:
+                break  # past the last page the site repeats listings instead of an empty page
             page += 1
         if self.capped:
             return  # --max-listings may have cut the last page short; the route is not finished
