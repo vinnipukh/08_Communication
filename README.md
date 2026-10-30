@@ -11,12 +11,14 @@ InflationItems/
   Codes/
     08_Communication/           # Beymen, DR, Huawei, PozitifTeknoloji,
                                 # Samsung, VatanComputer, Telecom
+    09_Recreation/              # copied from upstream InflationResearchStudy (2026-10-30)
   Datas/
     04_Housing/Emlakjet/        # rental CSVs; scraper rewritten 2026-10-23 (Codes/04_Housing/Emlakjet)
     08_Communication/<Source>/  # daily price CSVs per retailer/operator/service
+    09_Recreation/<Source>/     # upstream 09 CSVs (copied 2026-10-30)
 .github/workflows/              # Emlakjet schedule + manual runs of the server scrapers
 deploy/scraper-server/          # cron setup for the 08_Communication server
-docs/                           # scraping wiki, tool registry, telecom recon
+docs/                           # scraping wiki, tool registry, telecom and recreation recon, TÜFE basket
 SCRAPER_TIMETABLE.md            # daily schedule
 ```
 

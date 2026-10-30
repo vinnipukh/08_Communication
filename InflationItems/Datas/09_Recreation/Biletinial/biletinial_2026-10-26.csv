@@ -1,0 +1,776 @@
+﻿product_name,price,category_number,sub_category_number
+Ahududu - 02 Aralık Çarşamba · 20:00 - MEB Şura Salonu · Ankara - 1. Kategori,1500.00,09,0961002
+Ahududu - 02 Aralık Çarşamba · 20:00 - MEB Şura Salonu · Ankara - 2. Kategori,1250.00,09,0961002
+Ahududu - 02 Aralık Çarşamba · 20:00 - MEB Şura Salonu · Ankara - 3. Kategori,1000.00,09,0961002
+Ahududu - 02 Aralık Çarşamba · 20:00 - MEB Şura Salonu · Ankara - VIP,1750.00,09,0961002
+Ahududu - 03 Aralık Perşembe · 20:30 - Etimesgut Bld Korkut Ata Kültür ve Kongre Merkezi · Ankara - 1. Kategori,1500.00,09,0961002
+Ahududu - 03 Aralık Perşembe · 20:30 - Etimesgut Bld Korkut Ata Kültür ve Kongre Merkezi · Ankara - 2. Kategori,1250.00,09,0961002
+Ahududu - 03 Aralık Perşembe · 20:30 - Etimesgut Bld Korkut Ata Kültür ve Kongre Merkezi · Ankara - 3. Kategori,1000.00,09,0961002
+Ahududu - 03 Aralık Perşembe · 20:30 - Etimesgut Bld Korkut Ata Kültür ve Kongre Merkezi · Ankara - Protokol Fiyat,1750.00,09,0961002
+Ahududu - 03 Kasım Salı · 20:30 - Trump Sahne · İstanbul Avrupa - 1. Kategori,1600.00,09,0961002
+Ahududu - 03 Kasım Salı · 20:30 - Trump Sahne · İstanbul Avrupa - 2. Kategori,1300.00,09,0961002
+Ahududu - 04 Aralık Cuma · 20:30 - Merinos AKKM Orhangazi Salonu · Bursa - 1. Kategori,1500.00,09,0961002
+Ahududu - 04 Aralık Cuma · 20:30 - Merinos AKKM Orhangazi Salonu · Bursa - 2. Kategori,1250.00,09,0961002
+Ahududu - 04 Aralık Cuma · 20:30 - Merinos AKKM Orhangazi Salonu · Bursa - 3. Kategori,1000.00,09,0961002
+Ahududu - 04 Aralık Cuma · 20:30 - Merinos AKKM Orhangazi Salonu · Bursa - Protokol Fiyat,1750.00,09,0961002
+Ahududu - 06 Aralık Pazar · 19:30 - Trump Sahne · İstanbul Avrupa - 1. Kategori,1600.00,09,0961002
+Ahududu - 06 Aralık Pazar · 19:30 - Trump Sahne · İstanbul Avrupa - 2. Kategori,1300.00,09,0961002
+Ahududu - 25 Kasım Çarşamba · 20:30 - Kozzy Gönül Ülkü Gazanfer Özcan Sahnesi · İstanbul Anadolu - 1. Kategori,1600.00,09,0961002
+Ahududu - 25 Kasım Çarşamba · 20:30 - Kozzy Gönül Ülkü Gazanfer Özcan Sahnesi · İstanbul Anadolu - 2. Kategori,1300.00,09,0961002
+Ahududu - 26 Ekim Pazartesi · 20:30 - Caddebostan Kültür Merkezi Büyük Salon · İstanbul Anadolu - 1. Kategori,1600.00,09,0961002
+Ahududu - 26 Ekim Pazartesi · 20:30 - Caddebostan Kültür Merkezi Büyük Salon · İstanbul Anadolu - 2. Kategori,1300.00,09,0961002
+Ahududu - 26 Ekim Pazartesi · 20:30 - Caddebostan Kültür Merkezi Büyük Salon · İstanbul Anadolu - 3. Kategori,950.00,09,0961002
+Ahududu - 26 Kasım Perşembe · 20:00 - İBB İdris Güllüce Kültür Merkezi · İstanbul Anadolu - 1. Kategori,1600.00,09,0961002
+Ahududu - 26 Kasım Perşembe · 20:00 - İBB İdris Güllüce Kültür Merkezi · İstanbul Anadolu - 2. Kategori,1300.00,09,0961002
+Ahududu - 27 Kasım Cuma · 20:30 - Sefaköy Kültür ve Sanat Merkezi · İstanbul Avrupa - 1. Kategori,1750.00,09,0961002
+Ahududu - 27 Kasım Cuma · 20:30 - Sefaköy Kültür ve Sanat Merkezi · İstanbul Avrupa - 2. Kategori,1500.00,09,0961002
+Ahududu - 27 Kasım Cuma · 20:30 - Sefaköy Kültür ve Sanat Merkezi · İstanbul Avrupa - 3. Kategori,1250.00,09,0961002
+Ahududu - 27 Kasım Cuma · 20:30 - Sefaköy Kültür ve Sanat Merkezi · İstanbul Avrupa - 4. Kategori,1000.00,09,0961002
+Ahududu - 28 Kasım Cumartesi · 20:30 - İnal Aydınoğlu KM Şener Şen Sahnesi · İstanbul Anadolu - 1. Kategori,1500.00,09,0961002
+Ahududu - 28 Kasım Cumartesi · 20:30 - İnal Aydınoğlu KM Şener Şen Sahnesi · İstanbul Anadolu - 2. Kategori,1250.00,09,0961002
+Ahududu - 28 Kasım Cumartesi · 20:30 - İnal Aydınoğlu KM Şener Şen Sahnesi · İstanbul Anadolu - 3. Kategori,1000.00,09,0961002
+Ahududu - 28 Kasım Cumartesi · 20:30 - İnal Aydınoğlu KM Şener Şen Sahnesi · İstanbul Anadolu - Protokol Fiyat,1750.00,09,0961002
+Ahududu - 29 Kasım Pazar · 19:30 - Kartal Bülent Ecevit Kültür Merkezi · İstanbul Anadolu - 1. Kategori,1600.00,09,0961002
+Ahududu - 29 Kasım Pazar · 19:30 - Kartal Bülent Ecevit Kültür Merkezi · İstanbul Anadolu - 2. Kategori,1300.00,09,0961002
+Ahududu - 30 Ekim Cuma · 20:30 - Mall Of İstanbul Biletinial Moi Sahne · İstanbul Avrupa - 1. Kategori,1750.00,09,0961002
+Ahududu - 30 Ekim Cuma · 20:30 - Mall Of İstanbul Biletinial Moi Sahne · İstanbul Avrupa - 2. Kategori,1500.00,09,0961002
+Ahududu - 30 Ekim Cuma · 20:30 - Mall Of İstanbul Biletinial Moi Sahne · İstanbul Avrupa - 3. Kategori,1250.00,09,0961002
+Ahududu - 30 Ekim Cuma · 20:30 - Mall Of İstanbul Biletinial Moi Sahne · İstanbul Avrupa - 4. Kategori,1000.00,09,0961002
+Alevli Günler - 03 Kasım Salı · 20:30 - Merinos Atatürk Kültür Merkezi Orhangazi Salonu · Bursa - 1. Kategori,2355.00,09,0961002
+Alevli Günler - 03 Kasım Salı · 20:30 - Merinos Atatürk Kültür Merkezi Orhangazi Salonu · Bursa - 2. Kategori,1830.00,09,0961002
+Alevli Günler - 03 Kasım Salı · 20:30 - Merinos Atatürk Kültür Merkezi Orhangazi Salonu · Bursa - 3. Kategori,1310.00,09,0961002
+Alevli Günler - 05 Aralık Cumartesi · 20:00 - Trabzon KTÜ Atatürk Kültür Merkezi · Trabzon - 1. Kategori,2095.00,09,0961002
+Alevli Günler - 05 Aralık Cumartesi · 20:00 - Trabzon KTÜ Atatürk Kültür Merkezi · Trabzon - 2. Kategori,1675.00,09,0961002
+Alevli Günler - 05 Aralık Cumartesi · 20:00 - Trabzon KTÜ Atatürk Kültür Merkezi · Trabzon - 3. Kategori,1310.00,09,0961002
+Alevli Günler - 06 Aralık Pazar · 20:00 - Rize İsmail Kahraman Kültür Merkezi · Rize - 1. Kategori,2355.00,09,0961002
+Alevli Günler - 06 Aralık Pazar · 20:00 - Rize İsmail Kahraman Kültür Merkezi · Rize - 2. Kategori,1830.00,09,0961002
+Alevli Günler - 06 Aralık Pazar · 20:00 - Rize İsmail Kahraman Kültür Merkezi · Rize - 3. Kategori,1310.00,09,0961002
+Alevli Günler - 07 Aralık Pazartesi · 20:30 - Ordu Kültür Sanat Merkezi · Ordu - 1. Kategori,2615.00,09,0961002
+Alevli Günler - 07 Aralık Pazartesi · 20:30 - Ordu Kültür Sanat Merkezi · Ordu - 2. Kategori,2095.00,09,0961002
+Alevli Günler - 07 Aralık Pazartesi · 20:30 - Ordu Kültür Sanat Merkezi · Ordu - 3. Kategori,1570.00,09,0961002
+Alevli Günler - 08 Aralık Salı · 20:00 - Samsun Ata Sahne · Samsun - 1. Kategori,2615.00,09,0961002
+Alevli Günler - 08 Aralık Salı · 20:00 - Samsun Ata Sahne · Samsun - 2. Kategori,2095.00,09,0961002
+Alevli Günler - 17 Kasım Salı · 20:30 - Bostanlı Suat Taşer Salonu · İzmir - 1. Kategori,2095.00,09,0961002
+Alevli Günler - 17 Kasım Salı · 20:30 - Bostanlı Suat Taşer Salonu · İzmir - 2. Kategori,1570.00,09,0961002
+Alevli Günler - 17 Kasım Salı · 20:30 - Bostanlı Suat Taşer Salonu · İzmir - 3. Kategori,1180.00,09,0961002
+Alevli Günler - 18 Kasım Çarşamba · 20:30 - İstinyeArt %100 Performans Arena · İzmir - 1. Kategori,2095.00,09,0961002
+Alevli Günler - 18 Kasım Çarşamba · 20:30 - İstinyeArt %100 Performans Arena · İzmir - 2. Kategori,1570.00,09,0961002
+Alevli Günler - 18 Kasım Çarşamba · 20:30 - İstinyeArt %100 Performans Arena · İzmir - 3. Kategori,1180.00,09,0961002
+Alevli Günler - 21 Kasım Cumartesi · 20:30 - Gaziantep Şehit Kamil Kültür ve Kongre Merkezi · Gaziantep - 1. Kategori,2355.00,09,0961002
+Alevli Günler - 21 Kasım Cumartesi · 20:30 - Gaziantep Şehit Kamil Kültür ve Kongre Merkezi · Gaziantep - 2. Kategori,1885.00,09,0961002
+Alevli Günler - 21 Kasım Cumartesi · 20:30 - Gaziantep Şehit Kamil Kültür ve Kongre Merkezi · Gaziantep - 3. Kategori,1570.00,09,0961002
+Alevli Günler - 21 Kasım Cumartesi · 20:30 - Gaziantep Şehit Kamil Kültür ve Kongre Merkezi · Gaziantep - 4. Kategori,1180.00,09,0961002
+Alevli Günler - 22 Kasım Pazar · 20:00 - Mehmet Akif İnan Konferans Salonu · Şanlıurfa - 1. Kategori,2355.00,09,0961002
+Alevli Günler - 22 Kasım Pazar · 20:00 - Mehmet Akif İnan Konferans Salonu · Şanlıurfa - 2. Kategori,1830.00,09,0961002
+Alevli Günler - 22 Kasım Pazar · 20:00 - Mehmet Akif İnan Konferans Salonu · Şanlıurfa - 3. Kategori,1310.00,09,0961002
+Alevli Günler - 23 Kasım Pazartesi · 20:30 - Mardin Artuklu Üniversitesi Vali Kılıçlar Salonu · Mardin - 1. Kategori,2355.00,09,0961002
+Alevli Günler - 23 Kasım Pazartesi · 20:30 - Mardin Artuklu Üniversitesi Vali Kılıçlar Salonu · Mardin - 2. Kategori,1830.00,09,0961002
+Alevli Günler - 23 Kasım Pazartesi · 20:30 - Mardin Artuklu Üniversitesi Vali Kılıçlar Salonu · Mardin - 3. Kategori,1310.00,09,0961002
+Alevli Günler - 24 Kasım Salı · 20:30 - Sezai Karakoç Kongre ve Kültür Merkezi · Diyarbakır - 1. Kategori,2355.00,09,0961002
+Alevli Günler - 24 Kasım Salı · 20:30 - Sezai Karakoç Kongre ve Kültür Merkezi · Diyarbakır - 2. Kategori,1830.00,09,0961002
+Alevli Günler - 24 Kasım Salı · 20:30 - Sezai Karakoç Kongre ve Kültür Merkezi · Diyarbakır - 3. Kategori,1440.00,09,0961002
+Alevli Günler - 24 Kasım Salı · 20:30 - Sezai Karakoç Kongre ve Kültür Merkezi · Diyarbakır - 4. Kategori,1045.00,09,0961002
+Alevli Günler - 27 Ocak Çarşamba 2027 · 20:30 - Küçükçekmece Cennet Kültür ve Sanat Merkezi · İstanbul Avrupa - 1. Kategori,2355.00,09,0961002
+Alevli Günler - 27 Ocak Çarşamba 2027 · 20:30 - Küçükçekmece Cennet Kültür ve Sanat Merkezi · İstanbul Avrupa - 2. Kategori,1830.00,09,0961002
+Alevli Günler - 27 Ocak Çarşamba 2027 · 20:30 - Küçükçekmece Cennet Kültür ve Sanat Merkezi · İstanbul Avrupa - 3. Kategori,1310.00,09,0961002
+Ben Bir Robot Muyum? - 15 Kasım Pazar · 15:45 - Mesafe Sahne · Ankara - Tam,400.00,09,0961002
+Ben Bir Robot Muyum? - 29 Kasım Pazar · 15:45 - Mesafe Sahne · Ankara - Tam,400.00,09,0961002
+Ben Bir Robot Muyum? - 31 Ekim Cumartesi · 16:30 - Mesafe Sahne · Ankara - Tam,400.00,09,0961002
+Bir Adam Yaratmak - 05 Kasım Perşembe · 20:00 - Bursa Tayyare Kültür Merkezi · Bursa - Loca Tam,300.00,09,0961002
+Bir Adam Yaratmak - 05 Kasım Perşembe · 20:00 - Bursa Tayyare Kültür Merkezi · Bursa - Tam,100.00,09,0961002
+Bir Adam Yaratmak - 05 Kasım Perşembe · 20:00 - Bursa Tayyare Kültür Merkezi · Bursa - Öğrenci,75.00,09,0961002
+Bir Adam Yaratmak - 06 Kasım Cuma · 20:00 - Bursa Tayyare Kültür Merkezi · Bursa - Loca Tam,300.00,09,0961002
+Bir Adam Yaratmak - 06 Kasım Cuma · 20:00 - Bursa Tayyare Kültür Merkezi · Bursa - Tam,100.00,09,0961002
+Bir Adam Yaratmak - 06 Kasım Cuma · 20:00 - Bursa Tayyare Kültür Merkezi · Bursa - Öğrenci,75.00,09,0961002
+Bir Adam Yaratmak - 07 Kasım Cumartesi · 20:00 - Bursa Tayyare Kültür Merkezi · Bursa - Loca Tam,300.00,09,0961002
+Bir Adam Yaratmak - 07 Kasım Cumartesi · 20:00 - Bursa Tayyare Kültür Merkezi · Bursa - Tam,100.00,09,0961002
+Bir Adam Yaratmak - 07 Kasım Cumartesi · 20:00 - Bursa Tayyare Kültür Merkezi · Bursa - Öğrenci,75.00,09,0961002
+Bir Adam Yaratmak - 30 Ekim Cuma · 20:00 - Bursa Tayyare Kültür Merkezi · Bursa - Loca Tam,300.00,09,0961002
+Bir Adam Yaratmak - 30 Ekim Cuma · 20:00 - Bursa Tayyare Kültür Merkezi · Bursa - Tam,100.00,09,0961002
+Bir Adam Yaratmak - 30 Ekim Cuma · 20:00 - Bursa Tayyare Kültür Merkezi · Bursa - Öğrenci,75.00,09,0961002
+Bir Adam Yaratmak - 31 Ekim Cumartesi · 20:00 - Bursa Tayyare Kültür Merkezi · Bursa - Loca Tam,300.00,09,0961002
+Bir Adam Yaratmak - 31 Ekim Cumartesi · 20:00 - Bursa Tayyare Kültür Merkezi · Bursa - Tam,100.00,09,0961002
+Bir Adam Yaratmak - 31 Ekim Cumartesi · 20:00 - Bursa Tayyare Kültür Merkezi · Bursa - Öğrenci,75.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 01 Kasım Pazar · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Tam,750.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 01 Kasım Pazar · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Öğrenci,500.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 04 Kasım Çarşamba · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Tam,750.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 04 Kasım Çarşamba · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Öğrenci,500.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 06 Kasım Cuma · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Tam,750.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 06 Kasım Cuma · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Öğrenci,500.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 08 Kasım Pazar · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Tam,750.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 08 Kasım Pazar · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Öğrenci,500.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 11 Kasım Çarşamba · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Tam,750.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 11 Kasım Çarşamba · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Öğrenci,500.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 18 Kasım Çarşamba · 20:00 - Başkent Sanat Merkezi Nata Vega · Ankara - Tam,750.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 18 Kasım Çarşamba · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Tam,750.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 18 Kasım Çarşamba · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Öğrenci,500.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 20 Kasım Cuma · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Tam,750.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 20 Kasım Cuma · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Öğrenci,500.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 22 Kasım Pazar · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Tam,750.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 22 Kasım Pazar · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Öğrenci,500.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 25 Kasım Çarşamba · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Tam,750.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 25 Kasım Çarşamba · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Öğrenci,500.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 27 Ekim Salı · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Tam,750.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 27 Ekim Salı · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Öğrenci,500.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 27 Kasım Cuma · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Tam,750.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 27 Kasım Cuma · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Öğrenci,500.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 29 Kasım Pazar · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Tam,750.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 29 Kasım Pazar · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Öğrenci,500.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 30 Ekim Cuma · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Tam,750.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 30 Ekim Cuma · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Öğrenci,500.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 31 Ekim Cumartesi · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Tam,750.00,09,0961002
+Bir Delinin Hatıra Defteri - Oğuzhan Karadavut - 31 Ekim Cumartesi · 20:00 - Era Tiyatro Gösteri Merkezi · Ankara - Öğrenci,500.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 01 Kasım Pazar · 18:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 01 Kasım Pazar · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 01 Kasım Pazar · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 01 Kasım Pazar · 18:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 06 Kasım Cuma · 19:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 06 Kasım Cuma · 19:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 06 Kasım Cuma · 19:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 06 Kasım Cuma · 19:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 08 Kasım Pazar · 18:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 08 Kasım Pazar · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 08 Kasım Pazar · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 08 Kasım Pazar · 18:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 13 Kasım Cuma · 19:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 13 Kasım Cuma · 19:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 13 Kasım Cuma · 19:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 13 Kasım Cuma · 19:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 15 Kasım Pazar · 18:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 15 Kasım Pazar · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 15 Kasım Pazar · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 15 Kasım Pazar · 18:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 20 Kasım Cuma · 19:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 20 Kasım Cuma · 19:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 20 Kasım Cuma · 19:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 20 Kasım Cuma · 19:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 22 Kasım Pazar · 18:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 22 Kasım Pazar · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 22 Kasım Pazar · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 22 Kasım Pazar · 18:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 27 Kasım Cuma · 19:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 27 Kasım Cuma · 19:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 27 Kasım Cuma · 19:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 27 Kasım Cuma · 19:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 28 Ekim Çarşamba · 18:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 28 Ekim Çarşamba · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 28 Ekim Çarşamba · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 28 Ekim Çarşamba · 18:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 29 Kasım Pazar · 18:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 29 Kasım Pazar · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 29 Kasım Pazar · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 29 Kasım Pazar · 18:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 31 Ekim Cumartesi · 20:30 - İsmail Uygur Kültür Merkezi · İzmir - Tam,800.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 31 Ekim Cumartesi · 20:30 - İsmail Uygur Kültür Merkezi · İzmir - VIP,1000.00,09,0961002
+Bir Delinin Hatıra Defteri Metin Zakoğlu - 31 Ekim Cumartesi · 20:30 - İsmail Uygur Kültür Merkezi · İzmir - Öğrenci,500.00,09,0961002
+Bir Robot Hikayesi - 31 Ekim Cumartesi · 12:00 - Pembe Kurbağa Sahnesi · Ankara - Yetişkin,500.00,09,0961002
+Bir Robot Hikayesi - 31 Ekim Cumartesi · 12:00 - Pembe Kurbağa Sahnesi · Ankara - Çocuk,550.00,09,0961002
+Bülent Beyin Hikayesi - 17 Kasım Salı · 20:00 - Acıbadem Acu Sahne · İstanbul Anadolu - Tam,900.00,09,0961002
+Bütün Çılgınlar Sever Beni - 06 Aralık Pazar · 16:00 - Moda Sahnesi Büyük Salon · İstanbul Anadolu - Tam,900.00,09,0961002
+Bütün Çılgınlar Sever Beni - 06 Aralık Pazar · 16:00 - Moda Sahnesi Büyük Salon · İstanbul Anadolu - Öğrenci,650.00,09,0961002
+Bütün Çılgınlar Sever Beni - 06 Aralık Pazar · 19:30 - Moda Sahnesi Büyük Salon · İstanbul Anadolu - Tam,900.00,09,0961002
+Bütün Çılgınlar Sever Beni - 06 Aralık Pazar · 19:30 - Moda Sahnesi Büyük Salon · İstanbul Anadolu - Öğrenci,650.00,09,0961002
+Bütün Çılgınlar Sever Beni - 14 Kasım Cumartesi · 16:00 - Fişekhane Ana Sahne · İstanbul Avrupa - 1. Kategori,1250.00,09,0961002
+Bütün Çılgınlar Sever Beni - 14 Kasım Cumartesi · 16:00 - Fişekhane Ana Sahne · İstanbul Avrupa - 2. Kategori,1000.00,09,0961002
+Bütün Çılgınlar Sever Beni - 14 Kasım Cumartesi · 16:00 - Fişekhane Ana Sahne · İstanbul Avrupa - 3. Kategori,750.00,09,0961002
+Bütün Çılgınlar Sever Beni - 14 Kasım Cumartesi · 20:30 - Fişekhane Ana Sahne · İstanbul Avrupa - 1. Kategori,1250.00,09,0961002
+Bütün Çılgınlar Sever Beni - 14 Kasım Cumartesi · 20:30 - Fişekhane Ana Sahne · İstanbul Avrupa - 2. Kategori,1000.00,09,0961002
+Bütün Çılgınlar Sever Beni - 14 Kasım Cumartesi · 20:30 - Fişekhane Ana Sahne · İstanbul Avrupa - 3. Kategori,750.00,09,0961002
+Dava - 01 Kasım Pazar · 19:00 - Yakın Sahne · Ankara - Tam,500.00,09,0961002
+Dava - 02 Aralık Çarşamba · 20:00 - Yakın Sahne · Ankara - Tam,500.00,09,0961002
+Dava - 09 Kasım Pazartesi · 20:00 - Yakın Sahne · Ankara - Tam,500.00,09,0961002
+Dava - 18 Kasım Çarşamba · 20:00 - Yakın Sahne · Ankara - Tam,500.00,09,0961002
+Edepsiz Komedi - 06 Kasım Cuma · 23:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Edepsiz Komedi - 06 Kasım Cuma · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Edepsiz Komedi - 06 Kasım Cuma · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Edepsiz Komedi - 06 Kasım Cuma · 23:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Edepsiz Komedi - 07 Kasım Cumartesi · 23:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Edepsiz Komedi - 07 Kasım Cumartesi · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Edepsiz Komedi - 07 Kasım Cumartesi · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Edepsiz Komedi - 07 Kasım Cumartesi · 23:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Edepsiz Komedi - 13 Kasım Cuma · 23:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Edepsiz Komedi - 13 Kasım Cuma · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Edepsiz Komedi - 13 Kasım Cuma · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Edepsiz Komedi - 13 Kasım Cuma · 23:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Edepsiz Komedi - 14 Kasım Cumartesi · 23:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Edepsiz Komedi - 14 Kasım Cumartesi · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Edepsiz Komedi - 14 Kasım Cumartesi · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Edepsiz Komedi - 14 Kasım Cumartesi · 23:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Edepsiz Komedi - 20 Kasım Cuma · 23:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Edepsiz Komedi - 20 Kasım Cuma · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Edepsiz Komedi - 20 Kasım Cuma · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Edepsiz Komedi - 20 Kasım Cuma · 23:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Edepsiz Komedi - 21 Kasım Cumartesi · 23:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Edepsiz Komedi - 21 Kasım Cumartesi · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Edepsiz Komedi - 21 Kasım Cumartesi · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Edepsiz Komedi - 21 Kasım Cumartesi · 23:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Edepsiz Komedi - 27 Kasım Cuma · 23:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Edepsiz Komedi - 27 Kasım Cuma · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Edepsiz Komedi - 27 Kasım Cuma · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Edepsiz Komedi - 27 Kasım Cuma · 23:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Edepsiz Komedi - 28 Ekim Çarşamba · 23:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Edepsiz Komedi - 28 Ekim Çarşamba · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Edepsiz Komedi - 28 Ekim Çarşamba · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Edepsiz Komedi - 28 Ekim Çarşamba · 23:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Edepsiz Komedi - 28 Kasım Cumartesi · 23:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Edepsiz Komedi - 28 Kasım Cumartesi · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Edepsiz Komedi - 28 Kasım Cumartesi · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Edepsiz Komedi - 28 Kasım Cumartesi · 23:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Edepsiz Komedi - 29 Ekim Perşembe · 20:30 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Edepsiz Komedi - 29 Ekim Perşembe · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Edepsiz Komedi - 29 Ekim Perşembe · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Edepsiz Komedi - 29 Ekim Perşembe · 20:30 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Edepsiz Komedi - 30 Ekim Cuma · 23:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Edepsiz Komedi - 30 Ekim Cuma · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Edepsiz Komedi - 30 Ekim Cuma · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Edepsiz Komedi - 30 Ekim Cuma · 23:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Edepsiz Komedi - 31 Ekim Cumartesi · 23:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Edepsiz Komedi - 31 Ekim Cumartesi · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Edepsiz Komedi - 31 Ekim Cumartesi · 23:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Edepsiz Komedi - 31 Ekim Cumartesi · 23:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Ege ile Gaga Müzikali - 31 Ekim Cumartesi · 13:00 - Mall Of İstanbul Biletinial Moi Sahne · İstanbul Avrupa - 1. Kategori,600.00,09,0961002
+Ege ile Gaga Müzikali - 31 Ekim Cumartesi · 13:00 - Mall Of İstanbul Biletinial Moi Sahne · İstanbul Avrupa - 2. Kategori,500.00,09,0961002
+Ege ile Gaga Müzikali - 31 Ekim Cumartesi · 13:00 - Mall Of İstanbul Biletinial Moi Sahne · İstanbul Avrupa - 3. Kategori,450.00,09,0961002
+Ege ile Gaga Müzikali - 31 Ekim Cumartesi · 15:00 - Mall Of İstanbul Biletinial Moi Sahne · İstanbul Avrupa - 1. Kategori,600.00,09,0961002
+Ege ile Gaga Müzikali - 31 Ekim Cumartesi · 15:00 - Mall Of İstanbul Biletinial Moi Sahne · İstanbul Avrupa - 2. Kategori,500.00,09,0961002
+Ege ile Gaga Müzikali - 31 Ekim Cumartesi · 15:00 - Mall Of İstanbul Biletinial Moi Sahne · İstanbul Avrupa - 3. Kategori,450.00,09,0961002
+Erkek Aklı Oksimoron - 01 Kasım Pazar · 20:30 - Sakarya Ted Sahne · Sakarya - 1. Kategori,1250.00,09,0961002
+Erkek Aklı Oksimoron - 01 Kasım Pazar · 20:30 - Sakarya Ted Sahne · Sakarya - 2. Kategori,1000.00,09,0961002
+Erkek Aklı Oksimoron - 06 Kasım Cuma · 20:30 - Hasan Polatkan Kültür Merkezi · Eskişehir - 1. Kategori,1250.00,09,0961002
+Erkek Aklı Oksimoron - 06 Kasım Cuma · 20:30 - Hasan Polatkan Kültür Merkezi · Eskişehir - 2. Kategori,1000.00,09,0961002
+Erkek Aklı Oksimoron - 07 Kasım Cumartesi · 20:30 - Vesahne Panora & Kuli̇s Sanat Ti̇yatrosu · Ankara - 1. Kategori,1250.00,09,0961002
+Erkek Aklı Oksimoron - 07 Kasım Cumartesi · 20:30 - Vesahne Panora & Kuli̇s Sanat Ti̇yatrosu · Ankara - 2. Kategori,1000.00,09,0961002
+Erkek Aklı Oksimoron - 07 Kasım Cumartesi · 20:30 - Vesahne Panora & Kuli̇s Sanat Ti̇yatrosu · Ankara - 3. Kategori Balkon,700.00,09,0961002
+Erkek Aklı Oksimoron - 12 Aralık Cumartesi · 20:00 - Başkent Sanat Merkezi Nata Vega · Ankara - 1. Kategori,1250.00,09,0961002
+Erkek Aklı Oksimoron - 12 Aralık Cumartesi · 20:00 - Başkent Sanat Merkezi Nata Vega · Ankara - 2. Kategori,1000.00,09,0961002
+Erkek Aklı Oksimoron - 12 Aralık Cumartesi · 20:00 - Başkent Sanat Merkezi Nata Vega · Ankara - 3. Kategori,750.00,09,0961002
+Erkek Aklı Oksimoron - 14 Aralık Pazartesi · 20:30 - Fethiye Belediyesi Kültür Merkezi · Muğla - 1. Kategori,1000.00,09,0961002
+Erkek Aklı Oksimoron - 14 Aralık Pazartesi · 20:30 - Fethiye Belediyesi Kültür Merkezi · Muğla - 2. Kategori,900.00,09,0961002
+"Erkek Aklı Oksimoron - 14 Kasım Cumartesi · 20:30 - BAOB Sahne, Bursa · Bursa - 1. Kategori",1250.00,09,0961002
+"Erkek Aklı Oksimoron - 14 Kasım Cumartesi · 20:30 - BAOB Sahne, Bursa · Bursa - 2. Kategori",1000.00,09,0961002
+Erkek Aklı Oksimoron - 15 Aralık Salı · 20:30 - Antalya Türkan Şoray Kültür Merkezi · Antalya - 1. Kategori,1000.00,09,0961002
+Erkek Aklı Oksimoron - 15 Aralık Salı · 20:30 - Antalya Türkan Şoray Kültür Merkezi · Antalya - 2. Kategori,900.00,09,0961002
+Erkek Aklı Oksimoron - 15 Aralık Salı · 20:30 - Antalya Türkan Şoray Kültür Merkezi · Antalya - VIP,1250.00,09,0961002
+Erkek Aklı Oksimoron - 15 Kasım Pazar · 20:30 - Lüleburgaz Yıldızları Sanat Akademisi · Kırklareli - 1. Kategori,1250.00,09,0961002
+Erkek Aklı Oksimoron - 15 Kasım Pazar · 20:30 - Lüleburgaz Yıldızları Sanat Akademisi · Kırklareli - 2. Kategori,1000.00,09,0961002
+Erkek Aklı Oksimoron - 16 Aralık Çarşamba · 20:30 - Isparta Belediyesi Kültür Merkezi Gül Salonu · Isparta - Tam,975.00,09,0961002
+Erkek Aklı Oksimoron - 20 Kasım Cuma · 20:30 - Çayırova Prof. Dr. Necmettin Erbakan Kültür Merkezi · Kocaeli - 1. Kategori,1250.00,09,0961002
+Erkek Aklı Oksimoron - 20 Kasım Cuma · 20:30 - Çayırova Prof. Dr. Necmettin Erbakan Kültür Merkezi · Kocaeli - 2. Kategori,1000.00,09,0961002
+Erkek Aklı Oksimoron - 22 Kasım Pazar · 20:30 - İstinyeArt %100 Performans Arena · İzmir - 1. Kategori,1250.00,09,0961002
+Erkek Aklı Oksimoron - 22 Kasım Pazar · 20:30 - İstinyeArt %100 Performans Arena · İzmir - 2. Kategori,1000.00,09,0961002
+Erkek Aklı Oksimoron - 29 Kasım Pazar · 20:30 - Çorlu Ünal Baysan Kültür Merkezi · Tekirdağ - 2. Kategori,1000.00,09,0961002
+Erkek Aklı Oksimoron - 29 Kasım Pazar · 20:30 - Çorlu Ünal Baysan Kültür Merkezi · Tekirdağ - 3. Kategori Balkon,850.00,09,0961002
+Fırat Tanış ile Gelin Tanış Olalım - 23 Kasım Pazartesi · 20:30 - Sancaktepe Sahnesi · İstanbul Anadolu - 1. Kategori,2000.00,09,0961002
+Fırat Tanış ile Gelin Tanış Olalım - 23 Kasım Pazartesi · 20:30 - Sancaktepe Sahnesi · İstanbul Anadolu - 2. Kategori,1500.00,09,0961002
+Fırat Tanış ile Gelin Tanış Olalım - 23 Kasım Pazartesi · 20:30 - Sancaktepe Sahnesi · İstanbul Anadolu - 3. Kategori,1000.00,09,0961002
+Fırat Tanış ile Gelin Tanış Olalım - 26 Ekim Pazartesi · 20:30 - Mall Of İstanbul Biletinial Moi Sahne · İstanbul Avrupa - 1. Kategori,2000.00,09,0961002
+Fırat Tanış ile Gelin Tanış Olalım - 26 Ekim Pazartesi · 20:30 - Mall Of İstanbul Biletinial Moi Sahne · İstanbul Avrupa - 2. Kategori,1500.00,09,0961002
+Fırat Tanış ile Gelin Tanış Olalım - 26 Ekim Pazartesi · 20:30 - Mall Of İstanbul Biletinial Moi Sahne · İstanbul Avrupa - 3. Kategori,1000.00,09,0961002
+Fırat Tanış ile Gelin Tanış Olalım - 29 Kasım Pazar · 20:30 - Watergarden Performans Merkezi Duru Ataşehir · İstanbul Anadolu - 1. Kategori,2500.00,09,0961002
+Fırat Tanış ile Gelin Tanış Olalım - 29 Kasım Pazar · 20:30 - Watergarden Performans Merkezi Duru Ataşehir · İstanbul Anadolu - 2. Kategori,2000.00,09,0961002
+Fırat Tanış ile Gelin Tanış Olalım - 29 Kasım Pazar · 20:30 - Watergarden Performans Merkezi Duru Ataşehir · İstanbul Anadolu - 3. Kategori,1500.00,09,0961002
+GÜN EKSİLMESİN PENCEREMDEN - 03 Kasım Salı · 20:00 - Oda Tiyatrosu DT Genç Sahne · Diyarbakır - 1. Kategori İndirimli,175.00,09,0961002
+GÜN EKSİLMESİN PENCEREMDEN - 03 Kasım Salı · 20:00 - Oda Tiyatrosu DT Genç Sahne · Diyarbakır - 1. Kategori Tam,270.00,09,0961002
+GÜN EKSİLMESİN PENCEREMDEN - 03 Kasım Salı · 20:00 - Oda Tiyatrosu DT Genç Sahne · Diyarbakır - 2. Kategori İndirimli,80.00,09,0961002
+GÜN EKSİLMESİN PENCEREMDEN - 03 Kasım Salı · 20:00 - Oda Tiyatrosu DT Genç Sahne · Diyarbakır - 2. Kategori Tam,120.00,09,0961002
+GÜN EKSİLMESİN PENCEREMDEN - 04 Kasım Çarşamba · 20:00 - Oda Tiyatrosu DT Genç Sahne · Diyarbakır - 1. Kategori İndirimli,175.00,09,0961002
+GÜN EKSİLMESİN PENCEREMDEN - 04 Kasım Çarşamba · 20:00 - Oda Tiyatrosu DT Genç Sahne · Diyarbakır - 1. Kategori Tam,270.00,09,0961002
+GÜN EKSİLMESİN PENCEREMDEN - 04 Kasım Çarşamba · 20:00 - Oda Tiyatrosu DT Genç Sahne · Diyarbakır - 2. Kategori İndirimli,80.00,09,0961002
+GÜN EKSİLMESİN PENCEREMDEN - 04 Kasım Çarşamba · 20:00 - Oda Tiyatrosu DT Genç Sahne · Diyarbakır - 2. Kategori Tam,120.00,09,0961002
+GÜN EKSİLMESİN PENCEREMDEN - 10 Aralık Perşembe · 20:00 - CSO ADA ANKARA Bankkart Mavi Salon · Ankara - 1. Kategori İndirimli,330.00,09,0961002
+GÜN EKSİLMESİN PENCEREMDEN - 10 Aralık Perşembe · 20:00 - CSO ADA ANKARA Bankkart Mavi Salon · Ankara - 1. Kategori Tam,450.00,09,0961002
+GÜN EKSİLMESİN PENCEREMDEN - 10 Aralık Perşembe · 20:00 - CSO ADA ANKARA Bankkart Mavi Salon · Ankara - 2. Kategori İndirimli,120.00,09,0961002
+GÜN EKSİLMESİN PENCEREMDEN - 10 Aralık Perşembe · 20:00 - CSO ADA ANKARA Bankkart Mavi Salon · Ankara - 2. Kategori Tam,200.00,09,0961002
+Hayvanlar ve Çocuklar - 01 Kasım Pazar · 15:30 - Ataşehir Mavi Uçurtma Tiyatrosu - Mu Sahne · İstanbul Anadolu - Tam,400.00,09,0961002
+Hayyam - 31 Ekim Cumartesi · 20:30 - Rosemarine Comedy Club · İstanbul Avrupa - Tam,500.00,09,0961002
+Herkes Kocama Benziyor - 05 Kasım Perşembe · 20:30 - Moda Sahnesi Büyük Salon · İstanbul Anadolu - Tam,1000.00,09,0961002
+Herkes Kocama Benziyor - 05 Kasım Perşembe · 20:30 - Moda Sahnesi Büyük Salon · İstanbul Anadolu - Öğrenci,850.00,09,0961002
+Herkes Kocama Benziyor - 11 Kasım Çarşamba · 20:30 - Antalya Türkan Şoray Kültür Merkezi · Antalya - 1. Kategori,1200.00,09,0961002
+Herkes Kocama Benziyor - 11 Kasım Çarşamba · 20:30 - Antalya Türkan Şoray Kültür Merkezi · Antalya - 2. Kategori,1000.00,09,0961002
+Herkes Kocama Benziyor - 11 Kasım Çarşamba · 20:30 - Antalya Türkan Şoray Kültür Merkezi · Antalya - 3. Kategori,800.00,09,0961002
+Herkes Kocama Benziyor - 20 Kasım Cuma · 20:30 - Hasan Polatkan Kültür Merkezi · Eskişehir - 1. Kategori,1200.00,09,0961002
+Herkes Kocama Benziyor - 20 Kasım Cuma · 20:30 - Hasan Polatkan Kültür Merkezi · Eskişehir - 2. Kategori,1000.00,09,0961002
+Herkes Kocama Benziyor - 20 Kasım Cuma · 20:30 - Hasan Polatkan Kültür Merkezi · Eskişehir - 3. Kategori,800.00,09,0961002
+Herkes Kocama Benziyor - 21 Kasım Cumartesi · 20:00 - Çankaya Belediyesi Atatürk Sanat Merkezi- Kırmızı Salon · Ankara - Tam,800.00,09,0961002
+Herkes Kocama Benziyor - 25 Kasım Çarşamba · 20:30 - Kadıköy Eğitim Sahnesi · İstanbul Anadolu - 1. Kategori,1200.00,09,0961002
+Herkes Kocama Benziyor - 25 Kasım Çarşamba · 20:30 - Kadıköy Eğitim Sahnesi · İstanbul Anadolu - 2. Kategori,1000.00,09,0961002
+Herkes Kocama Benziyor - 25 Kasım Çarşamba · 20:30 - Kadıköy Eğitim Sahnesi · İstanbul Anadolu - 3. Kategori,800.00,09,0961002
+Herkes Kocama Benziyor - 26 Kasım Perşembe · 20:30 - Akatlar Kültür Merkezi · İstanbul Avrupa - 1. Kategori,1200.00,09,0961002
+Herkes Kocama Benziyor - 26 Kasım Perşembe · 20:30 - Akatlar Kültür Merkezi · İstanbul Avrupa - 2. Kategori,1000.00,09,0961002
+Herkes Kocama Benziyor - 26 Kasım Perşembe · 20:30 - Akatlar Kültür Merkezi · İstanbul Avrupa - 3. Kategori,800.00,09,0961002
+Hiç Kimse - 31 Ekim Cumartesi · 20:30 - Kolektif Performans · İstanbul Anadolu - Tam,700.00,09,0961002
+Hiç Kimse - 31 Ekim Cumartesi · 20:30 - Kolektif Performans · İstanbul Anadolu - Öğrenci,400.00,09,0961002
+Kadere 45 - 08 Kasım Pazar · 20:30 - Tiyatro Durağı Kültür ve Sanat Merkezi · İzmir - Tam,300.00,09,0961002
+Kadere 45 - 21 Kasım Cumartesi · 20:30 - Boyoz Akademi Sanat Merkezi · İzmir - Tam,300.00,09,0961002
+Kadere 45 - 30 Ekim Cuma · 20:30 - Tiyatro Durağı Kültür ve Sanat Merkezi · İzmir - Tam,300.00,09,0961002
+KARACAOĞLAN - 29 Ekim Perşembe · 19:30 - AKM Sahnesi · Sivas - 1. Kategori İndirimli,175.00,09,0961002
+KARACAOĞLAN - 29 Ekim Perşembe · 19:30 - AKM Sahnesi · Sivas - 1. Kategori Tam,270.00,09,0961002
+KARACAOĞLAN - 29 Ekim Perşembe · 19:30 - AKM Sahnesi · Sivas - 2. Kategori İndirimli,80.00,09,0961002
+KARACAOĞLAN - 29 Ekim Perşembe · 19:30 - AKM Sahnesi · Sivas - 2. Kategori Tam,120.00,09,0961002
+KARACAOĞLAN - 30 Ekim Cuma · 19:30 - AKM Sahnesi · Sivas - 1. Kategori İndirimli,175.00,09,0961002
+KARACAOĞLAN - 30 Ekim Cuma · 19:30 - AKM Sahnesi · Sivas - 1. Kategori Tam,270.00,09,0961002
+KARACAOĞLAN - 30 Ekim Cuma · 19:30 - AKM Sahnesi · Sivas - 2. Kategori İndirimli,80.00,09,0961002
+KARACAOĞLAN - 30 Ekim Cuma · 19:30 - AKM Sahnesi · Sivas - 2. Kategori Tam,120.00,09,0961002
+KARACAOĞLAN - 31 Ekim Cumartesi · 14:00 - AKM Sahnesi · Sivas - 1. Kategori İndirimli,175.00,09,0961002
+KARACAOĞLAN - 31 Ekim Cumartesi · 14:00 - AKM Sahnesi · Sivas - 1. Kategori Tam,270.00,09,0961002
+KARACAOĞLAN - 31 Ekim Cumartesi · 14:00 - AKM Sahnesi · Sivas - 2. Kategori İndirimli,80.00,09,0961002
+KARACAOĞLAN - 31 Ekim Cumartesi · 14:00 - AKM Sahnesi · Sivas - 2. Kategori Tam,120.00,09,0961002
+KARACAOĞLAN - 31 Ekim Cumartesi · 19:30 - AKM Sahnesi · Sivas - 1. Kategori İndirimli,175.00,09,0961002
+KARACAOĞLAN - 31 Ekim Cumartesi · 19:30 - AKM Sahnesi · Sivas - 1. Kategori Tam,270.00,09,0961002
+KARACAOĞLAN - 31 Ekim Cumartesi · 19:30 - AKM Sahnesi · Sivas - 2. Kategori İndirimli,80.00,09,0961002
+KARACAOĞLAN - 31 Ekim Cumartesi · 19:30 - AKM Sahnesi · Sivas - 2. Kategori Tam,120.00,09,0961002
+Komedya - 30 Ekim Cuma · 20:00 - Alternaif Tiyatro · Kocaeli - Tam,150.00,09,0961002
+Kral Lear - 01 Kasım Pazar · 20:00 - Çankaya Sahne · Ankara - Tam,600.00,09,0961002
+Kral Lear - 01 Kasım Pazar · 20:00 - Çankaya Sahne · Ankara - Öğrenci,450.00,09,0961002
+Kral Lear - 27 Ekim Salı · 20:00 - Çankaya Sahne · Ankara - Tam,600.00,09,0961002
+Kral Lear - 27 Ekim Salı · 20:00 - Çankaya Sahne · Ankara - Öğrenci,450.00,09,0961002
+Küçük Bir Aşk Masalı - 11 Kasım Çarşamba · 20:00 - Tiyatro Kafe · Ankara - Tam,450.00,09,0961002
+Küçük Bir Aşk Masalı - 18 Kasım Çarşamba · 20:00 - Başkent Sanat Merkezi Nata Vega · Ankara - Tam,500.00,09,0961002
+Küçük Bir Aşk Masalı - 20 Kasım Cuma · 20:00 - Tiyatro Kafe · Ankara - Tam,500.00,09,0961002
+Küçük Bir Aşk Masalı - 20 Kasım Cuma · 20:00 - Tiyatro Kafe · Ankara - Öğrenci,450.00,09,0961002
+Küçük Bir Aşk Masalı - 30 Ekim Cuma · 20:00 - Tiyatro Kafe · Ankara - Tam,450.00,09,0961002
+Küçük Kara Balık - 08 Kasım Pazar · 13:00 - Caddebostan Kültür Merkezi B Salonu · İstanbul Anadolu - Tam,600.00,09,0961002
+Küçük Kara Balık - 08 Kasım Pazar · 15:00 - Caddebostan Kültür Merkezi B Salonu · İstanbul Anadolu - Tam,600.00,09,0961002
+Küçük Kara Balık - 12 Aralık Cumartesi · 13:00 - Nilüfer Uğur Mumcu Kültür Merkezi · Bursa - Tam,600.00,09,0961002
+Küçük Kara Balık - 12 Aralık Cumartesi · 15:00 - Nilüfer Uğur Mumcu Kültür Merkezi · Bursa - Tam,600.00,09,0961002
+Küçük Kara Balık - 15 Kasım Pazar · 13:00 - Nazım Hikmet Kültür Merkezi -Konak Sahnesi · İzmir - Tam,500.00,09,0961002
+Küçük Kara Balık - 15 Kasım Pazar · 15:00 - Nazım Hikmet Kültür Merkezi -Konak Sahnesi · İzmir - Tam,500.00,09,0961002
+Küçük Kara Balık - 19 Kasım Perşembe · 14:00 - House Of Performance - Alt Sahne · İstanbul Avrupa - Tam,650.00,09,0961002
+Küçük Kara Balık - 19 Kasım Perşembe · 16:00 - House Of Performance - Alt Sahne · İstanbul Avrupa - Tam,650.00,09,0961002
+Küçük Kara Balık - 20 Aralık Pazar · 13:00 - Edremit Şükrü Tunar Kültür Merkezi · Balıkesir - Tam,450.00,09,0961002
+Küçük Kara Balık - 20 Aralık Pazar · 15:00 - Edremit Şükrü Tunar Kültür Merkezi · Balıkesir - Tam,450.00,09,0961002
+Küçük Kara Balık - 20 Kasım Cuma · 13:00 - Kadıköy Barış Manço Kültür Merkezi · İstanbul Anadolu - Tam,600.00,09,0961002
+Küçük Kara Balık - 20 Kasım Cuma · 15:00 - Kadıköy Barış Manço Kültür Merkezi · İstanbul Anadolu - Tam,600.00,09,0961002
+Küçük Kara Balık - 21 Kasım Cumartesi · 13:00 - Kozzy Kozyatağı Kültür Merkezi · İstanbul Anadolu - Tam,600.00,09,0961002
+Küçük Kara Balık - 26 Aralık Cumartesi · 13:00 - Bolu Necip Fazıl Kısakürek Kültür Merkezi · Bolu - Tam,500.00,09,0961002
+Küçük Kara Balık - 26 Aralık Cumartesi · 15:00 - Bolu Necip Fazıl Kısakürek Kültür Merkezi · Bolu - Tam,500.00,09,0961002
+Küçük Kara Balık - 28 Kasım Cumartesi · 13:00 - Yaşar Kemal Kültür Merkezi Tiyatro Salonu · İstanbul Anadolu - Tam,550.00,09,0961002
+Küçük Kara Balık - 28 Kasım Cumartesi · 15:00 - Yaşar Kemal Kültür Merkezi Tiyatro Salonu · İstanbul Anadolu - Tam,550.00,09,0961002
+Küçük Kara Balık - 29 Kasım Pazar · 13:00 - Ortaköy Kültür Merkezi - Afife Jale Sahnesi · İstanbul Avrupa - Tam,650.00,09,0961002
+Küçük Kara Balık - 31 Ekim Cumartesi · 13:00 - Kadıköy Halis Kurtça Çocuk Kültür Merkezi · İstanbul Anadolu - Tam,600.00,09,0961002
+Küçük Kara Balık - 31 Ekim Cumartesi · 15:00 - Kadıköy Halis Kurtça Çocuk Kültür Merkezi · İstanbul Anadolu - Tam,600.00,09,0961002
+Kırkından Sonra - 13 Kasım Cuma · 20:00 - Kedi Sanat Sahnesi · Mersin - Tam,500.00,09,0961002
+Kırkından Sonra - 30 Ekim Cuma · 20:00 - Kedi Sanat Sahnesi · Mersin - Tam,500.00,09,0961002
+Mahşer-i Cümbüş - 01 Aralık Salı · 20:00 - Isparta Belediyesi Kültür Merkezi - Gül Salonu · Isparta - 1. Kategori,1400.00,09,0961002
+Mahşer-i Cümbüş - 01 Aralık Salı · 20:00 - Isparta Belediyesi Kültür Merkezi - Gül Salonu · Isparta - 2. Kategori,1000.00,09,0961002
+Mahşer-i Cümbüş - 02 Aralık Çarşamba · 20:30 - Antalya Türkan Şoray Kültür Merkezi · Antalya - 1. Kategori,1400.00,09,0961002
+Mahşer-i Cümbüş - 02 Aralık Çarşamba · 20:30 - Antalya Türkan Şoray Kültür Merkezi · Antalya - 2. Kategori,1000.00,09,0961002
+Mahşer-i Cümbüş - 02 Kasım Pazartesi · 20:00 - Mersin Yenişehir Atatürk K M Barış Salonu · Mersin - 1. Kategori,1500.00,09,0961002
+Mahşer-i Cümbüş - 02 Kasım Pazartesi · 20:00 - Mersin Yenişehir Atatürk K M Barış Salonu · Mersin - 2. Kategori,1250.00,09,0961002
+Mahşer-i Cümbüş - 02 Kasım Pazartesi · 20:00 - Mersin Yenişehir Atatürk K M Barış Salonu · Mersin - 3. Kategori,1000.00,09,0961002
+Mahşer-i Cümbüş - 03 Aralık Perşembe · 20:00 - Manavgat Atatürk Kültür Merkezi · Antalya - Tam,1000.00,09,0961002
+Mahşer-i Cümbüş - 03 Kasım Salı · 20:30 - TED İskenderun Koleji · Hatay - 1. Kategori,1500.00,09,0961002
+Mahşer-i Cümbüş - 03 Kasım Salı · 20:30 - TED İskenderun Koleji · Hatay - 2. Kategori,1000.00,09,0961002
+Mahşer-i Cümbüş - 04 Kasım Çarşamba · 20:30 - Seyhan Belediyesi Yaşar Kemal Kültür Merkezi · Adana - Tam,1000.00,09,0961002
+Mahşer-i Cümbüş - 05 Aralık Cumartesi · 20:30 - Trump Sahne · İstanbul Avrupa - Tam,1500.00,09,0961002
+Mahşer-i Cümbüş - 05 Aralık Cumartesi · 20:30 - Trump Sahne · İstanbul Avrupa - Öğrenci,1000.00,09,0961002
+Mahşer-i Cümbüş - 05 Kasım Perşembe · 20:30 - Kadirli Devlet Bahçeli Kültür Merkezi · Osmaniye - Tam,1000.00,09,0961002
+Mahşer-i Cümbüş - 07 Kasım Cumartesi · 20:30 - Trump Sahne · İstanbul Avrupa - Tam,1500.00,09,0961002
+Mahşer-i Cümbüş - 07 Kasım Cumartesi · 20:30 - Trump Sahne · İstanbul Avrupa - Öğrenci,1000.00,09,0961002
+Mahşer-i Cümbüş - 08 Aralık Salı · 20:00 - Lüleburgaz Yıldızları Cahit Irgat Salonu · Kırklareli - 1. Kategori,1200.00,09,0961002
+Mahşer-i Cümbüş - 08 Aralık Salı · 20:00 - Lüleburgaz Yıldızları Cahit Irgat Salonu · Kırklareli - 2. Kategori,1000.00,09,0961002
+Mahşer-i Cümbüş - 08 Kasım Pazar · 20:30 - Beylikdüzü Atatürk Kültür ve Sanat Merkezi · İstanbul Avrupa - 1. Kategori,1500.00,09,0961002
+Mahşer-i Cümbüş - 08 Kasım Pazar · 20:30 - Beylikdüzü Atatürk Kültür ve Sanat Merkezi · İstanbul Avrupa - 2. Kategori,1250.00,09,0961002
+Mahşer-i Cümbüş - 08 Kasım Pazar · 20:30 - Beylikdüzü Atatürk Kültür ve Sanat Merkezi · İstanbul Avrupa - Balkon,1000.00,09,0961002
+Mahşer-i Cümbüş - 14 Aralık Pazartesi · 20:00 - Amasya Belediyesi Kültür Merkezi · Amasya - Tam,1000.00,09,0961002
+Mahşer-i Cümbüş - 14 Kasım Cumartesi · 20:30 - Trump Sahne · İstanbul Avrupa - Tam,1500.00,09,0961002
+Mahşer-i Cümbüş - 14 Kasım Cumartesi · 20:30 - Trump Sahne · İstanbul Avrupa - Öğrenci,1000.00,09,0961002
+Mahşer-i Cümbüş - 15 Aralık Salı · 20:00 - Çorum Devlet Tiyatrosu · Çorum - Tam,1000.00,09,0961002
+Mahşer-i Cümbüş - 15 Kasım Pazar · 20:00 - Nevşehir Kapadokya Kültür Merkezi · Nevşehir - 1. Kategori,1500.00,09,0961002
+Mahşer-i Cümbüş - 15 Kasım Pazar · 20:00 - Nevşehir Kapadokya Kültür Merkezi · Nevşehir - 2. Kategori,1000.00,09,0961002
+Mahşer-i Cümbüş - 16 Aralık Çarşamba · 20:00 - 26 Haziran Atatürk Kültür Merkezi · Tokat - Tam,1000.00,09,0961002
+Mahşer-i Cümbüş - 16 Kasım Pazartesi · 20:30 - Selçuklu Sahne - Güzel Sanatlar Lisesi · Konya - 1. Kategori,1500.00,09,0961002
+Mahşer-i Cümbüş - 16 Kasım Pazartesi · 20:30 - Selçuklu Sahne - Güzel Sanatlar Lisesi · Konya - 2. Kategori,1000.00,09,0961002
+Mahşer-i Cümbüş - 17 Aralık Perşembe · 20:00 - Samsun Büyükşehir Belediyesi Atakum Sanat Merkezi · Samsun - Tam,1000.00,09,0961002
+Mahşer-i Cümbüş - 17 Kasım Salı · 20:00 - Niğde İl Kültür Merkezi · Niğde - 1. Kategori,1500.00,09,0961002
+Mahşer-i Cümbüş - 17 Kasım Salı · 20:00 - Niğde İl Kültür Merkezi · Niğde - 2. Kategori,1000.00,09,0961002
+Mahşer-i Cümbüş - 18 Aralık Cuma · 20:00 - Kocaeli Kongre Merkezi · Kocaeli - 1. Kategori,1200.00,09,0961002
+Mahşer-i Cümbüş - 18 Aralık Cuma · 20:00 - Kocaeli Kongre Merkezi · Kocaeli - 2. Kategori,1000.00,09,0961002
+Mahşer-i Cümbüş - 18 Kasım Çarşamba · 20:00 - Kayseri İl Kültür Merkezi · Kayseri - 1. Kategori,1500.00,09,0961002
+Mahşer-i Cümbüş - 18 Kasım Çarşamba · 20:00 - Kayseri İl Kültür Merkezi · Kayseri - 2. Kategori,1000.00,09,0961002
+Mahşer-i Cümbüş - 19 Aralık Cumartesi · 20:30 - Trump Sahne · İstanbul Avrupa - Tam,1500.00,09,0961002
+Mahşer-i Cümbüş - 19 Aralık Cumartesi · 20:30 - Trump Sahne · İstanbul Avrupa - Öğrenci,1000.00,09,0961002
+Mahşer-i Cümbüş - 20 Kasım Cuma · 20:30 - HOP Sahne · İstanbul Avrupa - 1. Kategori,1500.00,09,0961002
+Mahşer-i Cümbüş - 20 Kasım Cuma · 20:30 - HOP Sahne · İstanbul Avrupa - 2. Kategori,1000.00,09,0961002
+Mahşer-i Cümbüş - 21 Kasım Cumartesi · 20:30 - Trump Sahne · İstanbul Avrupa - Tam,1500.00,09,0961002
+Mahşer-i Cümbüş - 21 Kasım Cumartesi · 20:30 - Trump Sahne · İstanbul Avrupa - Öğrenci,1000.00,09,0961002
+Mahşer-i Cümbüş - 22 Kasım Pazar · 20:00 - Kale Sahne · Sakarya - 1. Kategori,1500.00,09,0961002
+Mahşer-i Cümbüş - 22 Kasım Pazar · 20:00 - Kale Sahne · Sakarya - 2. Kategori,1000.00,09,0961002
+Mahşer-i Cümbüş - 23 Aralık Çarşamba · 20:00 - Çorlu Memduh Şevket Esendal Sahnesi · Tekirdağ - 1. Kategori,1200.00,09,0961002
+Mahşer-i Cümbüş - 23 Aralık Çarşamba · 20:00 - Çorlu Memduh Şevket Esendal Sahnesi · Tekirdağ - 2. Kategori,1000.00,09,0961002
+Mahşer-i Cümbüş - 24 Kasım Salı · 20:00 - Darıca Adnan Menderes Kültür Merkezi · Kocaeli - 1. Kategori,1200.00,09,0961002
+Mahşer-i Cümbüş - 24 Kasım Salı · 20:00 - Darıca Adnan Menderes Kültür Merkezi · Kocaeli - 2. Kategori,1000.00,09,0961002
+Mahşer-i Cümbüş - 25 Kasım Çarşamba · 20:00 - Tekirdağ Yahya Kemal Beyatlı Kültür Merkezi · Tekirdağ - 1. Kategori,1200.00,09,0961002
+Mahşer-i Cümbüş - 25 Kasım Çarşamba · 20:00 - Tekirdağ Yahya Kemal Beyatlı Kültür Merkezi · Tekirdağ - 2. Kategori,1000.00,09,0961002
+Mahşer-i Cümbüş - 26 Aralık Cumartesi · 20:30 - Trump Sahne · İstanbul Avrupa - Tam,1500.00,09,0961002
+Mahşer-i Cümbüş - 26 Aralık Cumartesi · 20:30 - Trump Sahne · İstanbul Avrupa - Öğrenci,1000.00,09,0961002
+Mahşer-i Cümbüş - 28 Kasım Cumartesi · 20:30 - Trump Sahne · İstanbul Avrupa - Tam,1500.00,09,0961002
+Mahşer-i Cümbüş - 28 Kasım Cumartesi · 20:30 - Trump Sahne · İstanbul Avrupa - Öğrenci,1000.00,09,0961002
+Mahşer-i Cümbüş - 30 Kasım Pazartesi · 20:00 - Burdur Kültür Merkezi · Burdur - 1. Kategori,1400.00,09,0961002
+Mahşer-i Cümbüş - 30 Kasım Pazartesi · 20:00 - Burdur Kültür Merkezi · Burdur - 2. Kategori,1000.00,09,0961002
+Mahşer-i Cümbüş - 31 Ekim Cumartesi · 20:30 - Trump Sahne · İstanbul Avrupa - Tam,1500.00,09,0961002
+Mahşer-i Cümbüş - 31 Ekim Cumartesi · 20:30 - Trump Sahne · İstanbul Avrupa - Öğrenci,1000.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 06 Kasım Cuma · 20:30 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 06 Kasım Cuma · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 06 Kasım Cuma · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 06 Kasım Cuma · 20:30 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 07 Kasım Cumartesi · 20:30 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 07 Kasım Cumartesi · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 07 Kasım Cumartesi · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 07 Kasım Cumartesi · 20:30 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 13 Kasım Cuma · 20:30 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 13 Kasım Cuma · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 13 Kasım Cuma · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 13 Kasım Cuma · 20:30 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 14 Kasım Cumartesi · 20:30 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 14 Kasım Cumartesi · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 14 Kasım Cumartesi · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 14 Kasım Cumartesi · 20:30 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 20 Kasım Cuma · 20:30 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 20 Kasım Cuma · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 20 Kasım Cuma · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 20 Kasım Cuma · 20:30 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 21 Kasım Cumartesi · 20:30 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 21 Kasım Cumartesi · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 21 Kasım Cumartesi · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 21 Kasım Cumartesi · 20:30 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 27 Kasım Cuma · 20:30 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 27 Kasım Cuma · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 27 Kasım Cuma · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 27 Kasım Cuma · 20:30 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 28 Kasım Cumartesi · 20:30 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 28 Kasım Cumartesi · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 28 Kasım Cumartesi · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 28 Kasım Cumartesi · 20:30 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 30 Ekim Cuma · 20:30 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 30 Ekim Cuma · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 30 Ekim Cuma · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 30 Ekim Cuma · 20:30 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 31 Ekim Cumartesi · 20:30 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 31 Ekim Cumartesi · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 31 Ekim Cumartesi · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Metin Zakoğlu ile Neşeli Gazino - 31 Ekim Cumartesi · 20:30 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 02 Kasım Pazartesi · 20:00 - Mezitli Kültür Merkezi · Mersin - 1. Kategori,1500.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 02 Kasım Pazartesi · 20:00 - Mezitli Kültür Merkezi · Mersin - 2. Kategori,1250.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 02 Kasım Pazartesi · 20:00 - Mezitli Kültür Merkezi · Mersin - 3. Kategori,1000.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 03 Kasım Salı · 20:00 - Adana 01 Pgm Kültür Merkezi · Adana - 1. Kategori,1500.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 03 Kasım Salı · 20:00 - Adana 01 Pgm Kültür Merkezi · Adana - 2. Kategori,1250.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 03 Kasım Salı · 20:00 - Adana 01 Pgm Kültür Merkezi · Adana - 3. Kategori,1000.00,09,0961002
+"Nilgün Belgün Aşk ve Komedi - 07 Kasım Cumartesi · 20:30 - BAOB Sahne, Bursa · Bursa - 1. Kategori",1500.00,09,0961002
+"Nilgün Belgün Aşk ve Komedi - 07 Kasım Cumartesi · 20:30 - BAOB Sahne, Bursa · Bursa - 2. Kategori",1250.00,09,0961002
+"Nilgün Belgün Aşk ve Komedi - 07 Kasım Cumartesi · 20:30 - BAOB Sahne, Bursa · Bursa - 3. Kategori",1000.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 13 Kasım Cuma · 20:30 - Sakarya Ted Sahne · Sakarya - 1. Kategori,1500.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 13 Kasım Cuma · 20:30 - Sakarya Ted Sahne · Sakarya - 2. Kategori,1300.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 13 Kasım Cuma · 20:30 - Sakarya Ted Sahne · Sakarya - 3. Kategori,1000.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 19 Kasım Perşembe · 20:30 - DasDas Sahne · İstanbul Anadolu - 1. Kategori,1750.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 19 Kasım Perşembe · 20:30 - DasDas Sahne · İstanbul Anadolu - 2. Kategori,1500.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 19 Kasım Perşembe · 20:30 - DasDas Sahne · İstanbul Anadolu - 3. Kategori,1250.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 23 Kasım Pazartesi · 20:00 - Devlet Tiyatroları Şinasi Sahnesi · Ankara - 1. Kategori,1750.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 23 Kasım Pazartesi · 20:00 - Devlet Tiyatroları Şinasi Sahnesi · Ankara - 2. Kategori,1500.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 23 Kasım Pazartesi · 20:00 - Devlet Tiyatroları Şinasi Sahnesi · Ankara - 3. Kategori,1250.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 24 Kasım Salı · 20:00 - Vesahne Panora & Kuli̇s Sanat Ti̇yatrosu · Ankara - 1. Kategori,1800.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 24 Kasım Salı · 20:00 - Vesahne Panora & Kuli̇s Sanat Ti̇yatrosu · Ankara - 2. Kategori,1400.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 24 Kasım Salı · 20:00 - Vesahne Panora & Kuli̇s Sanat Ti̇yatrosu · Ankara - 3. Kategori,1000.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 27 Kasım Cuma · 20:00 - Trabzon KTÜ Atatürk Kültür Merkezi · Trabzon - 1. Kategori,1500.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 27 Kasım Cuma · 20:00 - Trabzon KTÜ Atatürk Kültür Merkezi · Trabzon - 2. Kategori,1250.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 27 Kasım Cuma · 20:00 - Trabzon KTÜ Atatürk Kültür Merkezi · Trabzon - 3. Kategori,1000.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 29 Kasım Pazar · 20:00 - Samsun Ata Sahne · Samsun - 1. Kategori,1500.00,09,0961002
+Nilgün Belgün Aşk ve Komedi - 29 Kasım Pazar · 20:00 - Samsun Ata Sahne · Samsun - 2. Kategori,1250.00,09,0961002
+Olay Rusya'da Geçiyor - 30 Ekim Cuma · 20:30 - İstanbulimpro Sahne · İstanbul Anadolu - Tam,1000.00,09,0961002
+Olay Rusya'da Geçiyor - 30 Ekim Cuma · 20:30 - İstanbulimpro Sahne · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Oliver Twist - 01 Kasım Pazar · 13:00 - CKM - Caddebostan Kültür Merkezi A Salonu · İstanbul Anadolu - Tam,700.00,09,0961002
+Oliver Twist - 01 Kasım Pazar · 15:00 - CKM - Caddebostan Kültür Merkezi A Salonu · İstanbul Anadolu - Tam,700.00,09,0961002
+Oliver Twist - 08 Kasım Pazar · 13:00 - Halis Kurtça Çocuk Kültür Merkezi · İstanbul Anadolu - Tam,600.00,09,0961002
+Oliver Twist - 08 Kasım Pazar · 15:00 - Halis Kurtça Çocuk Kültür Merkezi · İstanbul Anadolu - Tam,600.00,09,0961002
+Oliver Twist - 27 Aralık Pazar · 13:00 - Kadıköy Barış Manço Kültür Merkezi · İstanbul Anadolu - Tam,700.00,09,0961002
+Oliver Twist - 27 Aralık Pazar · 15:00 - Kadıköy Barış Manço Kültür Merkezi · İstanbul Anadolu - Tam,700.00,09,0961002
+Oliver Twist - 29 Kasım Pazar · 13:00 - Tiyatro Ak’la Kara · İstanbul Anadolu - Tam,700.00,09,0961002
+Oliver Twist - 29 Kasım Pazar · 15:00 - Tiyatro Ak’la Kara · İstanbul Anadolu - Tam,700.00,09,0961002
+Orhan Veli (Garip) - 08 Aralık Salı · 20:00 - Zonguldak Belediyesi Sinema Salonu · Zonguldak - 1. Kategori,600.00,09,0961002
+Orhan Veli (Garip) - 08 Aralık Salı · 20:00 - Zonguldak Belediyesi Sinema Salonu · Zonguldak - 2. Kategori,500.00,09,0961002
+Orhan Veli (Garip) - 12 Kasım Perşembe · 20:00 - Ankara Çayyolu Sahne · Ankara - Tam,600.00,09,0961002
+Orhan Veli (Garip) - 25 Kasım Çarşamba · 20:00 - Ankara Çayyolu Sahne · Ankara - Tam,600.00,09,0961002
+Orhan Veli (Garip) - 28 Ekim Çarşamba · 20:00 - Ankara Çayyolu Sahne · Ankara - Tam,500.00,09,0961002
+Pinokyo - 01 Kasım Pazar · 13:00 - Aksaray Somuncu Baba Kültür Merkezi · Aksaray - 1. Kategori,400.00,09,0961002
+Pinokyo - 01 Kasım Pazar · 13:00 - Aksaray Somuncu Baba Kültür Merkezi · Aksaray - 2. Kategori,300.00,09,0961002
+Pinokyo - 01 Kasım Pazar · 13:00 - Aksaray Somuncu Baba Kültür Merkezi · Aksaray - 3. Kategori,200.00,09,0961002
+Pinokyo - 01 Kasım Pazar · 17:00 - Nevşehir Kapadokya Kültür Merkezi · Nevşehir - 1. Kategori,400.00,09,0961002
+Pinokyo - 01 Kasım Pazar · 17:00 - Nevşehir Kapadokya Kültür Merkezi · Nevşehir - 2. Kategori,300.00,09,0961002
+Pinokyo - 01 Kasım Pazar · 17:00 - Nevşehir Kapadokya Kültür Merkezi · Nevşehir - 3. Kategori,200.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 01 Kasım Pazar · 14:00 - Sinop Kültür Merkezi · Sinop - Tam,600.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 01 Kasım Pazar · 16:00 - Sinop Kültür Merkezi · Sinop - Tam,600.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 03 Kasım Salı · 18:00 - Antalya Konyaaltı Nazım Hikmet Kültür Merkezi · Antalya - Tam,500.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 06 Kasım Cuma · 18:00 - Yalova Halk Eğitim Merkezi Konferans Salonu · Yalova - Tam,600.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 08 Kasım Pazar · 14:00 - Kale Sahne · Sakarya - Tam,600.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 08 Kasım Pazar · 16:00 - Kale Sahne · Sakarya - Tam,600.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 09 Kasım Pazartesi · 18:00 - Hilltown Seyirlik Sahne · İstanbul Anadolu - Tam,600.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 12 Kasım Perşembe · 18:00 - Balıkesir Hasan Can Kültür Merkezi · Balıkesir - Tam,600.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 13 Aralık Pazar · 18:00 - Murat Göğebakan Kültür Merkezi · Adana - Tam,500.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 13 Kasım Cuma · 18:00 - Susurluk Kongre ve Kültür Merkezi · Balıkesir - Tam,500.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 14 Kasım Cumartesi · 18:00 - Kütahya Hezar Dinari Kültür Merkezi · Kütahya - Tam,500.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 15 Kasım Pazar · 15:00 - Bandırma Barış Manço Kültür Merkezi · Balıkesir - Tam,600.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 15 Kasım Pazar · 17:00 - Bandırma Barış Manço Kültür Merkezi · Balıkesir - Tam,600.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 18 Kasım Çarşamba · 14:00 - Bergüzar Sahne · Ankara - Tam,400.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 18 Kasım Çarşamba · 16:00 - Bergüzar Sahne · Ankara - Tam,400.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 18 Kasım Çarşamba · 18:00 - Bergüzar Sahne · Ankara - Tam,400.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 18 Kasım Çarşamba · 18:00 - Kastamonu Belediyesi Nikah ve Konferans Merkezi · Kastamonu - Tam,500.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 19 Aralık Cumartesi · 14:00 - Tokat 26 Haziran Atatürk Kültür Merkezi · Tokat - Tam,500.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 19 Aralık Cumartesi · 16:00 - Tokat 26 Haziran Atatürk Kültür Merkezi · Tokat - Tam,500.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 20 Aralık Pazar · 14:00 - Konya Bergüzar Gösteri Merkezi · Konya - Tam,600.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 20 Aralık Pazar · 16:00 - Konya Bergüzar Gösteri Merkezi · Konya - Tam,600.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 22 Aralık Salı · 18:00 - Erzincan Belediyesi Kültür Sanat Merkezi · Erzincan - Tam,600.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 27 Aralık Pazar · 18:00 - Amasya Belediyesi Kültür Merkezi · Amasya - Tam,500.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 28 Ekim Çarşamba · 18:00 - Konya Bergüzar Gösteri Merkezi · Konya - Tam,600.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 29 Kasım Pazar · 15:00 - Malatya İl Kongre KM Kemal Sunal Salonu · Malatya - Tam,600.00,09,0961002
+Pinokyo Çocuk Tiyatrosu - 29 Kasım Pazar · 17:00 - Malatya İl Kongre KM Kemal Sunal Salonu · Malatya - Tam,600.00,09,0961002
+Plastik Aşklar / Oya Başar & Begüm Birgören - 19 Kasım Perşembe · 20:00 - Lüleburgaz Yıldızları Sanat Akademisi - Cahit Irgat Salonu · Kırklareli - 1. Kategori,1350.00,09,0961002
+Plastik Aşklar / Oya Başar & Begüm Birgören - 19 Kasım Perşembe · 20:00 - Lüleburgaz Yıldızları Sanat Akademisi - Cahit Irgat Salonu · Kırklareli - 2. Kategori,1100.00,09,0961002
+Ponpon Kuyruğun Pastası - 01 Kasım Pazar · 12:00 - Pembe Kurbağa Sahnesi · Ankara - Yetişkin,500.00,09,0961002
+Ponpon Kuyruğun Pastası - 01 Kasım Pazar · 12:00 - Pembe Kurbağa Sahnesi · Ankara - Çocuk,550.00,09,0961002
+Profesyonel - 04 Aralık Cuma · 20:30 - MEB Şura Salonu · Ankara - 1. Kategori,3100.00,09,0961002
+Profesyonel - 04 Aralık Cuma · 20:30 - MEB Şura Salonu · Ankara - 2. Kategori,2500.00,09,0961002
+Profesyonel - 04 Aralık Cuma · 20:30 - MEB Şura Salonu · Ankara - 3. Kategori,2200.00,09,0961002
+Profesyonel - 04 Aralık Cuma · 20:30 - MEB Şura Salonu · Ankara - 4. Kategori,1800.00,09,0961002
+Profesyonel - 04 Aralık Cuma · 20:30 - MEB Şura Salonu · Ankara - 5. Kategori,1500.00,09,0961002
+Profesyonel - 04 Kasım Çarşamba · 20:30 - Bostancı Gösteri Merkezi · İstanbul Anadolu - 1. Kategori,3100.00,09,0961002
+Profesyonel - 04 Kasım Çarşamba · 20:30 - Bostancı Gösteri Merkezi · İstanbul Anadolu - 2. Kategori,2500.00,09,0961002
+Profesyonel - 04 Kasım Çarşamba · 20:30 - Bostancı Gösteri Merkezi · İstanbul Anadolu - 3. Kategori,1500.00,09,0961002
+Profesyonel - 04 Kasım Çarşamba · 20:30 - Bostancı Gösteri Merkezi · İstanbul Anadolu - VIP,3500.00,09,0961002
+Profesyonel - 05 Aralık Cumartesi · 20:30 - Eskişehir Atatürk Kültür Sanat ve Kongre Merkezi · Eskişehir - 1. Kategori,3100.00,09,0961002
+Profesyonel - 05 Aralık Cumartesi · 20:30 - Eskişehir Atatürk Kültür Sanat ve Kongre Merkezi · Eskişehir - 2. Kategori,2800.00,09,0961002
+Profesyonel - 05 Aralık Cumartesi · 20:30 - Eskişehir Atatürk Kültür Sanat ve Kongre Merkezi · Eskişehir - 3. Kategori,2500.00,09,0961002
+Profesyonel - 05 Aralık Cumartesi · 20:30 - Eskişehir Atatürk Kültür Sanat ve Kongre Merkezi · Eskişehir - 4. Kategori,2100.00,09,0961002
+Profesyonel - 05 Aralık Cumartesi · 20:30 - Eskişehir Atatürk Kültür Sanat ve Kongre Merkezi · Eskişehir - 5. Kategori,1600.00,09,0961002
+Profesyonel - 05 Kasım Perşembe · 20:30 - İstanbul Lütfi Kirdar Anadolu Oditoryum Salonu · İstanbul Avrupa - 1. Kategori,3100.00,09,0961002
+Profesyonel - 05 Kasım Perşembe · 20:30 - İstanbul Lütfi Kirdar Anadolu Oditoryum Salonu · İstanbul Avrupa - 2. Kategori,2800.00,09,0961002
+Profesyonel - 05 Kasım Perşembe · 20:30 - İstanbul Lütfi Kirdar Anadolu Oditoryum Salonu · İstanbul Avrupa - 3. Kategori,2500.00,09,0961002
+Profesyonel - 05 Kasım Perşembe · 20:30 - İstanbul Lütfi Kirdar Anadolu Oditoryum Salonu · İstanbul Avrupa - 4. Kategori,1800.00,09,0961002
+Profesyonel - 05 Kasım Perşembe · 20:30 - İstanbul Lütfi Kirdar Anadolu Oditoryum Salonu · İstanbul Avrupa - 5. Kategori,1600.00,09,0961002
+Profesyonel - 05 Kasım Perşembe · 20:30 - İstanbul Lütfi Kirdar Anadolu Oditoryum Salonu · İstanbul Avrupa - VIP,3500.00,09,0961002
+Profesyonel - 10 Aralık Perşembe · 20:30 - Caddebostan Kültür Merkezi Büyük Salon · İstanbul Anadolu - 1. Kategori,2800.00,09,0961002
+Profesyonel - 12 Kasım Perşembe · 20:30 - Selçuklu Kongre Merkezi - Anadolu Sahne · Konya - 1. Kategori,2600.00,09,0961002
+Profesyonel - 12 Kasım Perşembe · 20:30 - Selçuklu Kongre Merkezi - Anadolu Sahne · Konya - 2. Kategori,2500.00,09,0961002
+Profesyonel - 12 Kasım Perşembe · 20:30 - Selçuklu Kongre Merkezi - Anadolu Sahne · Konya - 3. Kategori,2100.00,09,0961002
+Profesyonel - 12 Kasım Perşembe · 20:30 - Selçuklu Kongre Merkezi - Anadolu Sahne · Konya - 4. Kategori,1800.00,09,0961002
+Profesyonel - 12 Kasım Perşembe · 20:30 - Selçuklu Kongre Merkezi - Anadolu Sahne · Konya - 5. Kategori,1500.00,09,0961002
+Profesyonel - 12 Kasım Perşembe · 20:30 - Selçuklu Kongre Merkezi - Anadolu Sahne · Konya - VIP,2800.00,09,0961002
+Profesyonel - 13 Aralık Pazar · 20:30 - Bostanlı Suat Taşer Salonu · İzmir - 1. Kategori,3100.00,09,0961002
+Profesyonel - 13 Aralık Pazar · 20:30 - Bostanlı Suat Taşer Salonu · İzmir - 2. Kategori,2800.00,09,0961002
+Profesyonel - 13 Aralık Pazar · 20:30 - Bostanlı Suat Taşer Salonu · İzmir - 3. Kategori,2500.00,09,0961002
+Profesyonel - 13 Aralık Pazar · 20:30 - Bostanlı Suat Taşer Salonu · İzmir - 4. Kategori,2100.00,09,0961002
+Profesyonel - 13 Aralık Pazar · 20:30 - Bostanlı Suat Taşer Salonu · İzmir - 5. Kategori,1500.00,09,0961002
+Profesyonel - 13 Kasım Cuma · 20:30 - MEB Şura Salonu · Ankara - 1. Kategori,3100.00,09,0961002
+Profesyonel - 13 Kasım Cuma · 20:30 - MEB Şura Salonu · Ankara - 2. Kategori,2500.00,09,0961002
+Profesyonel - 13 Kasım Cuma · 20:30 - MEB Şura Salonu · Ankara - 3. Kategori,2200.00,09,0961002
+Profesyonel - 13 Kasım Cuma · 20:30 - MEB Şura Salonu · Ankara - 4. Kategori,1800.00,09,0961002
+Profesyonel - 13 Kasım Cuma · 20:30 - MEB Şura Salonu · Ankara - 5. Kategori,1500.00,09,0961002
+Profesyonel - 14 Kasım Cumartesi · 20:30 - Yenimahalle Nazım Hikmet KM Genco Erkal Sahnesi · Ankara - 1. Kategori,3100.00,09,0961002
+Profesyonel - 14 Kasım Cumartesi · 20:30 - Yenimahalle Nazım Hikmet KM Genco Erkal Sahnesi · Ankara - 2. Kategori,2500.00,09,0961002
+Profesyonel - 14 Kasım Cumartesi · 20:30 - Yenimahalle Nazım Hikmet KM Genco Erkal Sahnesi · Ankara - 3. Kategori,2200.00,09,0961002
+Profesyonel - 14 Kasım Cumartesi · 20:30 - Yenimahalle Nazım Hikmet KM Genco Erkal Sahnesi · Ankara - 4. Kategori,2100.00,09,0961002
+Profesyonel - 14 Kasım Cumartesi · 20:30 - Yenimahalle Nazım Hikmet KM Genco Erkal Sahnesi · Ankara - 5. Kategori,1800.00,09,0961002
+Profesyonel - 14 Kasım Cumartesi · 20:30 - Yenimahalle Nazım Hikmet KM Genco Erkal Sahnesi · Ankara - 6. Kategori,1500.00,09,0961002
+Profesyonel - 17 Aralık Perşembe · 20:30 - İstanbul Lütfi Kirdar Anadolu Oditoryum Salonu · İstanbul Avrupa - 1. Kategori,3100.00,09,0961002
+Profesyonel - 17 Aralık Perşembe · 20:30 - İstanbul Lütfi Kirdar Anadolu Oditoryum Salonu · İstanbul Avrupa - 2. Kategori,2800.00,09,0961002
+Profesyonel - 17 Aralık Perşembe · 20:30 - İstanbul Lütfi Kirdar Anadolu Oditoryum Salonu · İstanbul Avrupa - 3. Kategori,2500.00,09,0961002
+Profesyonel - 17 Aralık Perşembe · 20:30 - İstanbul Lütfi Kirdar Anadolu Oditoryum Salonu · İstanbul Avrupa - 4. Kategori,1800.00,09,0961002
+Profesyonel - 17 Aralık Perşembe · 20:30 - İstanbul Lütfi Kirdar Anadolu Oditoryum Salonu · İstanbul Avrupa - 5. Kategori,1600.00,09,0961002
+Profesyonel - 17 Aralık Perşembe · 20:30 - İstanbul Lütfi Kirdar Anadolu Oditoryum Salonu · İstanbul Avrupa - VIP,3500.00,09,0961002
+Profesyonel - 20 Kasım Cuma · 20:30 - Merinos Atatürk Kongre ve Kültür Merkezi Osmangazi Salonu · Bursa - 1. Kategori,2800.00,09,0961002
+Profesyonel - 20 Kasım Cuma · 20:30 - Merinos Atatürk Kongre ve Kültür Merkezi Osmangazi Salonu · Bursa - 2. Kategori,2500.00,09,0961002
+Profesyonel - 20 Kasım Cuma · 20:30 - Merinos Atatürk Kongre ve Kültür Merkezi Osmangazi Salonu · Bursa - 3. Kategori,2100.00,09,0961002
+Profesyonel - 20 Kasım Cuma · 20:30 - Merinos Atatürk Kongre ve Kültür Merkezi Osmangazi Salonu · Bursa - 4. Kategori,1800.00,09,0961002
+Profesyonel - 20 Kasım Cuma · 20:30 - Merinos Atatürk Kongre ve Kültür Merkezi Osmangazi Salonu · Bursa - 5. Kategori,1500.00,09,0961002
+Profesyonel - 20 Kasım Cuma · 20:30 - Merinos Atatürk Kongre ve Kültür Merkezi Osmangazi Salonu · Bursa - VIP,3100.00,09,0961002
+Profesyonel - 23 Aralık Çarşamba · 20:30 - Diyarbakır Sezai Karakoç Kültür Merkezi · Diyarbakır - 1. Kategori,2800.00,09,0961002
+Profesyonel - 23 Aralık Çarşamba · 20:30 - Diyarbakır Sezai Karakoç Kültür Merkezi · Diyarbakır - 2. Kategori,2400.00,09,0961002
+Profesyonel - 23 Aralık Çarşamba · 20:30 - Diyarbakır Sezai Karakoç Kültür Merkezi · Diyarbakır - 3. Kategori,2100.00,09,0961002
+Profesyonel - 23 Aralık Çarşamba · 20:30 - Diyarbakır Sezai Karakoç Kültür Merkezi · Diyarbakır - 4. Kategori,1800.00,09,0961002
+Profesyonel - 23 Aralık Çarşamba · 20:30 - Diyarbakır Sezai Karakoç Kültür Merkezi · Diyarbakır - 5. Kategori,1600.00,09,0961002
+Profesyonel - 23 Aralık Çarşamba · 20:30 - Diyarbakır Sezai Karakoç Kültür Merkezi · Diyarbakır - 6. Kategori,1500.00,09,0961002
+Profesyonel - 24 Aralık Perşembe · 20:30 - Şahinbey Kongre ve Sanat Merkez Ayıntap Salonu · Gaziantep - 1. Kategori,2500.00,09,0961002
+Profesyonel - 24 Aralık Perşembe · 20:30 - Şahinbey Kongre ve Sanat Merkez Ayıntap Salonu · Gaziantep - 2. Kategori,2200.00,09,0961002
+Profesyonel - 24 Aralık Perşembe · 20:30 - Şahinbey Kongre ve Sanat Merkez Ayıntap Salonu · Gaziantep - 3. Kategori,2100.00,09,0961002
+Profesyonel - 24 Aralık Perşembe · 20:30 - Şahinbey Kongre ve Sanat Merkez Ayıntap Salonu · Gaziantep - 4. Kategori,1800.00,09,0961002
+Profesyonel - 24 Aralık Perşembe · 20:30 - Şahinbey Kongre ve Sanat Merkez Ayıntap Salonu · Gaziantep - 5. Kategori,1500.00,09,0961002
+Profesyonel - 24 Aralık Perşembe · 20:30 - Şahinbey Kongre ve Sanat Merkez Ayıntap Salonu · Gaziantep - VIP,2800.00,09,0961002
+Profesyonel - 25 Kasım Çarşamba · 20:30 - Büyükşehir Belediyesi Kocaeli Kongre Merkezi · Kocaeli - 1. Kategori,3100.00,09,0961002
+Profesyonel - 25 Kasım Çarşamba · 20:30 - Büyükşehir Belediyesi Kocaeli Kongre Merkezi · Kocaeli - 2. Kategori,2800.00,09,0961002
+Profesyonel - 25 Kasım Çarşamba · 20:30 - Büyükşehir Belediyesi Kocaeli Kongre Merkezi · Kocaeli - 3. Kategori,2100.00,09,0961002
+Profesyonel - 25 Kasım Çarşamba · 20:30 - Büyükşehir Belediyesi Kocaeli Kongre Merkezi · Kocaeli - 4. Kategori,1500.00,09,0961002
+Profesyonel - 27 Kasım Cuma · 20:30 - Çanakkale İçdaş Kongre Merkezi · Çanakkale - 1. Kategori,2800.00,09,0961002
+Profesyonel - 27 Kasım Cuma · 20:30 - Çanakkale İçdaş Kongre Merkezi · Çanakkale - 2. Kategori,2500.00,09,0961002
+Profesyonel - 27 Kasım Cuma · 20:30 - Çanakkale İçdaş Kongre Merkezi · Çanakkale - 3. Kategori,2100.00,09,0961002
+Profesyonel - 27 Kasım Cuma · 20:30 - Çanakkale İçdaş Kongre Merkezi · Çanakkale - 4. Kategori,1800.00,09,0961002
+Profesyonel - 27 Kasım Cuma · 20:30 - Çanakkale İçdaş Kongre Merkezi · Çanakkale - 5. Kategori,1500.00,09,0961002
+Profesyonel - 31 Ekim Cumartesi · 20:30 - İstanbul Lütfi Kirdar Anadolu Oditoryum Salonu · İstanbul Avrupa - 1. Kategori,3100.00,09,0961002
+Profesyonel - 31 Ekim Cumartesi · 20:30 - İstanbul Lütfi Kirdar Anadolu Oditoryum Salonu · İstanbul Avrupa - 2. Kategori,2800.00,09,0961002
+Profesyonel - 31 Ekim Cumartesi · 20:30 - İstanbul Lütfi Kirdar Anadolu Oditoryum Salonu · İstanbul Avrupa - 3. Kategori,2500.00,09,0961002
+Profesyonel - 31 Ekim Cumartesi · 20:30 - İstanbul Lütfi Kirdar Anadolu Oditoryum Salonu · İstanbul Avrupa - 4. Kategori,1800.00,09,0961002
+Profesyonel - 31 Ekim Cumartesi · 20:30 - İstanbul Lütfi Kirdar Anadolu Oditoryum Salonu · İstanbul Avrupa - 5. Kategori,1600.00,09,0961002
+Profesyonel - 31 Ekim Cumartesi · 20:30 - İstanbul Lütfi Kirdar Anadolu Oditoryum Salonu · İstanbul Avrupa - VIP,3500.00,09,0961002
+Ruh Öküzüm - 02 Kasım Pazartesi · 20:00 - Watergarden Performans Merkezi Duru Ataşehir · İstanbul Anadolu - Tam,1000.00,09,0961002
+Ruh Öküzüm - 03 Kasım Salı · 20:30 - Akatlar Kültür Merkezi · İstanbul Avrupa - Tam,1000.00,09,0961002
+Ruh Öküzüm - 12 Kasım Perşembe · 20:00 - Samsun Büyükşehir Belediyesi Atakum Sanat Merkezi · Samsun - Tam,1000.00,09,0961002
+Ruh Öküzüm - 15 Kasım Pazar · 20:00 - Çorum Devlet Tiyatrosu · Çorum - Tam,1000.00,09,0961002
+Ruh Öküzüm - 16 Kasım Pazartesi · 20:00 - Başkent Sanat Merkezi Nata Vega · Ankara - Tam,1000.00,09,0961002
+Ruh Öküzüm - 24 Kasım Salı · 20:00 - Eskişehir Vehbi Koç Kongre Merkezi · Eskişehir - Tam,1000.00,09,0961002
+Ruh Öküzüm - 26 Kasım Perşembe · 20:00 - HOP Sahne · İstanbul Avrupa - Tam,1000.00,09,0961002
+"Ruh Öküzüm - 29 Kasım Pazar · 20:00 - BAOB Sahne, Bursa · Bursa - Tam",1000.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 01 Kasım Pazar · 14:00 - Bursa Aspera Sahne · Bursa - Tam,750.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 01 Kasım Pazar · 16:00 - Bursa Aspera Sahne · Bursa - Tam,750.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 07 Kasım Cumartesi · 16:00 - Mehmet Akif İnan Konferans Salonu · Şanlıurfa - Tam,750.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 07 Kasım Cumartesi · 18:00 - Mehmet Akif İnan Konferans Salonu · Şanlıurfa - Tam,750.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 08 Kasım Pazar · 14:00 - Zeugma Müzesi Kültür Merkezi · Gaziantep - Tam,750.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 08 Kasım Pazar · 16:00 - Zeugma Müzesi Kültür Merkezi · Gaziantep - Tam,750.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 12 Aralık Cumartesi · 13:30 - Çorlu Ünal Baysan Kültür Merkezi · Tekirdağ - Tam,750.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 12 Aralık Cumartesi · 15:30 - Çorlu Ünal Baysan Kültür Merkezi · Tekirdağ - Tam,750.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 13 Aralık Pazar · 15:00 - Edirne Belediyesi AKM Belediye Konsevatuar Binası · Edirne - Tam,750.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 15 Kasım Pazar · 13:00 - Beylikdüzü Atatürk Kültür ve Sanat Merkezi · İstanbul Avrupa - Tam,700.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 15 Kasım Pazar · 15:00 - Beylikdüzü Atatürk Kültür ve Sanat Merkezi · İstanbul Avrupa - Tam,700.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 16 Kasım Pazartesi · 13:00 - Kadıköy Moda Barış Manço Kültür Merkezi · İstanbul Anadolu - Tam,750.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 16 Kasım Pazartesi · 15:00 - Kadıköy Moda Barış Manço Kültür Merkezi · İstanbul Anadolu - Tam,750.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 19 Aralık Cumartesi · 13:00 - Nazım Hikmet Kültür Merkezi Konak Halk Sahnesi · İzmir - Tam,800.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 19 Aralık Cumartesi · 15:00 - Nazım Hikmet Kültür Merkezi Konak Halk Sahnesi · İzmir - Tam,800.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 19 Kasım Perşembe · 13:00 - HOP Sahne · İstanbul Avrupa - 1. Kategori,800.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 19 Kasım Perşembe · 13:00 - HOP Sahne · İstanbul Avrupa - 2. Kategori,700.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 19 Kasım Perşembe · 15:00 - HOP Sahne · İstanbul Avrupa - 1. Kategori,800.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 19 Kasım Perşembe · 15:00 - HOP Sahne · İstanbul Avrupa - 2. Kategori,700.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 20 Kasım Cuma · 13:00 - Kadıköy Halis Kurtça Çocuk Kültür Merkezi · İstanbul Anadolu - Tam,750.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 20 Kasım Cuma · 15:00 - Kadıköy Halis Kurtça Çocuk Kültür Merkezi · İstanbul Anadolu - Tam,750.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 22 Kasım Pazar · 14:00 - Prestij Sahne · Sakarya - Tam,700.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 22 Kasım Pazar · 16:00 - Prestij Sahne · Sakarya - Tam,700.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 28 Kasım Cumartesi · 14:00 - Başkent Sanat Merkezi Nata Vega · Ankara - Tam,750.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 28 Kasım Cumartesi · 16:00 - Başkent Sanat Merkezi Nata Vega · Ankara - Tam,750.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 29 Kasım Pazar · 14:00 - Ve Sahne Panora & Kulis Sanat · Ankara - Tam,800.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 29 Kasım Pazar · 16:00 - Ve Sahne Panora & Kulis Sanat · Ankara - Tam,800.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 31 Ekim Cumartesi · 14:00 - Odunpazarı Belediyesi 100. Yıl Kültür Merkezi · Eskişehir - Tam,750.00,09,0961002
+Sermet Erkin ile - Çocuklar için İnteraktif İllüzyon Gösterisi - 31 Ekim Cumartesi · 16:00 - Odunpazarı Belediyesi 100. Yıl Kültür Merkezi · Eskişehir - Tam,750.00,09,0961002
+Sokakta - 15 Kasım Pazar · 14:00 - Bursa Aspera Sahne · Bursa - Tam,450.00,09,0961002
+Sokakta - 29 Ekim Perşembe · 14:00 - Bursa Aspera Sahne · Bursa - Tam,450.00,09,0961002
+Süt Kardeşler - 06 Aralık Pazar · 20:30 - Etimesgut Belediyesi 100. Yıl Cumhuriyet Kültür Merkezi · Ankara - 1. Kategori,1570.00,09,0961002
+Süt Kardeşler - 06 Aralık Pazar · 20:30 - Etimesgut Belediyesi 100. Yıl Cumhuriyet Kültür Merkezi · Ankara - 2. Kategori,1309.00,09,0961002
+Süt Kardeşler - 06 Aralık Pazar · 20:30 - Etimesgut Belediyesi 100. Yıl Cumhuriyet Kültür Merkezi · Ankara - 3. Kategori,1047.00,09,0961002
+Toz - 01 Aralık Salı · 19:00 - Caddebostan Kültür Merkezi Büyük Salon · İstanbul Anadolu - 1. Kategori,2000.00,09,0961002
+Toz - 01 Aralık Salı · 19:00 - Caddebostan Kültür Merkezi Büyük Salon · İstanbul Anadolu - 2. Kategori,1750.00,09,0961002
+Toz - 01 Aralık Salı · 19:00 - Caddebostan Kültür Merkezi Büyük Salon · İstanbul Anadolu - 3. Kategori,1250.00,09,0961002
+Toz - 01 Aralık Salı · 21:00 - Caddebostan Kültür Merkezi Büyük Salon · İstanbul Anadolu - 1. Kategori,2000.00,09,0961002
+Toz - 01 Aralık Salı · 21:00 - Caddebostan Kültür Merkezi Büyük Salon · İstanbul Anadolu - 2. Kategori,1750.00,09,0961002
+Toz - 01 Aralık Salı · 21:00 - Caddebostan Kültür Merkezi Büyük Salon · İstanbul Anadolu - 3. Kategori,1250.00,09,0961002
+Toz - 08 Aralık Salı · 20:30 - Zorlu PSM Turkcell Platinum Sahnesi · İstanbul Avrupa - 1. Kategori,2000.00,09,0961002
+Toz - 08 Aralık Salı · 20:30 - Zorlu PSM Turkcell Platinum Sahnesi · İstanbul Avrupa - 2. Kategori,1750.00,09,0961002
+Toz - 08 Aralık Salı · 20:30 - Zorlu PSM Turkcell Platinum Sahnesi · İstanbul Avrupa - 3. Kategori,1250.00,09,0961002
+Toz - 10 Kasım Salı · 20:30 - Zorlu PSM Turkcell Platinum Sahnesi · İstanbul Avrupa - 1. Kategori,2000.00,09,0961002
+Toz - 10 Kasım Salı · 20:30 - Zorlu PSM Turkcell Platinum Sahnesi · İstanbul Avrupa - 2. Kategori,1750.00,09,0961002
+Toz - 10 Kasım Salı · 20:30 - Zorlu PSM Turkcell Platinum Sahnesi · İstanbul Avrupa - 3. Kategori,1250.00,09,0961002
+Toz - 19 Kasım Perşembe · 20:30 - Zorlu PSM Turkcell Platinum Sahnesi · İstanbul Avrupa - 1. Kategori,2000.00,09,0961002
+Toz - 19 Kasım Perşembe · 20:30 - Zorlu PSM Turkcell Platinum Sahnesi · İstanbul Avrupa - 2. Kategori,1750.00,09,0961002
+Toz - 19 Kasım Perşembe · 20:30 - Zorlu PSM Turkcell Platinum Sahnesi · İstanbul Avrupa - 3. Kategori,1250.00,09,0961002
+Toz - 30 Ekim Cuma · 19:00 - Bostanlı Suat Taşer Salonu · İzmir - 1. Kategori,2500.00,09,0961002
+Toz - 30 Ekim Cuma · 19:00 - Bostanlı Suat Taşer Salonu · İzmir - 2. Kategori,2000.00,09,0961002
+Toz - 30 Ekim Cuma · 19:00 - Bostanlı Suat Taşer Salonu · İzmir - 3. Kategori,1500.00,09,0961002
+Toz - 30 Ekim Cuma · 21:00 - Bostanlı Suat Taşer Salonu · İzmir - 1. Kategori,2500.00,09,0961002
+Toz - 30 Ekim Cuma · 21:00 - Bostanlı Suat Taşer Salonu · İzmir - 2. Kategori,2000.00,09,0961002
+Toz - 30 Ekim Cuma · 21:00 - Bostanlı Suat Taşer Salonu · İzmir - 3. Kategori,1500.00,09,0961002
+Yan Rol - 27 Kasım Cuma · 20:30 - House Of Performance - Alt Sahne · İstanbul Avrupa - Tam,1000.00,09,0961002
+Yan Rol - 27 Kasım Cuma · 20:30 - House Of Performance - Alt Sahne · İstanbul Avrupa - Öğrenci,750.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 07 Kasım Cumartesi · 18:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 07 Kasım Cumartesi · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 07 Kasım Cumartesi · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 07 Kasım Cumartesi · 18:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 14 Kasım Cumartesi · 18:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 14 Kasım Cumartesi · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 14 Kasım Cumartesi · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 14 Kasım Cumartesi · 18:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 21 Kasım Cumartesi · 18:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 21 Kasım Cumartesi · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 21 Kasım Cumartesi · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 21 Kasım Cumartesi · 18:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 28 Ekim Çarşamba · 20:30 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 28 Ekim Çarşamba · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 28 Ekim Çarşamba · 20:30 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 28 Ekim Çarşamba · 20:30 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 28 Kasım Cumartesi · 18:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 28 Kasım Cumartesi · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 28 Kasım Cumartesi · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 28 Kasım Cumartesi · 18:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 30 Ekim Cuma · 19:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 30 Ekim Cuma · 19:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 30 Ekim Cuma · 19:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 30 Ekim Cuma · 19:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 31 Ekim Cumartesi · 18:00 - Cafe Theatre · İstanbul Anadolu - Tam,800.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 31 Ekim Cumartesi · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP,1000.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 31 Ekim Cumartesi · 18:00 - Cafe Theatre · İstanbul Anadolu - VIP 1,1200.00,09,0961002
+Yaşar Ne Yaşar Ne Yaşamaz - 31 Ekim Cumartesi · 18:00 - Cafe Theatre · İstanbul Anadolu - Öğrenci,600.00,09,0961002
+Zengin Mutfağı - 29 Kasım Pazar · 20:00 - ATO - Congresium Kongre ve Sergi Merkezi · Ankara - 1. Kategori,2900.00,09,0961002
+Zengin Mutfağı - 29 Kasım Pazar · 20:00 - ATO - Congresium Kongre ve Sergi Merkezi · Ankara - 2. Kategori,2600.00,09,0961002
+Zengin Mutfağı - 29 Kasım Pazar · 20:00 - ATO - Congresium Kongre ve Sergi Merkezi · Ankara - 3. Kategori,2200.00,09,0961002
+Zengin Mutfağı - 29 Kasım Pazar · 20:00 - ATO - Congresium Kongre ve Sergi Merkezi · Ankara - 4. Kategori,1700.00,09,0961002
+Zengin Mutfağı - 29 Kasım Pazar · 20:00 - ATO - Congresium Kongre ve Sergi Merkezi · Ankara - 5. Kategori,1100.00,09,0961002
+Zengin Mutfağı - 29 Kasım Pazar · 20:00 - ATO - Congresium Kongre ve Sergi Merkezi · Ankara - 6. Kategori,900.00,09,0961002
+Zengin Mutfağı - 29 Kasım Pazar · 20:00 - ATO - Congresium Kongre ve Sergi Merkezi · Ankara - VIP,3700.00,09,0961002
+Zengin Mutfağı - 30 Kasım Pazartesi · 20:30 - Selçuklu Kongre Merkezi - Anadolu Sahne · Konya - 1. Kategori,3000.00,09,0961002
+Zengin Mutfağı - 30 Kasım Pazartesi · 20:30 - Selçuklu Kongre Merkezi - Anadolu Sahne · Konya - 2. Kategori,2500.00,09,0961002
+Zengin Mutfağı - 30 Kasım Pazartesi · 20:30 - Selçuklu Kongre Merkezi - Anadolu Sahne · Konya - 3. Kategori,2000.00,09,0961002
+Zengin Mutfağı - 30 Kasım Pazartesi · 20:30 - Selçuklu Kongre Merkezi - Anadolu Sahne · Konya - 4. Kategori,1500.00,09,0961002
+Zengin Mutfağı - 30 Kasım Pazartesi · 20:30 - Selçuklu Kongre Merkezi - Anadolu Sahne · Konya - 5. Kategori,1000.00,09,0961002
+Zengin Mutfağı - 30 Kasım Pazartesi · 20:30 - Selçuklu Kongre Merkezi - Anadolu Sahne · Konya - VIP,4500.00,09,0961002
+Çizmeli Kedi - 01 Kasım Pazar · 13:00 - Bergüzar Sahne · Ankara - Tam,600.00,09,0961002
+Çizmeli Kedi - 01 Kasım Pazar · 15:00 - Bergüzar Sahne · Ankara - Tam,600.00,09,0961002
+Çizmeli Kedi - 01 Kasım Pazar · 15:00 - Kadıköy Halis Kurtça Çocuk Kültür Merkezi · İstanbul Anadolu - Tam,750.00,09,0961002
+Çizmeli Kedi - 01 Kasım Pazar · 17:00 - Bergüzar Sahne · Ankara - Tam,600.00,09,0961002
+Çizmeli Kedi - 06 Aralık Pazar · 13:00 - Akatlar Kültür Merkezi · İstanbul Avrupa - 1. Kategori,750.00,09,0961002
+Çizmeli Kedi - 06 Aralık Pazar · 13:00 - Akatlar Kültür Merkezi · İstanbul Avrupa - VIP,900.00,09,0961002
+Çizmeli Kedi - 08 Kasım Pazar · 13:00 - Kadıköy Barış Manço Kültür Merkezi · İstanbul Anadolu - Tam,700.00,09,0961002
+Çizmeli Kedi - 08 Kasım Pazar · 15:00 - Kadıköy Barış Manço Kültür Merkezi · İstanbul Anadolu - Tam,700.00,09,0961002
+Çizmeli Kedi - 16 Kasım Pazartesi · 15:00 - Kadıköy Halis Kurtça Çocuk Kültür Merkezi · İstanbul Anadolu - Tam,750.00,09,0961002
+Çizmeli Kedi - 18 Kasım Çarşamba · 13:00 - Torium Sahne · İstanbul Avrupa - 1. Kategori,600.00,09,0961002
+Çizmeli Kedi - 18 Kasım Çarşamba · 13:00 - Torium Sahne · İstanbul Avrupa - 2. Kategori,500.00,09,0961002
+Çizmeli Kedi - 18 Kasım Çarşamba · 13:00 - Torium Sahne · İstanbul Avrupa - VIP,750.00,09,0961002
+Çizmeli Kedi - 18 Kasım Çarşamba · 15:00 - Torium Sahne · İstanbul Avrupa - 1. Kategori,600.00,09,0961002
+Çizmeli Kedi - 18 Kasım Çarşamba · 15:00 - Torium Sahne · İstanbul Avrupa - 2. Kategori,500.00,09,0961002
+Çizmeli Kedi - 18 Kasım Çarşamba · 15:00 - Torium Sahne · İstanbul Avrupa - VIP,750.00,09,0961002
+Çizmeli Kedi - 19 Aralık Cumartesi · 13:00 - Akatlar Kültür Merkezi · İstanbul Avrupa - 1. Kategori,750.00,09,0961002
+Çizmeli Kedi - 19 Aralık Cumartesi · 13:00 - Akatlar Kültür Merkezi · İstanbul Avrupa - VIP,900.00,09,0961002
+Çizmeli Kedi - 19 Kasım Perşembe · 13:00 - Hilltown Seyirlik Sahne · İstanbul Anadolu - 1. Kategori,600.00,09,0961002
+Çizmeli Kedi - 19 Kasım Perşembe · 13:00 - Hilltown Seyirlik Sahne · İstanbul Anadolu - VIP,850.00,09,0961002
+Çizmeli Kedi - 19 Kasım Perşembe · 15:00 - Hilltown Seyirlik Sahne · İstanbul Anadolu - 1. Kategori,600.00,09,0961002
+Çizmeli Kedi - 19 Kasım Perşembe · 15:00 - Hilltown Seyirlik Sahne · İstanbul Anadolu - VIP,850.00,09,0961002
+Ölü Ozanlar Derneği - 02 Kasım Pazartesi · 20:30 - Hasan Polatkan Kültür Merkezi · Eskişehir - Tam,1300.00,09,0961002
+Ölü Ozanlar Derneği - 03 Kasım Salı · 20:30 - Kadıköy Eğitim Sahnesi · İstanbul Anadolu - Tam,1300.00,09,0961002
+Ölü Ozanlar Derneği - 05 Kasım Perşembe · 20:30 - Süleyman Seba Kültür Merkezi · İstanbul Avrupa - 1. Kategori,1300.00,09,0961002
+Ölü Ozanlar Derneği - 05 Kasım Perşembe · 20:30 - Süleyman Seba Kültür Merkezi · İstanbul Avrupa - 2. Kategori,1050.00,09,0961002
+Ölü Ozanlar Derneği - 05 Kasım Perşembe · 20:30 - Süleyman Seba Kültür Merkezi · İstanbul Avrupa - 3. Kategori,750.00,09,0961002
+Ölü Ozanlar Derneği - 21 Aralık Pazartesi · 20:30 - Beylikdüzü Atatürk Kültür ve Sanat Merkezi · İstanbul Avrupa - 1. Kategori,1200.00,09,0961002
+Ölü Ozanlar Derneği - 21 Aralık Pazartesi · 20:30 - Beylikdüzü Atatürk Kültür ve Sanat Merkezi · İstanbul Avrupa - 2. Kategori,1000.00,09,0961002
+Ölü Ozanlar Derneği - 21 Aralık Pazartesi · 20:30 - Beylikdüzü Atatürk Kültür ve Sanat Merkezi · İstanbul Avrupa - 3. Kategori,800.00,09,0961002
+Ölü Ozanlar Derneği - 21 Aralık Pazartesi · 20:30 - Beylikdüzü Atatürk Kültür ve Sanat Merkezi · İstanbul Avrupa - Balkon,600.00,09,0961002
+Ölü Ozanlar Derneği - 22 Nisan Perşembe 2027 · 20:30 - AKM Tiyatro Salonu · İstanbul Avrupa - 1. Kategori,2000.00,09,0961002
+Ölü Ozanlar Derneği - 22 Nisan Perşembe 2027 · 20:30 - AKM Tiyatro Salonu · İstanbul Avrupa - 2. Kategori,1750.00,09,0961002
+Ölü Ozanlar Derneği - 22 Nisan Perşembe 2027 · 20:30 - AKM Tiyatro Salonu · İstanbul Avrupa - 3. Kategori,1500.00,09,0961002
+Ölü Ozanlar Derneği - 22 Nisan Perşembe 2027 · 20:30 - AKM Tiyatro Salonu · İstanbul Avrupa - 4. Kategori,1250.00,09,0961002
+Ölü Ozanlar Derneği - 22 Nisan Perşembe 2027 · 20:30 - AKM Tiyatro Salonu · İstanbul Avrupa - 5. Kategori,1000.00,09,0961002
+Ölü Ozanlar Derneği - 23 Aralık Çarşamba · 20:00 - Dalaman Bahcesehir Koleji · Muğla - Tam,950.00,09,0961002
+Ölü Ozanlar Derneği - 24 Aralık Perşembe · 20:00 - Fethiye Belediyesi Kültür Merkezi · Muğla - Tam,950.00,09,0961002
+Ölü Ozanlar Derneği - 27 Ekim Salı · 20:00 - Vesahne Panora & Kuli̇s Sanat Ti̇yatrosu · Ankara - 1. Kategori,1000.00,09,0961002
+Ölü Ozanlar Derneği - 27 Ekim Salı · 20:00 - Vesahne Panora & Kuli̇s Sanat Ti̇yatrosu · Ankara - 2. Kategori,750.00,09,0961002
+Örümcek Adam Karlar Ülkesinde - 01 Kasım Pazar · 14:00 - Tiyatro Durağı Kültür ve Sanat Merkezi · İzmir - Tam,336.00,09,0961002
+Örümcek Adam Karlar Ülkesinde - 31 Ekim Cumartesi · 16:00 - Tiyatro Durağı Kültür ve Sanat Merkezi · İzmir - Tam,336.00,09,0961002
+Üstün Dökmen ile 'Küçük Şeyler' - 04 Aralık Cuma · 20:00 - Afyon Girne Koleji · Afyon - 1. Kategori,1500.00,09,0961002
+Üstün Dökmen ile 'Küçük Şeyler' - 04 Aralık Cuma · 20:00 - Afyon Girne Koleji · Afyon - 2. Kategori,1200.00,09,0961002
+Üstün Dökmen ile 'Küçük Şeyler' - 07 Kasım Cumartesi · 20:00 - Kocaeli Marmara Koleji Salonu Hasan Ali Yücel Sahnesi · Kocaeli - 2. Kategori,500.00,09,0961002
+Üstün Dökmen ile 'Küçük Şeyler' - 07 Kasım Cumartesi · 20:00 - Kocaeli Marmara Koleji Salonu Hasan Ali Yücel Sahnesi · Kocaeli - Balkon,500.00,09,0961002
+Üstün Dökmen ile 'Küçük Şeyler' - 07 Kasım Cumartesi · 20:00 - Kocaeli Marmara Koleji Salonu Hasan Ali Yücel Sahnesi · Kocaeli - VIP,800.00,09,0961002
+Üstün Dökmen ile 'Küçük Şeyler' - 08 Kasım Pazar · 20:00 - Podyum Sanat Mahal · Bursa - Tam,1500.00,09,0961002
+Üstün Dökmen ile 'Küçük Şeyler' - 11 Kasım Çarşamba · 20:30 - Küçükçekmece Atakent Kültür Merkezi · İstanbul Avrupa - Tam,900.00,09,0961002
+Üstün Dökmen ile 'Küçük Şeyler' - 17 Aralık Perşembe · 20:00 - Bolu Necip Fazıl Kısakürek Kültür Merkezi · Bolu - 1. Kategori,1500.00,09,0961002
+Üstün Dökmen ile 'Küçük Şeyler' - 17 Aralık Perşembe · 20:00 - Bolu Necip Fazıl Kısakürek Kültür Merkezi · Bolu - 2. Kategori,1200.00,09,0961002
+Üstün Dökmen ile 'Küçük Şeyler' - 17 Aralık Perşembe · 20:00 - Bolu Necip Fazıl Kısakürek Kültür Merkezi · Bolu - 3. Kategori,900.00,09,0961002
+Üstün Dökmen ile 'Küçük Şeyler' - 19 Kasım Perşembe · 20:00 - Kayseri Kültür Merkezi · Kayseri - 1. Kategori,1500.00,09,0961002
+Üstün Dökmen ile 'Küçük Şeyler' - 19 Kasım Perşembe · 20:00 - Kayseri Kültür Merkezi · Kayseri - 2. Kategori,1250.00,09,0961002
+Üstün Dökmen ile 'Küçük Şeyler' - 29 Kasım Pazar · 20:00 - Uşak Atatürk Kültür Merkezi 1 Nolu Salon · Uşak - 1. Kategori,1500.00,09,0961002
+Üstün Dökmen ile 'Küçük Şeyler' - 29 Kasım Pazar · 20:00 - Uşak Atatürk Kültür Merkezi 1 Nolu Salon · Uşak - 2. Kategori,1300.00,09,0961002
+Üstün Dökmen ile 'Küçük Şeyler' - 29 Kasım Pazar · 20:00 - Uşak Atatürk Kültür Merkezi 1 Nolu Salon · Uşak - 3. Kategori,1100.00,09,0961002
+Üstün Dökmen ile 'Küçük Şeyler' - 30 Ekim Cuma · 20:00 - Aksaray Somuncu Baba Kültür Merkezi · Aksaray - 1. Kategori,1200.00,09,0961002
+Üstün Dökmen ile 'Küçük Şeyler' - 30 Ekim Cuma · 20:00 - Aksaray Somuncu Baba Kültür Merkezi · Aksaray - 2. Kategori,1000.00,09,0961002
+Üstün Dökmen ile 'Küçük Şeyler' - 30 Ekim Cuma · 20:00 - Aksaray Somuncu Baba Kültür Merkezi · Aksaray - VIP,1500.00,09,0961002
