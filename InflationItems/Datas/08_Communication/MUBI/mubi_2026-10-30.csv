@@ -1,0 +1,4 @@
+﻿product_name,price,category_number,sub_category_number,date,operator,group,product_id,list_price,period,url
+MUBI aylık (month),229.0,8,0839201,2026-10-30,mubi,,month,,1_ay,https://mubi.com/tr/tr
+MUBI yıllık (year),1980.0,8,0839201,2026-10-30,mubi,,year,,1_yil,https://mubi.com/tr/tr
+MUBI aylık (month_student),129.0,8,0839201,2026-10-30,mubi,,month_student,,1_ay,https://mubi.com/tr/tr
