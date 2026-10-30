@@ -63,3 +63,11 @@ ekiyle ayrılır:
 `category_number` her satırda `8`; `sub_category_number` scraper başına sabit TÜİK kalem kodu: `scraper.py` `0832001`,
 `internet.py` `0833001`, `repair.py` `0835001`, `streaming.py` `0839201` (bkz. `../README.md`). Eski dosyalar
 2026-10-18'de bu kolon sırasına çevrildi.
+
+`price = 0.0` olan satırlar parse hatası değildir; operatör paketi gerçekten TL karşılığı olmadan sunar
+(2026-10-30'da kontrol edildi). Fiyat endeksinde bunlar atılmalıdır:
+
+- Turkcell `tumbara-paketler` (~16): Tumbara puanıyla alınır (ör. Haftalık 30 GB = 250.000 puan; sayfa "Ücretsiz" yazar).
+- Turkcell `turkcell-yildiz-paketleri` (~27): Yıldız sadakat programının hediye paketleri.
+- Turkcell `konusma` / `mevcut-musteri` / `yurt-disinda-kullanim` içindeki "Hediye …", "Ücretsiz …", "BiP Sizinle" kampanyaları.
+- Vodafone `ek-paket/ucretsiz` (~12): ücretsiz ek paket ve özellikler.

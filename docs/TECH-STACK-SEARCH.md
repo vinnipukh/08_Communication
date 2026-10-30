@@ -791,3 +791,23 @@ for all six:
   (meşe 1 ton 8,000 → 9,500 → 13,000 TL). Ulusoy and Yak Gelsin have no copies.
 - Verified 2026-10-28 by live runs: Ulusoy 2 rows, Komurdeposu 4, Odunmarket 5, Tetik 1, Yakgelsin 11, Odunal 14;
   1 ton meşe 6.6–13.2 TL/kg across sellers.
+
+## 3.16 Data health check fixes: Aygaz, Vatan names, Pozitif bundles (2026-10-30)
+
+A pandas pass over every 04_Housing / 08_Communication series (row-count ratio vs. the 7-file median, schema
+and required columns, unparsable / non-positive prices, duplicate keys, day-over-day product retention and
+>50 % price moves, robust-z outliers in the newest file, missing days) found three scraper defects:
+- LPG / Aygaz: the price page was served once with empty `expiryDates`, and the error message itself
+  (`dates[-1]`) raised `list index out of range`, so the 2026-10-30 Actions run wrote no `aygaz_` file. The page
+  is now fetched again (2 / 5 / 10 s) until it lists dates and cities. A bounded and a full live run gave 82 rows.
+- Vatan: `product_name` was cut from the whole card text, so badges, the score and the product code leaked into
+  it (`YENİ ÜRÜN 0,0 …`, `… outlet 47664 MSI …`, `… Sepette`; ~25 % of names) and changed from day to day, which made
+  35–40 % of products look new on some days. The name now comes from `.product-list__product-name h3`;
+  new columns `product_code` and `product_url` (the stable key). The price logic did not change.
+- Pozitif Teknoloji: WooCommerce Store API answers `prices.price = 0` for `type: "bundle"` sets (~130 rows,
+  ~10 %); their price is read from `price_html`. Names are HTML-unescaped (`&#8211;`). A full live run: 0 zero
+  prices (was 130), 1 191 of 1 192 other prices unchanged vs. the day before.
+Checked and left alone: Turkcell / Vodafone `price = 0` rows are genuinely free or points-priced packages
+(Telecom README); Egemek (404, dropped 2026-10-17), TOD (CloudFront 403, removed 2026-10-28), Armut's October
+gap (not in the monthly history yet) and BeymenTech (removed 2026-10-27) are known stops; GSM İletişim
+Xiaomi repairs (700 → 1 200 / 1 500 TL) and D&R campaign prices (399 ↔ 1 299 TL) are real site changes.

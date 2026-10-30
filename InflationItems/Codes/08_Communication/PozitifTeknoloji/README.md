@@ -25,6 +25,12 @@ fiyat, stok, SKU ve kategoriyle bütün kataloğu döndürür (~1.300 ürün, 10
 Bütün ürünler tutulur; `in_stock` ve `is_outlet` kolonları sayesinde analiz sırasında
 filtrelenebilir.
 
+- Set ürünleri ("Avantajlı Aksesuar Setleri": Beats Ses Paketi, iPad Eğitim / Aksesuar Seti; API'de
+  `type: "bundle"`) Store API'de `prices.price = 0` döner, gerçek fiyat yalnızca `price_html`'dedir.
+  Bu ürünlerde `price` / `regular_price` oradan okunur (`<ins>` varsa indirimli, `<del>` liste fiyatı).
+  2026-10-30 öncesi dosyalarda bu ~130 set `price = 0.0` olarak yazılmıştır, analizde atılmalıdır.
+- `product_name` HTML entity'leri çözülmüş haliyle yazılır (`&#8211;` → `–`, 2026-10-30'dan beri).
+
 ## Çalıştırma
 
 ```bash

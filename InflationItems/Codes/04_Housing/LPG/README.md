@@ -64,6 +64,9 @@ list is shared with other Aygaz products.
 
 ## Troubleshooting
 
+- `Aygaz page attempt N: empty expiryDates / cities` — the Aygaz price page is sometimes served with empty
+  lists (2026-10-30: the run died with `list index out of range`, no `aygaz_2026-10-30.csv`); the page is
+  fetched again after 2 / 5 / 10 s, then the brand fails with `price page lists no validity dates / cities`.
 - Mogaz İstanbul Avrupa (code 341) is not requested: Mogaz always answered an empty price for it (its own form
   shows nothing either), so Mogaz İstanbul is Anadolu only (`MOGAZ_SKIP` in scraper.py).
 - `Aygaz: __NEXT_DATA__ not found` / `Milangaz: <select id='iller'> not found` / `Mogaz: city / expiryDate

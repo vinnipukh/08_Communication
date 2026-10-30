@@ -15,8 +15,10 @@ Output: InflationItems/Datas/08_Communication/PozitifTeknoloji/pozitifTeknoloji_
 """
 
 import csv
+import html
 import logging
 import os
+import re
 import sys
 import time
 from datetime import datetime
@@ -80,16 +82,37 @@ def money(prices, key):
     return round(int(raw) / (10 ** unit), 2)
 
 
+AMOUNT_RE = re.compile(r'woocommerce-Price-amount amount">(?:<bdi>)?([\d.]+(?:,\d+)?)')
+
+
+def html_amounts(price_html):
+    """(price, regular_price) from ``price_html``: '<del>..</del> <ins>..</ins>' -> (ins, del), else the first
+    amount for both; amounts are Turkish formatted ('26.999,00')."""
+    def amount(fragment):
+        m = AMOUNT_RE.search(fragment or "")
+        return round(float(m.group(1).replace(".", "").replace(",", ".")), 2) if m else None
+    ins, dele = re.search(r"<ins.*?</ins>", price_html or "", re.S), re.search(r"<del.*?</del>", price_html or "", re.S)
+    if ins:
+        return amount(ins.group(0)), amount(dele.group(0)) if dele else None
+    first = amount(price_html)
+    return first, first
+
+
 def to_row(p):
     cats = p.get("categories") or []
     names = [c.get("name", "") for c in cats]
-    name = (p.get("name") or "").strip()
+    name = html.unescape(p.get("name") or "").strip()  # the API keeps entities: "Beats Ses Paketi &#8211; ..."
     path = " > ".join(names)
+    price, regular = money(p.get("prices"), "price"), money(p.get("prices"), "regular_price")
+    # Bundles (type "bundle", the "Avantajlı Aksesuar Setleri" sets) answer prices.price = 0; their price is
+    # only in price_html (checked 2026-10-30: 26.999,00 ₺ for a set the API priced 0)
+    if p.get("type") == "bundle" and not price:
+        price, regular = html_amounts(p.get("price_html"))
     return tuik08.with_category(
-        name, money(p.get("prices"), "price"), tuik08.classify(name, path),
+        name, price, tuik08.classify(name, path),
         # deepest category is listed last by WooCommerce (e.g. Mac > MacBook Air)
         category=names[-1] if names else "",
-        regular_price=money(p.get("prices"), "regular_price"),
+        regular_price=regular,
         sku=p.get("sku") or "",
         product_id=p.get("id"),
         in_stock=bool(p.get("is_in_stock")),

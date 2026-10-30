@@ -227,7 +227,13 @@ class VatanScraper:
                 continue
 
             price = self.extract_price(text)
-            name = self.extract_name(text)
+            # Product cards carry the name and the code in their own elements; the whole card text also
+            # holds badges ("YENİ ÜRÜN"), the score, the code ("... outlet 49257") and "Sepette", which
+            # extract_name() only partly strips (2026-10-30), so it is the fallback for non-card links.
+            name_el = a.select_one(".product-list__product-name h3")
+            code_el = a.select_one(".product-list__product-code")
+            name = self.clean_text(name_el.get_text(" ")) if name_el else self.extract_name(text)
+            code = self.clean_text(code_el.get_text(" ")) if code_el else ""
 
             if not name or not price:
                 continue
@@ -235,7 +241,7 @@ class VatanScraper:
             if len(name) < 4:
                 continue
 
-            products.append((name, price, product_url_clean))
+            products.append((name, price, product_url_clean, code))
 
         return products, soup
 
@@ -422,7 +428,7 @@ class VatanScraper:
 
             new_count = 0
 
-            for name, price, product_url in products:
+            for name, price, product_url, code in products:
                 if product_url in self.seen_product_urls:
                     continue
 
@@ -430,7 +436,7 @@ class VatanScraper:
 
                 # ortak 08 kolonları: product_name, price, category_number, sub_category_number
                 writer.writerow([name, self.price_number(price), tuik08.CATEGORY_NUMBER,
-                                 tuik08.classify(name, category_url)])
+                                 tuik08.classify(name, category_url), code, product_url])
 
                 self.total_written += 1
                 new_count += 1
@@ -464,7 +470,7 @@ class VatanScraper:
         self.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
         with open(self.OUTPUT_FILE, "w", encoding="utf-8-sig", newline="") as csv_file:
             writer = csv.writer(csv_file)
-            writer.writerow(tuik08.COLUMNS)
+            writer.writerow(tuik08.COLUMNS + ["product_code", "product_url"])
 
             for category_url in self.CATEGORY_URLS:
                 if self.banned:

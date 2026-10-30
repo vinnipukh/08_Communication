@@ -210,11 +210,19 @@ def per_city(brand: str, cities: list, wanted: set | None, fetch) -> tuple[list[
 
 def aygaz(client: Client, wanted: set | None, since: str | None = None):
     """Newest validity date, or with ``since`` (YYYY-MM-DD) every validity date from then on (backfill)."""
-    raw = client.get(AYGAZ_PAGE).text
-    m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', raw, re.S)
-    if not m:
-        raise RuntimeError("Aygaz: __NEXT_DATA__ not found")
-    props = json.loads(m.group(1))["props"]["pageProps"]
+    # the page is sometimes served with empty expiryDates / cities lists (2026-10-30), so it is fetched again
+    for attempt in range(1, len(BACKOFF) + 2):
+        raw = client.get(AYGAZ_PAGE).text
+        m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', raw, re.S)
+        if not m:
+            raise RuntimeError("Aygaz: __NEXT_DATA__ not found")
+        props = json.loads(m.group(1))["props"]["pageProps"]
+        if props.get("expiryDates") and props.get("cities"):
+            break
+        log.warning("Aygaz page attempt %d: empty expiryDates / cities", attempt)
+        if attempt > len(BACKOFF):
+            raise RuntimeError("Aygaz: price page lists no validity dates / cities")
+        time.sleep(BACKOFF[attempt - 1])
     dates = sorted(d["value"] for d in props["expiryDates"])
     validities = [v for v in dates if v[:10] >= since] if since else dates[-1:]
     if not validities:
