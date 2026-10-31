@@ -40,7 +40,7 @@ DATA_DIR = (
 
 
 BASE_URL = "https://www.avansas.com"
-CATEGORY_NUMBER = "09"
+CATEGORY_NUMBER = "9"
 
 
 CATEGORIES = {

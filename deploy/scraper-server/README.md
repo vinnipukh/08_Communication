@@ -42,7 +42,8 @@ apt-get update && apt-get install -y git
 git clone --filter=blob:none --no-checkout https://github.com/vinnipukh/08_Communication.git <repo-root>
 cd <repo-root>
 git sparse-checkout set --cone deploy/scraper-server InflationItems/Codes/08_Communication \
-  InflationItems/Codes/04_Housing/NaturalGas InflationItems/Codes/04_Housing/Water
+  InflationItems/Codes/04_Housing/NaturalGas InflationItems/Codes/04_Housing/Water \
+  InflationItems/Codes/09_Recreation
 git checkout main
 bash deploy/scraper-server/setup.sh
 ```
@@ -80,6 +81,15 @@ cd <repo-root> && git sparse-checkout add InflationItems/Codes/04_Housing/Natura
 
 `InflationItems/Datas/04_Housing` de 08 verisi gibi checkout dışında kalır.
 
+2026-10-31 öncesi kurulmuş sunucuda TÜİK 09 işleri için bir kere (sonra "Kod güncellemesi"; `setup.sh` yeni
+Python paketlerini ve `libgl1` / `libglib2.0-0` sistem paketlerini de kurar, ilk çalıştırma birkaç dakika sürer):
+
+```bash
+cd <repo-root> && git sparse-checkout add InflationItems/Codes/09_Recreation
+```
+
+`InflationItems/Datas/09_Recreation` de checkout dışında kalır.
+
 Kod güncellemesi (repoda scraper değişirse):
 
 ```bash
@@ -115,6 +125,24 @@ Bellek = USS (process'e özel bellek, Chrome alt process'leri dahil).
 | 10:00 | streaming (Netflix, Disney+, HBO Max, Amazon Prime, Apple TV+, YouTube Premium, Spotify, MUBI, TV+, Tivibu, GAİN, tabii) | ~1 dk | ~40 | ~300 MB (kısa Chrome) | 15 dk | tabii için tek seferlik headless Chrome |
 | 10:25 | repair (onarım: Apple, Samsung, Huawei, GSM İletişim) | ~30 dk | ~2.000 | düşük | 90 dk | yok |
 
+TÜİK 09 (eğlence, spor, kültür; 2026-10-31'den beri, tarayıcı yok) öğleden sonraki boş pencerede çalışır. 24 scraper'ın
+çoğu kısa olduğu için `InflationItems/Codes/09_Recreation/run_group.py` ile gruplanır (her scraper ayrı süreç ve ayrı süre
+sınırı; biri patlarsa sıradaki yine çalışır, herhangi biri patlarsa grup 1 ile çıkar ve `log.txt`'de FAILED görünür,
+hangisi olduğu çalıştırma logunda `[group] failed scrapers: …` satırındadır). DR ayrı iştir. Süreler geliştirici PC'sinde
+ölçüldü (2026-10-31); sunucu CPU'su daha yavaş olduğundan zaman aşımları ~4 kat pay bırakır.
+
+| Saat | İş | Kapsam | Ölçülen süre | Satır | Timeout |
+|---|---|---|---|---|---|
+| 12:30 | rec_small | Avansas, Diyanet (OCR), Hisar, MACFit, Nezih, Korayspor, Milli Piyango, İstanbul Akvaryum, KidZania, Ankara VHO (OCR), İVHO, VetArt, Spor İstanbul, Arnavutköy, Grupanya | ~10 dk | ~17 bin | 45 dk |
+| 13:25 | rec_medium | Kitapyurdu, Jollytur, SPX, Biletinial (tiyatro + sinema), DüğünBuketi, Düğün.com, Petchef, Temiz Mama | ~30 dk | ~7 bin | 120 dk |
+| 15:35 | rec_shops | Petlebi, Toyzzshop, Petzzshop, Decathlon (fitness + giyim), Zuhal Müzik | ~55 dk | ~28 bin | 240 dk |
+| 19:45 | rec_dr | D&R (TÜİK 09 kategorileri, `DR/dr_scraper.py`; 08'deki `dr` işi başka bir scraper) | ~65 dk | ~85 bin | 240 dk |
+
+En kötü durumda (her iş timeout'a kadar) son iş 23:47'de biter; cleanup 00:30'da. Tepe RAM: OCR'lı Diyanet ~665 MB ve
+Ankara VHO ~604 MB (ağır olanlar; modeller pakette, indirme yok), diğer scraper'lar 50-100 MB civarı; işler üst üste
+çalışmadığı için 1.9 GB'a sığar. Günlük çıktı ~14 MB (DR dahil), `export_data.sh` 09 verisini de paketler.
+Paribu Cineverse robots.txt fiyat sayfasını (`/biletleme/`) yasakladığı için dahil değildir.
+
 Her iş, bir öncekinin timeout'u (+2 dk kill payı) dolduktan en az 8 dk sonra başlar: bir iş timeout'a takılsa bile
 sıradaki iş beklemez, kayma olmaz (2026-10-28 telecom/internet timeout zinciri sonrası aralar açıldı).
 Tüm işler aynı kilidi (`flock /tmp/scraper.lock`) kullanır, yani biri geç kalırsa
@@ -130,7 +158,7 @@ aşımlarıyla yavaşladı, iş 90 dk sınırına takıldı ve sonra gelen NetGS
 geliştirici PC'sinde ölçüldü; süreyi Türk Telekom'un sitemap'teki ~490 + ~340 detay sayfası belirler
 (sıralı, 1.5-3.5 sn bekleme). Kaynak notları: `docs/site-analysis/telecom/NOTES.md`.
 
-Bu on işin ve iki 04 işinin verisini GitHub'a sunucu push'lar (aşağıda "GitHub'a push"). `.github/workflows/scraper_<isim>.yml`
+Bu on işin, iki 04 işinin ve dört 09 işinin verisini GitHub'a sunucu push'lar (aşağıda "GitHub'a push"). `.github/workflows/scraper_<isim>.yml`
 iş akışlarının artık zamanlaması yok, sadece elle (`workflow_dispatch`) çalışır; `bin/run_scraper.sh` ve
 `requirements.txt` dosyalarını doğrudan kullandıkları için bu dosyalardaki bir değişiklik iki tarafı da etkiler.
 Emlakjet ve Beymen tech iş akışları ayrıdır ve kendi zamanlamalarıyla çalışmaya devam eder.
@@ -141,8 +169,15 @@ yılın Aralık fiyatlarını yazar (uyarı, hata değil).
 
 ## Telegram özeti
 
-`bin/daily_report.sh [tech|telecom] [YYYY-MM-DD]` günün `log.txt` satırlarını okur, her işin CSV satırlarını sayar
-ve dünküne göre %20+ düşüşü işaretler. `tech` 6 teknoloji işi + `naturalgas` + `iski`, `telecom` 4 telecom işi.
+`bin/daily_report.sh [tech|telecom|recreation] [YYYY-MM-DD]` günün `log.txt` satırlarını okur, her işin CSV satırlarını sayar
+ve dünküne göre %20+ düşüşü işaretler. `tech` 6 teknoloji işi + `naturalgas` + `iski`, `telecom` 4 telecom işi,
+`recreation` 4 TÜİK 09 işi (`rec_*`; telecom gibi her kaynak için satır sayısı ve düşüş uyarısı). `REPORT_DRY_RUN=1` iken
+mesajı göndermez, ekrana yazar (elle kontrol için). Sunucudaki `telegram-report-local` bloğuna bir kere şu satır eklenir
+(en kötü durumda son iş 23:47'de biter):
+
+```
+55 23 * * * <repo-root>/bin/daily_report.sh recreation >> <repo-root>/log.txt 2>&1
+```
 Her işin `log.txt`'deki son satırı OK / FAILED / TIMEOUT ile başlar; push sonucu aynı satırda ` · ` sonrasında gelir
 (push başarısızsa ⚠️). `TELEGRAM_BOT_TOKEN` ve `TELEGRAM_CHAT_ID` `.env`'de olmalı. Cron satırları `crontab.txt`'te
 değil, sunucuda ayrı bir `telegram-report-local` bloğunda (06:50 tech, 12:10 telecom; işler en kötü durumda bile bittikten sonra).
@@ -209,7 +244,7 @@ GIT_PUSH=1                # her scraper'dan sonra CSV'leri GitHub'a push'la (bin
 ## GitHub'a push
 
 `GIT_PUSH=1` iken `run_scraper.sh` her işten sonra (kilit içindeyken) `bin/push_data.sh <isim>` çalıştırır:
-son başarılı push'tan (`.last_push`) beri yazılan CSV'leri (sadece `InflationItems/Datas/08_Communication/` ve
+son başarılı push'tan (`.last_push`) beri yazılan CSV'leri (sadece `InflationItems/Datas/08_Communication/`, `InflationItems/Datas/09_Recreation/` ve
 `InflationItems/Datas/04_Housing/{IGDAS,Baskentgaz,Izmirgaz,ISKI}/`; diğer 04_Housing klasörlerini Actions veya
 kişiler yazar, sunucu onlara dokunmaz) güncel `origin/main`'in üstüne geçici bir index ile
 commit'ler ve push'lar. Çalışma dizinine, sparse checkout'a ve yerel `main`'e dokunmaz; silmeleri hiç

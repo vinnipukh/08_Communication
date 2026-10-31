@@ -13,6 +13,7 @@ PY="$ROOT/venv/bin/python"
 CODES="$ROOT/InflationItems/Codes/08_Communication"
 TELECOM="$CODES/Telecom"
 HOUSING="$ROOT/InflationItems/Codes/04_Housing"
+RECREATION="$ROOT/InflationItems/Codes/09_Recreation"
 LOG_DIR="$ROOT/server_logs"
 STATUS_LOG="$ROOT/log.txt"
 LOCK=/tmp/scraper.lock
@@ -33,7 +34,13 @@ case "$NAME" in
   # TÜİK 04 sources that time out from GitHub runner IPs (the rest run in scraper_04_utilities.yml)
   naturalgas) TIMEOUT=15m; CMD=("$PY" -u "$HOUSING/NaturalGas/scraper.py") ;;
   iski)     TIMEOUT=10m;  CMD=("$PY" -u "$HOUSING/Water/scraper.py" --source iski) ;;
-  *) echo "usage: $0 {samsung|huawei|pozitif|beymen|dr|vatan|telecom|internet|streaming|repair|naturalgas|iski}"; exit 2 ;;
+  # TÜİK 09 (no browser). The many short scrapers are bundled by run_group.py (one job per group,
+  # each scraper with its own limit); the group timeout is just above the sum of those limits' realistic use.
+  rec_small)  TIMEOUT=45m;  CMD=("$PY" -u "$RECREATION/run_group.py" small) ;;
+  rec_medium) TIMEOUT=120m; CMD=("$PY" -u "$RECREATION/run_group.py" medium) ;;
+  rec_shops)  TIMEOUT=240m; CMD=("$PY" -u "$RECREATION/run_group.py" shops) ;;
+  rec_dr)     TIMEOUT=240m; CMD=("$PY" -u "$RECREATION/DR/dr_scraper.py") ;;
+  *) echo "usage: $0 {samsung|huawei|pozitif|beymen|dr|vatan|telecom|internet|streaming|repair|naturalgas|iski|rec_small|rec_medium|rec_shops|rec_dr}"; exit 2 ;;
 esac
 
 cd "$ROOT" || exit 1

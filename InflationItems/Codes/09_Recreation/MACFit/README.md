@@ -37,7 +37,7 @@ InflationItems/Datas/09_Recreation/MACFit/macfit_YYYY-MM-DD.csv
 ```
 
 Kolonlar:
-`product_name,price,category_name,sub_category_number,city,district,club_name,club_type,plan_name,membership_category,commitment_type,term_months,url`
+`product_name,price,category_number,sub_category_number,category_name,city,district,club_name,club_type,plan_name,membership_category,commitment_type,term_months,url`
 
 ### Kolon Açıklamaları
 - `product_name`: Standart ürün adı (Örn: `MACFit Ankara Ankamall - CLASSIC (12 Ay Taahhütlü Aylık Üyelik)`)
@@ -53,6 +53,7 @@ Kolonlar:
 - `commitment_type`: Taahhüt türü (`12 Ay Taahhütlü`, `Taahhütsüz Aylık`, `Peşin Yıllık (Aylık)`, `Peşin Yıllık (Toplam)`, `Tek Seferlik`)
 - `term_months`: Üyelik süresi ay (`12`, `1`, `0`)
 - `url`: Kulüp harita / bilgi bağlantısı
+- `category_number`: `9`
 
 ## Çalıştırma
 

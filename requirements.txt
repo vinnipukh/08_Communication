@@ -5,7 +5,9 @@ curl-cffi>=0.7
 lxml>=5.0
 openpyxl>=3.1  # EPDK electricity tariff XLSX
 pypdf>=5.0  # Başkentgaz natural gas tariff PDF
-rapidocr-onnxruntime>=1.4  # TKİ coal price image OCR (automatic transcription)
+rapidocr-onnxruntime>=1.4  # TKİ coal price image OCR (automatic transcription), Diyanet brochure OCR
+pypdfium2>=4  # renders PDF pages to images for OCR (Diyanet umrah brochure), reads PDF text boxes (İVHO)
+cryptography>=42  # İVHO: verifies the missing Sectigo intermediate certificate against the certifi roots
 requests>=2.32
 
 # Browser automation

@@ -26,7 +26,7 @@ PROJECT_ROOT = next((p for p in BASE_DIR.parents if (p / ".git").exists()), BASE
 DATA_DIR = PROJECT_ROOT / "InflationItems" / "Datas" / "09_Recreation" / "Petlebi"
 
 BASE_URL = "https://www.petlebi.com"
-CATEGORY_NUMBER = "09"
+CATEGORY_NUMBER = "9"
 PET_FOOD_SUB_CATEGORY_NUMBER = "0932201"
 OTHER_PET_PRODUCTS_SUB_CATEGORY_NUMBER = "0932204"
 

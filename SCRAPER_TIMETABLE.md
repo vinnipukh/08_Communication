@@ -21,8 +21,8 @@ out from GitHub runner IPs) run on a separate low-RAM Ubuntu server via cron.
 Setup, measured durations and operations: `deploy/scraper-server/README.md`. Jobs share one lock, so they never overlap.
 
 The server pushes each job's CSVs to `main` itself (`deploy/scraper-server/bin/push_data.sh`, enabled with
-`GIT_PUSH=1`): `InflationItems/Datas/08_Communication/` and, from `04_Housing/`, only `IGDAS`, `Baskentgaz`,
-`Izmirgaz` and `ISKI`. A Telegram summary of each day's runs (`deploy/scraper-server/bin/daily_report.sh`) goes
+`GIT_PUSH=1`): `InflationItems/Datas/08_Communication/`, `InflationItems/Datas/09_Recreation/` and, from
+`04_Housing/`, only `IGDAS`, `Baskentgaz`, `Izmirgaz` and `ISKI`. A Telegram summary of each day's runs (`deploy/scraper-server/bin/daily_report.sh`) goes
 out at 06:50 (tech + 04 jobs) and 12:10 (telecom jobs). Each job starts only after the previous one's timeout
 (+2 min kill grace) plus at least 8 min has passed, so a job that hits its timeout never delays the next one. The ten 08 scrapers also have GitHub Actions workflows (`scraper_<name>.yml`), now manual-only
 (`workflow_dispatch`, schedule removed 2026-10-27 so the two sources don't write the same files). Each one
@@ -47,3 +47,13 @@ failing, disable only that workflow.
 | 08:35 | 05:35 | Telecom — home internet (Superonline, Vodafone, Kablonet, Milleni, TurkNet, Türk Telekom, GIBIRNet) | `scraper_internet.yml` / `internet` | `InflationItems/Codes/08_Communication/Telecom/internet.py` | `InflationItems/Datas/08_Communication/<Provider>/*_internet_*.csv` |
 | 10:00 | 07:00 | Telecom — streaming subscriptions (12 services; TOD removed 2026-10-28) | `scraper_streaming.yml` / `streaming` | `InflationItems/Codes/08_Communication/Telecom/streaming.py` | `InflationItems/Datas/08_Communication/<Service>/*.csv` |
 | 10:25 | 07:25 | Telecom — ICT equipment repair prices (Apple, Samsung, Huawei, GSM İletişim) | `scraper_repair.yml` / `repair` | `InflationItems/Codes/08_Communication/Telecom/repair.py` | `InflationItems/Datas/08_Communication/<Source>/*_repair_*.csv` |
+| 12:30 | 09:30 | TÜİK 09 small scrapers (Avansas, Diyanet, Hisar Turizm, MACFit, Nezih, Korayspor, Milli Piyango, İstanbul Akvaryum, KidZania, Ankara VHO, İVHO, VetArt, Spor İstanbul, Arnavutköy, Grupanya) | — / `rec_small` | `InflationItems/Codes/09_Recreation/run_group.py small` | `InflationItems/Datas/09_Recreation/<Store>/*.csv` |
+| 13:25 | 10:25 | TÜİK 09 medium scrapers (Kitapyurdu, Jollytur, SPX, Biletinial theatre + cinema, DüğünBuketi, Düğün.com, Petchef, Temiz Mama) | — / `rec_medium` | `InflationItems/Codes/09_Recreation/run_group.py medium` | `InflationItems/Datas/09_Recreation/<Store>/*.csv` |
+| 15:35 | 12:35 | TÜİK 09 shops (Petlebi, Toyzzshop, Petzzshop, Decathlon fitness + clothing, Zuhal Müzik) | — / `rec_shops` | `InflationItems/Codes/09_Recreation/run_group.py shops` | `InflationItems/Datas/09_Recreation/<Store>/*.csv` |
+| 19:45 | 16:45 | TÜİK 09 D&R (~85k rows, about an hour) | — / `rec_dr` | `InflationItems/Codes/09_Recreation/DR/dr_scraper.py` | `InflationItems/Datas/09_Recreation/DR/*.csv` |
+
+The four TÜİK 09 jobs (2026-10-31) need no browser. `run_group.py` bundles the short scrapers: each runs as its own
+process with its own time limit and a failing one does not stop the next (the job exits 1 and `log.txt` shows FAILED;
+the run log lists the failed scrapers). Worst case (every job hits its timeout: 45 / 120 / 240 / 240 min) the last job
+ends at 23:47. The Telegram summary is `daily_report.sh recreation` at 23:55. Paribu Cineverse is not scheduled
+(its robots.txt disallows the ticket-price page).

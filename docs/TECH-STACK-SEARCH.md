@@ -812,3 +812,42 @@ Checked and left alone: Turkcell / Vodafone `price = 0` rows are genuinely free 
 (Telecom README); Egemek (404, dropped 2026-10-17), TOD (CloudFront 403, removed 2026-10-28), Armut's October
 gap (not in the monthly history yet) and BeymenTech (removed 2026-10-27) are known stops; GSM İletişim
 Xiaomi repairs (700 → 1 200 / 1 500 TL) and D&R campaign prices (399 ↔ 1 299 TL) are real site changes.
+
+## 3.17 09 Recreation scrapers made browser-free (2026-10-31)
+
+Before scheduling group 09, every Playwright path was replaced by `curl_cffi` (Chrome impersonation,
+homepage first) plus the site's own JSON calls, found by watching the page's XHR in a browser:
+- Toyzzshop: the storefront is a JS app with no products in its HTML; listings come from
+  `core.toyzzshop.com/api/categories/<id>/products` (ids from `/api/categories/menu`).
+- Biletinial: the 50 theatre cards are server-rendered; further cards come from `/List/GetMoreItems`
+  (empty today). The scroll loop was unnecessary.
+- Hisar Turizm: tours are embedded as `var tourFrontend = {...}` JSON; later pages come from
+  `admin-ajax.php` `action=filter_tours` with the page's nonce. The old browser fallback ran every day and
+  only saw page 1 (20 of 556 umrah tours).
+`requests` was also blocked on two sites (Milli Piyango: read timeouts, so all rows came from a hard-coded
+fallback; Decathlon: Cloudflare 403 for a custom UA); both now use `curl_cffi`, and the Milli Piyango
+fallback was removed. Upstream updates (category_number columns, Korayspor) were copied, Nezih and Zuhal
+item codes fixed, and an Akinon JSON scraper for SPX added. Details and the per-scraper method table:
+`docs/site-analysis/recreation/README.md` §11.
+
+Later the same day: Diyanet got OCR (`pypdfium2` page render + `rapidocr-onnxruntime`, checked against
+the PDF text layer), all 09 CSVs moved to the upstream column order with `category_number` 9, and nine
+scrapers were added for the five uncovered basket items (Spor İstanbul, Arnavutköy, Grupanya, İstanbul
+Akvaryum, KidZania, Ankara VHO with OCR, Düğün.com, DüğünBuketi, Biletinial cinema). sitemap.xml was
+checked on every 09 site: none carries prices, so per-product sitemap crawling would need 10–1000× more
+requests than the listing pages and APIs; no scraper uses it. Two sites disallow the endpoint with prices
+in robots.txt (Düğün.com `/api`, worked around via listing pages; Paribu Cineverse `/biletleme/`, scraper
+dropped and its folder moved to the Recycle Bin).
+
+TÜİK 09 on the cron server (2026-10-31): four jobs in the idle 12:30–23:47 window (`rec_small`, `rec_medium`,
+`rec_shops` via `InflationItems/Codes/09_Recreation/run_group.py`, and `rec_dr`), no browser; `setup.sh` now also
+installs `libgl1`/`libglib2.0-0`, `pypdfium2`, `rapidocr-onnxruntime` and `cryptography`; `push_data.sh` and
+`export_data.sh` include `Datas/09_Recreation`; `daily_report.sh recreation` (also `REPORT_DRY_RUN=1`).
+Details: `deploy/scraper-server/README.md`.
+
+Round two: Petzzshop (ikas API), Petchef and TemizMama (product sitemap + product pages, because pagination/API
+are disallowed by robots.txt — the only 09 scrapers where a sitemap is the fastest allowed route), VetArt and
+Decathlon sports clothing (0922107) were added. İVHO (0945001, İstanbul chamber tariff PDF, text layer, 695 rows)
+was added with a TLS workaround: the server omits its Sectigo intermediate certificate, so the scraper fetches the
+intermediate from the certificate's CA-issuers URL, verifies its signature against a `certifi` root with
+`cryptography`, and trusts the resulting bundle for ivho.org.tr only; certificate verification stays on.

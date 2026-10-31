@@ -5,13 +5,10 @@ import logging
 import re
 import sys
 import time
-import math
 from datetime import datetime
 from pathlib import Path
-from urllib.parse import parse_qsl, urlencode, urljoin, urlsplit, urlunsplit
 
-from bs4 import BeautifulSoup
-from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
+from curl_cffi import requests
 
 logging.basicConfig(
     level=logging.INFO,
@@ -26,75 +23,101 @@ PROJECT_ROOT = next((p for p in BASE_DIR.parents if (p / ".git").exists()), BASE
 DATA_DIR = PROJECT_ROOT / "InflationItems" / "Datas" / "09_Recreation" / "ToyzzShop"
 
 BASE_URL = "https://www.toyzzshop.com"
-CATEGORY_NUMBER = "09"
+# The storefront is a JS app; listings come from this JSON API (same calls the site makes).
+API_URL = "https://core.toyzzshop.com/api/categories/{category_id}/products"
+API_HEADERS = {
+    "Accept": "application/json, text/plain, */*",
+    "Origin": BASE_URL,
+    "Referer": BASE_URL + "/",
+}
+CATEGORY_NUMBER = "9"
 OTHER_TOYS_SUB_CATEGORY_NUMBER = "0921204"
 WHEELED_TOYS_SUB_CATEGORY_NUMBER = "0921207"
 
+# category_id comes from https://core.toyzzshop.com/api/categories/menu (id <-> slug).
 CATEGORIES = {
     "board_games": {
-        "url": "https://www.toyzzshop.com/kutu-oyunlari",
+        "slug": "kutu-oyunlari",
+        "category_id": 90,
         "sub_category_number": OTHER_TOYS_SUB_CATEGORY_NUMBER
     },
     "hobby_toys": {
-        "url": "https://www.toyzzshop.com/hobi-oyuncaklari",
+        "slug": "hobi-oyuncaklari",
+        "category_id": 62,
         "sub_category_number": OTHER_TOYS_SUB_CATEGORY_NUMBER
     },
     "plush_toys": {
-        "url": "https://www.toyzzshop.com/pelus-oyuncaklar",
+        "slug": "pelus-oyuncaklar",
+        "category_id": 11,
         "sub_category_number": OTHER_TOYS_SUB_CATEGORY_NUMBER
     },
     "dolls": {
-        "url": "https://www.toyzzshop.com/oyuncak-bebekler-ve-aksesuarlari/",
+        "slug": "oyuncak-bebekler-ve-aksesuarlari",
+        "category_id": 6,
         "sub_category_number": OTHER_TOYS_SUB_CATEGORY_NUMBER
     },
     "building_toys": {
-        "url": "https://www.toyzzshop.com/yapim-oyuncaklari-lego",
+        "slug": "yapim-oyuncaklari-lego",
+        "category_id": 5,
         "sub_category_number": OTHER_TOYS_SUB_CATEGORY_NUMBER
     },
     "baby_toys": {
-        "url": "https://www.toyzzshop.com/bebek-oyuncaklari",
+        "slug": "bebek-oyuncaklari",
+        "category_id": 30,
         "sub_category_number": OTHER_TOYS_SUB_CATEGORY_NUMBER
     },
     "educational_toys": {
-        "url": "https://www.toyzzshop.com/egitici-oyuncaklar",
+        "slug": "egitici-oyuncaklar",
+        "category_id": 19,
         "sub_category_number": OTHER_TOYS_SUB_CATEGORY_NUMBER
     },
     "model_toy_cars": {
-        "url": "https://www.toyzzshop.com/oyuncak-araba/model-arabalar-ve-araclar",
+        "slug": "oyuncak-araba/model-arabalar-ve-araclar",
+        "category_id": 52,
         "sub_category_number": OTHER_TOYS_SUB_CATEGORY_NUMBER
     },
     "remote_control_toys": {
-        "url": "https://www.toyzzshop.com/oyuncak-araba/kumandali-arabalar",
+        "slug": "oyuncak-araba/kumandali-arabalar",
+        "category_id": 53,
         "sub_category_number": OTHER_TOYS_SUB_CATEGORY_NUMBER
     },
     "scooters": {
-        "url": "https://www.toyzzshop.com/scooter",
+        "slug": "scooter",
+        "category_id": 96,
         "sub_category_number": WHEELED_TOYS_SUB_CATEGORY_NUMBER
     },
     "battery_vehicles": {
-        "url": "https://www.toyzzshop.com/akulu-araclar",
+        "slug": "akulu-araclar",
+        "category_id": 93,
         "sub_category_number": WHEELED_TOYS_SUB_CATEGORY_NUMBER
     },
     "pedal_vehicles": {
-        "url": "https://www.toyzzshop.com/pedalli-araclar",
+        "slug": "pedalli-araclar",
+        "category_id": 94,
         "sub_category_number": WHEELED_TOYS_SUB_CATEGORY_NUMBER
     },
     "ride_on_vehicles": {
-        "url": "https://www.toyzzshop.com/pedalsiz-surmeli-araclar",
+        "slug": "pedalsiz-surmeli-araclar",
+        "category_id": 98,
         "sub_category_number": WHEELED_TOYS_SUB_CATEGORY_NUMBER
     },
     "three_wheel_bikes": {
-        "url": "https://www.toyzzshop.com/bisiklet/3-tekerlekli-bisiklet",
+        "slug": "bisiklet/3-tekerlekli-bisiklet",
+        "category_id": 1204,
         "sub_category_number": WHEELED_TOYS_SUB_CATEGORY_NUMBER
     },
     "skates_skateboards": {
-        "url": "https://www.toyzzshop.com/kaykay-paten",
+        "slug": "kaykay-paten",
+        "category_id": 97,
         "sub_category_number": WHEELED_TOYS_SUB_CATEGORY_NUMBER
     }
 }
 
 MAX_PAGES = 120
-REQUEST_DELAY = 1.0
+PAGE_SIZE = 48
+REQUEST_DELAY = 1.5
+REQUEST_TIMEOUT = 40
+MAX_RETRIES = 3
 
 
 DEFAULT_OTHER_TOYS_LIMIT = 15000
@@ -102,11 +125,6 @@ DEFAULT_WHEELED_TOYS_LIMIT = 15000
 
 
 DEFAULT_SCAN_LIMIT_PER_CATEGORY = 1500
-
-PRICE_PATTERN = re.compile(
-    r"\d{1,3}(?:\s*\.\s*\d{3})*(?:\s*,\s*\d{2})?\s*(?:TL|TRY|₺)",
-    re.IGNORECASE
-)
 
 BADGE_PATTERNS = [
     r"^Sadece Toyzz Shop'ta\s*",
@@ -117,34 +135,10 @@ BADGE_PATTERNS = [
 ]
 
 
-def add_page_number(url, page_number):
-    if page_number <= 1:
-        return url
-    parts = urlsplit(url)
-    query = dict(parse_qsl(parts.query, keep_blank_values=True))
-    query["q"] = f"page/{page_number}"
-    return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
-
-
 def normalize_text(text):
     value = " ".join(text.replace("\xa0", " ").split())
     value = re.sub(r"\s*([.,])\s*(?=\d)", r"\1", value)
     return value.strip()
-
-
-def convert_price(text):
-    value = normalize_text(text)
-    value = re.sub(r"[^\d.,]", "", value)
-    if not value:
-        return None
-    if "," in value:
-        value = value.replace(".", "").replace(",", ".")
-    elif re.fullmatch(r"\d{1,3}(?:\.\d{3})+", value):
-        value = value.replace(".", "")
-    try:
-        return float(value)
-    except ValueError:
-        return None
 
 
 def clean_name(text):
@@ -178,206 +172,73 @@ def canonical_product_key(name):
     return value
 
 
-def is_product_href(href):
-    if not href:
-        return False
-    absolute = urljoin(BASE_URL, href)
-    parts = urlsplit(absolute)
-    query = dict(parse_qsl(parts.query, keep_blank_values=True))
-    return bool(query.get("serial"))
+def new_session():
+    session = requests.Session(impersonate="chrome")
+    # Homepage first, so the API calls come from a session that loaded the site.
+    response = session.get(BASE_URL + "/", timeout=REQUEST_TIMEOUT)
+    logger.info("Homepage HTTP status: %s", response.status_code)
+    return session
 
 
-def normalize_product_url(href):
-    if not is_product_href(href):
-        return None
-    absolute = urljoin(BASE_URL, href)
-    parts = urlsplit(absolute)
-    query = dict(parse_qsl(parts.query, keep_blank_values=True))
-    serial = query.get("serial")
-    return urlunsplit(("https", "www.toyzzshop.com", parts.path.rstrip("/"), urlencode({"serial": serial}), ""))
-
-
-def extract_current_price(text):
-    value = normalize_text(text)
-    before_basket = re.split(r"\bSepette\b", value, maxsplit=1, flags=re.IGNORECASE)[0]
-    matches = list(PRICE_PATTERN.finditer(before_basket))
-    if not matches:
-        return None
-    for match in reversed(matches):
-        price = convert_price(match.group(0))
-        if price is not None and price > 0:
-            return price
+def fetch_products_page(session, category_id, page_number):
+    url = API_URL.format(category_id=category_id)
+    params = {"limit": PAGE_SIZE, "order": "ocd", "page": page_number}
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            response = session.get(url, params=params, headers=API_HEADERS, timeout=REQUEST_TIMEOUT)
+            if response.status_code == 200:
+                return response.json()
+            logger.warning("API HTTP %s for category %s page %d (attempt %d)",
+                           response.status_code, category_id, page_number, attempt)
+        except Exception as exc:
+            logger.warning("API request failed for category %s page %d (attempt %d): %s",
+                           category_id, page_number, attempt, exc)
+        time.sleep(REQUEST_DELAY * attempt * 2)
     return None
 
 
-def extract_name_from_link(link):
-    candidates = []
-    for attribute in ["title", "aria-label"]:
-        value = link.get(attribute)
-        if value:
-            candidates.append(value)
-    image = link.find("img")
-    if image and image.get("alt"):
-        candidates.append(image.get("alt"))
-    text = normalize_text(link.get_text(" ", strip=True))
-    if text:
-        first_price = PRICE_PATTERN.search(text)
-        if first_price:
-            text = text[:first_price.start()].strip()
-        candidates.append(text)
-    cleaned = []
-    for candidate in candidates:
-        candidate = clean_name(candidate)
-        if len(candidate) >= 3 and not PRICE_PATTERN.search(candidate):
-            cleaned.append(candidate)
-    return max(cleaned, key=len) if cleaned else None
-
-
-def product_urls_in(container):
-    urls = set()
-    for link in container.find_all("a", href=True):
-        normalized = normalize_product_url(link.get("href"))
-        if normalized:
-            urls.add(normalized)
-    return urls
-
-
-def find_product_container(link):
-    current = link
-    for _ in range(14):
-        current = current.parent
-        if current is None:
-            break
-        text = normalize_text(current.get_text(" ", strip=True))
-        if extract_current_price(text) is None:
+def parse_products(payload, sub_category_number):
+    items = []
+    for product in (payload.get("payload") or {}).get("products") or []:
+        name = clean_name(product.get("title") or product.get("product_name") or "")
+        price = (product.get("price") or {}).get("original")
+        serial_id = product.get("serial_id")
+        if not name or len(name) < 3 or not isinstance(price, (int, float)) or price <= 0:
             continue
-        urls = product_urls_in(current)
-        if len(urls) == 1:
-            return current
-    return None
-
-
-def extract_name_from_container(container, product_url):
-    names = []
-    for link in container.find_all("a", href=True):
-        if normalize_product_url(link.get("href")) != product_url:
-            continue
-        name = extract_name_from_link(link)
-        if name:
-            names.append(name)
-    for selector in ["h2", "h3", "h4", "[class*='name']", "[class*='title']"]:
-        for element in container.select(selector):
-            text = clean_name(element.get_text(" ", strip=True))
-            first_price = PRICE_PATTERN.search(text)
-            if first_price:
-                text = text[:first_price.start()].strip()
-            if len(text) >= 3:
-                names.append(text)
-    return max(names, key=len) if names else None
-
-
-def extract_total_results(html):
-    soup = BeautifulSoup(html, "html.parser")
-    text = normalize_text(soup.get_text(" ", strip=True))
-    patterns = [
-        r"Filtrele\s*([\d.]+)\s*Ürün\s*Listeleniyor",
-        r"([\d.]+)\s*Ürün\s*Sırala",
-        r"([\d.]+)\s*Ürün"
-    ]
-    for pattern in patterns:
-        match = re.search(pattern, text, flags=re.IGNORECASE)
-        if match:
-            try:
-                return int(match.group(1).replace(".", ""))
-            except ValueError:
-                pass
-    return None
-
-
-def parse_products(html, sub_category_number):
-    soup = BeautifulSoup(html, "html.parser")
-    product_links = [link for link in soup.find_all("a", href=True) if is_product_href(link.get("href"))]
-    items = {}
-    for link in product_links:
-        product_url = normalize_product_url(link.get("href"))
-        if not product_url or product_url in items:
-            continue
-        container = find_product_container(link)
-        if container is None:
-            continue
-        price = extract_current_price(container.get_text(" ", strip=True))
-        if price is None or price <= 0:
-            continue
-        name = extract_name_from_container(container, product_url) or extract_name_from_link(link)
-        if not name or len(name) < 3:
-            continue
-        items[product_url] = {
+        items.append({
             "product_name": name,
-            "price": price,
+            "price": float(price),
             "category_number": CATEGORY_NUMBER,
             "sub_category_number": sub_category_number,
-            "_product_url": product_url
-        }
-    return list(items.values()), len(product_links)
+            "_product_url": f"{BASE_URL}/{product.get('slug', '')}?serial={serial_id}"
+        })
+    return items
 
 
-def fetch_rendered_html(page, url):
-    page.goto(url, wait_until="domcontentloaded", timeout=45000)
-    try:
-        page.wait_for_selector('a[href*="serial="]', timeout=10000)
-    except PlaywrightTimeoutError:
-        pass
-    page.wait_for_timeout(200)
-    return page.content()
-
-
-def scrape_category(page, category_name, category_url, sub_category_number, max_pages, limit_per_category=0):
+def scrape_category(session, category_name, category_id, sub_category_number, max_pages, limit_per_category=0):
     results = []
     seen_urls = set()
-    expected_total = None
-    page_limit = max_pages
-    logger.info("Starting category: %s", category_name)
+    logger.info("Starting category: %s (id %s)", category_name, category_id)
+    page_count = max_pages
     for page_number in range(1, max_pages + 1):
-        if page_number > page_limit:
+        if page_number > page_count:
             break
-        url = add_page_number(category_url, page_number)
-        logger.info("%s - page %d", category_name, page_number)
-        try:
-            html = fetch_rendered_html(page, url)
-        except Exception as exc:
-            logger.warning("%s page %d failed: %s", category_name, page_number, exc)
+        payload = fetch_products_page(session, category_id, page_number)
+        if payload is None:
+            logger.warning("%s page %d: no API response, stopping category", category_name, page_number)
             break
-        if expected_total is None:
-            expected_total = extract_total_results(html)
-            if expected_total is not None:
-                logger.info("%s: site reports %d products", category_name, expected_total)
-        products, link_count = parse_products(html, sub_category_number)
+        pagination = payload.get("pagination") or {}
+        if page_number == 1:
+            page_count = min(max_pages, int(pagination.get("pageCount") or 1))
+            logger.info("%s: site reports %s products on %d pages",
+                        category_name, pagination.get("total"), page_count)
+        products = parse_products(payload, sub_category_number)
         if not products:
-            soup = BeautifulSoup(html, "html.parser")
-            title = soup.title.get_text(" ", strip=True) if soup.title else ""
-            visible = normalize_text(soup.get_text(" ", strip=True))[:180]
-            logger.warning(
-                "%s page %d: parsed 0 products | html=%d chars | product_links=%d | title=%s | text=%s",
-                category_name,
-                page_number,
-                len(html),
-                link_count,
-                title,
-                visible
-            )
+            logger.warning("%s page %d: parsed 0 products", category_name, page_number)
             break
-        if page_number == 1 and expected_total is not None and products:
-            target_total = expected_total
-            if limit_per_category > 0:
-                target_total = min(target_total, limit_per_category)
-            page_limit = min(max_pages, max(1, math.ceil(target_total / len(products)) + 2))
-            logger.info("%s: page limit set to %d", category_name, page_limit)
         new_count = 0
-        target_total = expected_total
-        if limit_per_category > 0:
-            target_total = limit_per_category if target_total is None else min(target_total, limit_per_category)
         for product in products:
-            if target_total is not None and len(results) >= target_total:
+            if limit_per_category > 0 and len(results) >= limit_per_category:
                 break
             product_url = product["_product_url"]
             if product_url in seen_urls:
@@ -385,17 +246,10 @@ def scrape_category(page, category_name, category_url, sub_category_number, max_
             seen_urls.add(product_url)
             results.append(product)
             new_count += 1
-        logger.info(
-            "%s page %d: %d products, %d new, total=%d%s",
-            category_name,
-            page_number,
-            len(products),
-            new_count,
-            len(results),
-            f"/{target_total}" if target_total is not None else ""
-        )
-        if target_total is not None and len(results) >= target_total:
-            logger.info("%s: reached target total %d", category_name, target_total)
+        logger.info("%s page %d/%d: %d products, %d new, total=%d",
+                    category_name, page_number, page_count, len(products), new_count, len(results))
+        if limit_per_category > 0 and len(results) >= limit_per_category:
+            logger.info("%s: reached scan limit %d", category_name, limit_per_category)
             break
         if new_count == 0:
             break
@@ -516,7 +370,7 @@ def save_to_csv(data, date_str):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Toyzz Shop balanced rendered HTML scraper"
+        description="Toyzz Shop balanced scraper (JSON API via curl_cffi)"
     )
     parser.add_argument("--date", type=str, default=None)
     parser.add_argument("--max-pages", type=int, default=MAX_PAGES)
@@ -578,39 +432,22 @@ def main():
         WHEELED_TOYS_SUB_CATEGORY_NUMBER: {},
     }
 
-    with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=True)
+    session = new_session()
 
-        context = browser.new_context(
-            locale="tr-TR",
-            viewport={"width": 1440, "height": 1000},
+    for category_name, category in CATEGORIES.items():
+        items = scrape_category(
+            session=session,
+            category_name=category_name,
+            category_id=category["category_id"],
+            sub_category_number=category["sub_category_number"],
+            max_pages=args.max_pages,
+            limit_per_category=scan_limit,
         )
 
-        context.route(
-            "**/*",
-            lambda route: route.abort()
-            if route.request.resource_type in {"image", "media", "font"}
-            else route.continue_(),
-        )
-
-        page = context.new_page()
-
-        for category_name, category in CATEGORIES.items():
-            items = scrape_category(
-                page=page,
-                category_name=category_name,
-                category_url=category["url"],
-                sub_category_number=category["sub_category_number"],
-                max_pages=args.max_pages,
-                limit_per_category=scan_limit,
-            )
-
-            candidates[
-                category["sub_category_number"]
-            ][category_name] = items
-
-        context.close()
-        browser.close()
+        candidates[
+            category["sub_category_number"]
+        ][category_name] = items
+        time.sleep(REQUEST_DELAY)
 
 
     global_urls = set()

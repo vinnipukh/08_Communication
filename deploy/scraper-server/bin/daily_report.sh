@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# Send a Telegram summary of one day's scraper runs:  daily_report.sh [tech|telecom] [YYYY-MM-DD]
+# Send a Telegram summary of one day's scraper runs:  daily_report.sh [tech|telecom|recreation] [YYYY-MM-DD]
 #
 # - tech (default): the 6 tech product scrapers and the TÜİK 04 server jobs, one line each
 # - telecom: the telecom/internet/streaming/repair jobs, one line each with the
 #   row total of all their sources, plus a line per source that is missing or dropped
+# - recreation: the four TÜİK 09 jobs (rec_small, rec_medium, rec_shops, rec_dr), same layout as telecom
 # - reads the status lines run_scraper.sh wrote to log.txt (default: today)
 # - counts the rows in each CSV and flags a big drop vs the day before
 # - needs TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env
@@ -22,7 +23,7 @@ if [ -f "$ROOT/.env" ]; then
 fi
 
 GROUP=tech
-case "${1:-}" in tech|telecom) GROUP=$1; shift ;; esac
+case "${1:-}" in tech|telecom|recreation) GROUP=$1; shift ;; esac
 DAY="${1:-$(date +%F)}"
 PREV=$(date -d "$DAY -1 day" +%F)
 
@@ -49,10 +50,20 @@ TELECOM=(
   "repair:Apple/apple_repair Samsung/samsung_repair Huawei/huawei_repair GSMIletisim/gsmiletisim_repair"
 )
 
+# TÜİK 09: one source folder per store under Datas/09_Recreation, file <prefix>_<day>.csv.
+# The run_group.py bundles (small / medium / shops) and DR are the run_scraper.sh jobs rec_*.
+# <run_scraper.sh name>:<space-separated CSV path prefixes under Datas/09_Recreation>
+RECREATION=(
+  "rec_small:Avansas/avansas Diyanet/diyanet HisarTurizm/hisar_turizm MACFit/macfit Nezih/nezih Korayspor/korayspor Milli_Piyango/milli_piyango IstanbulAkvaryum/istanbulakvaryum KidZania/kidzania AnkaraVHO/ankara_vho IVHO/ivho VetArt/vetart SporIstanbul/sporistanbul ArnavutkoyBelediyesi/arnavutkoy Grupanya/grupanya"
+  "rec_medium:Kitapyurdu/kitapyurdu Jolly/jolly SPX/spx Biletinial/biletinial DugunBuketi/dugunbuketi DugunCom/dugun_com Petchef/petchef TemizMama/temizmama"
+  "rec_shops:Petlebi/petlebi ToyzzShop/toyzzshop Petzzshop/petzzshop Decathlon/decathlon Zuhal_Muzik/zuhal_muzik"
+  "rec_dr:DR/dr"
+)
+
 rows() { [ -f "$1" ] && echo $(( $(wc -l < "$1") - 1 )); }  # minus the header
 
 # a source's CSV for one day: <prefix>_<day>.csv (bounded test runs write *_limit.csv, never counted)
-day_csv() { [ -f "$TECH_DATA/$1_$2.csv" ] && echo "$TECH_DATA/$1_$2.csv"; }
+day_csv() { [ -f "$BASE/$1_$2.csv" ] && echo "$BASE/$1_$2.csv"; }
 
 # summed rows of <day> over the prefixes under DATAS; empty when none of the CSVs exists
 sum_rows() {
@@ -101,6 +112,8 @@ job_status() {
 
 ok=0
 body=""
+BASE="$TECH_DATA"   # where day_csv looks (telecom): flat 08 layout
+[ "$GROUP" = recreation ] && BASE="$DATAS/09_Recreation"
 
 if [ "$GROUP" = tech ]; then
   title="Scrapers"
@@ -122,9 +135,15 @@ if [ "$GROUP" = tech ]; then
     body+="$icon $name: $note"$'\n'
   done
 else
-  title="Telecom"
-  total=${#TELECOM[@]}
-  for entry in "${TELECOM[@]}"; do
+  # telecom and recreation: one line per job with the row total of all its sources, plus a line
+  # for each source that is missing or dropped
+  if [ "$GROUP" = recreation ]; then
+    title="Recreation (09)"; JOBS=("${RECREATION[@]}")
+  else
+    title="Telecom"; JOBS=("${TELECOM[@]}")
+  fi
+  total=${#JOBS[@]}
+  for entry in "${JOBS[@]}"; do
     name=${entry%%:*}
     job_status "$name"
     sum=0; n=0; problems=""
@@ -164,6 +183,12 @@ head="✅"; [ "$ok" -lt "$total" ] && head="⚠️"
 disk=$(grep -E "^$DAY [0-9:]+ \[cleanup\] " "$STATUS_LOG" 2>/dev/null | tail -n 1 | sed -n 's/.*free \([0-9]*\) MB.*/\1/p')
 msg="$head $title $DAY: $ok/$total OK"$'\n\n'"$body"
 [ -n "$disk" ] && msg+=$'\n'"💾 free disk: $(( disk / 1024 )) GB"
+
+# REPORT_DRY_RUN=1: print the message instead of sending it (to check a report by hand)
+if [ -n "${REPORT_DRY_RUN:-}" ]; then
+  echo "$msg"
+  exit 0
+fi
 
 if [ -z "${TELEGRAM_BOT_TOKEN:-}" ] || [ -z "${TELEGRAM_CHAT_ID:-}" ]; then
   status "NOT SENT: set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env"

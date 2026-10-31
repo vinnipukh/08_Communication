@@ -24,10 +24,11 @@ Zuhal Müzik geniş bir müzik aleti (elektro gitar, amfi, piyano vb.) envanteri
 |---|---|---|
 | `0971901` | Children's books | Çocuk kitapları |
 | `0971902` | Other books | Müzik, sanat, hobi, bilim, edebiyat, tarih ve çizgi roman kitapları |
-| `09212` | Games, toys and hobby-related goods | Puzzle, eğitici oyunlar, kutu oyunları, figürler |
-| `0921204` | Other toys | Oyuncak kategorisindeki ürünler |
-| `0922` | Sporting, camping and open-air recreation equipment | Kamp malzemeleri |
-| `0922103` | Sports equipment | Kaykay ve scooter ürünleri |
+| `0921204` | Other toys | Oyuncak, puzzle, eğitici oyunlar, kutu oyunları, figürler |
+| `0922103` | Sports equipment | Kaykay ve scooter ürünleri; kamp malzemeleri (kartlık/cüzdan hariç) |
+
+2026-10-31'e kadar puzzle/oyun/figür `09212`, kamp malzemeleri `0922` üst kodlarıyla yazılıyordu;
+artık DR ile aynı kalem kodları (`0921204`, `0922103`) kullanılıyor.
 | `0932204` | Other pet products | Tasma ve evcil hayvan gezdirme aksesuarları |
 | `0974001` | School notebooks | Okul defterleri |
 | `0974003` | Pens and pencils | Kalemler, tükenmezler, markerlar, finelinerlar |
@@ -57,7 +58,7 @@ InflationItems/Datas/09_Recreation/Zuhal_Muzik/zuhal_muzik_YYYY-MM-DD.csv
 
 Kolonlar:
 ```csv
-product_name,price,category_name,sub_category_number
+product_name,price,category_number,sub_category_number,category_name
 ```
 
 ---

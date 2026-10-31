@@ -23,7 +23,8 @@ USER_AGENT = "InflationResearchStudy/1.0 (academic product-price research)"
 REQUEST_DELAY = 2.0
 REQUEST_TIMEOUT = 25
 RETRY_BASE_SECONDS = 5
-CSV_COLUMNS = ["product_name", "price", "category_name", "sub_category_number"]
+CATEGORY_NUMBER = 9
+CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number", "category_name"]
 ISTANBUL_TIME = ZoneInfo("Europe/Istanbul")
 
 # Only these 24 site categories are visited. No unrelated store categories are crawled.
@@ -56,9 +57,7 @@ TARGET_SITE_CATEGORIES = [
 
 # Output labels are COICOP labels, not the category names used by the store.
 COICOP_LABELS = {
-    "09212": "Games, toys and hobby-related goods",
     "0921204": "Other toys",
-    "0922": "Sporting, camping and open-air recreation equipment",
     "0922103": "Sports equipment",
     "0932204": "Other pet products",
     "0971901": "Children's books",
@@ -109,6 +108,8 @@ OUTSIDE_OFFICE_PATTERNS = (
     r"masaustu organizer", r"masa duzenleyici", r"masaustu duzenleyici", r"mug\b",
     r"kupa\b", r"gozluk kutusu", r"tarak", r"ayna\b", r"bileklik", r"kumbar",
 )
+# Camping-category items that are not recreation equipment (wallets, card holders).
+OUTSIDE_CAMPING_PATTERNS = (r"kartlik", r"kart kabi", r"cuzdan", r"wallet", r"rfid")
 PET_PRODUCT_PATTERNS = (r"tasma", r"collar", r"leash", r"harness", r"gezdirme")
 SKATEBOARD_PATTERNS = (r"kaykay", r"skateboard")
 SCHOOL_NOTEBOOK_PATTERNS = (r"okul defteri", r"school notebook", r"school exercise book")
@@ -152,12 +153,12 @@ def classify_coicop(category: str, product_name: str):
         code = "0971901"
     elif site_category in OTHER_BOOK_CATEGORIES:
         code = "0971902"
-    elif site_category in GAME_CATEGORIES or site_category == "figur":
-        code = "09212"
-    elif site_category == "oyuncak":
+    elif site_category in GAME_CATEGORIES or site_category in {"figur", "oyuncak"}:
+        # Games, puzzles and figures are item 0921204 (same as DR), not the 09212 parent.
         code = "0921204"
     elif site_category == "kampmalzemeleri":
-        code = "0922"
+        if not has_any(name, OUTSIDE_CAMPING_PATTERNS):
+            code = "0922103"
     elif site_category == "kaykayvescooter":
         if has_any(name, SKATEBOARD_PATTERNS):
             code = "0922103"
@@ -402,12 +403,14 @@ def main():
                     if not name or not price or not key or key in products:
                         continue
 
+                    cat_num = row.get("category_number") or CATEGORY_NUMBER
                     if stored_code in COICOP_LABELS and stored_category == COICOP_LABELS[stored_code]:
                         products[key] = {
                             "product_name": name,
                             "price": price,
                             "category_name": stored_category,
                             "sub_category_number": stored_code,
+                            "category_number": cat_num,
                         }
                     else:
                         # Legacy CSV stored the store category in the category column.
@@ -419,6 +422,7 @@ def main():
                                 "price": price,
                                 "category_name": label,
                                 "sub_category_number": code,
+                                "category_number": cat_num,
                             }
                         else:
                             removed_existing_rows += 1
@@ -438,7 +442,7 @@ def main():
     print("Temporary connection/server errors and HTTP 429 are retried with increasing waits.")
     print("HTTP 403 pages/categories are skipped; duplicate product names are not added.")
     print(f"Unique products loaded from the existing CSV: {len(products)}")
-    print("CSV columns: product_name, price, category_name (COICOP label), sub_category_number.\n")
+    print("CSV columns: product_name, price, category_number, sub_category_number, category_name (COICOP label).\n")
 
     robots = RobotFileParser()
     robots.set_url(f"{BASE_URL}/robots.txt")
@@ -492,6 +496,7 @@ def main():
                 "price": price,
                 "category_name": label,
                 "sub_category_number": code,
+                "category_number": CATEGORY_NUMBER,
             }
             added += 1
         return added

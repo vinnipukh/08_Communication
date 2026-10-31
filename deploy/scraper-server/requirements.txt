@@ -13,3 +13,9 @@ selenium==4.49.0
 setuptools==84.0.0
 # TÜİK 04 natural gas / İSKİ tariff PDFs (certifi comes with requests)
 pypdf==6.21.3
+# TÜİK 09 (tested 2026-10-31, Python 3.11): PDF page rendering and text boxes, OCR for the Diyanet
+# and Ankara VHO tariff PDFs (the models ship inside the wheel; opencv needs libgl1, see setup.sh),
+# and the certificate check for ivho.org.tr's missing intermediate certificate.
+pypdfium2==5.14.0
+rapidocr-onnxruntime==1.4.4
+cryptography==50.0.2

@@ -21,7 +21,7 @@ Output:
   InflationItems/Datas/09_Recreation/MACFit/macfit_YYYY-MM-DD.csv
 
 Columns:
-  product_name,price,category_name,sub_category_number,city,district,club_name,club_type,plan_name,membership_category,commitment_type,term_months,url
+  product_name,price,category_number,sub_category_number,category_name,city,district,club_name,club_type,plan_name,membership_category,commitment_type,term_months,url
 """
 
 from __future__ import annotations
@@ -45,7 +45,7 @@ except ImportError:
 import requests
 
 # ── Configuration & Constants ──────────────────────────────────────────────────
-CATEGORY_NUMBER = "09"
+CATEGORY_NUMBER = 9
 SUB_CATEGORY_NUMBER = "0946201"
 CATEGORY_NAME = "Payments for sports facilities (membership, rental, etc.)"
 CATEGORY_NAME_TR = "Sportif tesislere yapılan ödemeler (üyelik, kiralama vb.)"
@@ -69,8 +69,9 @@ COMMON_HEADERS = {
 CSV_COLUMNS = [
     "product_name",
     "price",
-    "category_name",
+    "category_number",
     "sub_category_number",
+    "category_name",
     "city",
     "district",
     "club_name",
@@ -100,7 +101,15 @@ def find_project_root() -> Path:
     return current.parents[3]
 
 
-def request_get_json(url: str, timeout: int = 15, retries: int = 3) -> Optional[Dict[str, Any]]:
+RETRY_STATUSES = (429, 500, 502, 503, 504)
+
+
+def request_get_json(
+    url: str,
+    timeout: int = 15,
+    retries: int = 3,
+    retry_statuses: Tuple[int, ...] = RETRY_STATUSES,
+) -> Optional[Dict[str, Any]]:
     """Execute GET request with retry and JSON response parsing."""
     for attempt in range(1, retries + 1):
         try:
@@ -120,8 +129,8 @@ def request_get_json(url: str, timeout: int = 15, retries: int = 3) -> Optional[
 
             if resp.status_code == 200:
                 return resp.json()
-            elif resp.status_code in (429, 500, 502, 503, 504):
-                wait_sec = attempt * 2
+            elif resp.status_code in retry_statuses and attempt < retries:
+                wait_sec = attempt * 5
                 logger.warning("GET %s returned HTTP %d, retrying in %ds...", url, resp.status_code, wait_sec)
                 time.sleep(wait_sec)
             else:
@@ -174,7 +183,13 @@ def request_post_json(url: str, payload: Dict[str, Any], timeout: int = 15, retr
 
 def fetch_all_clubs() -> List[Dict[str, Any]]:
     """Retrieve full list of sports clubs from Mars Athletic gateway."""
-    data = request_get_json(CLUBS_ENDPOINT)
+    # The gateway occasionally answers this endpoint with a transient 404 (seen 2026-10-31,
+    # fine a few minutes later), so 404 is retried here as well.
+    data = request_get_json(
+        CLUBS_ENDPOINT,
+        retries=5,
+        retry_statuses=RETRY_STATUSES + (404,),
+    )
     if not data or not data.get("isValid"):
         logger.error("Failed to fetch clubs list from %s", CLUBS_ENDPOINT)
         return []
@@ -235,6 +250,7 @@ def fetch_plans_for_club(club: Dict[str, Any]) -> List[Dict[str, Any]]:
                         "commitment_type": "12 Ay Taahhütlü",
                         "term_months": 12,
                         "url": google_maps_url,
+                        "category_number": CATEGORY_NUMBER,
                     })
 
                 # Record one-time enrollment fee if applicable
@@ -254,6 +270,7 @@ def fetch_plans_for_club(club: Dict[str, Any]) -> List[Dict[str, Any]]:
                         "commitment_type": "Tek Seferlik",
                         "term_months": 0,
                         "url": google_maps_url,
+                        "category_number": CATEGORY_NUMBER,
                     })
 
     # Scenario 2: Flexible Monthly (Taahhütsüz Aylık) and Upfront Annual (Peşin Yıllık)
@@ -298,6 +315,7 @@ def fetch_plans_for_club(club: Dict[str, Any]) -> List[Dict[str, Any]]:
                         "commitment_type": "Taahhütsüz Aylık",
                         "term_months": 1,
                         "url": google_maps_url,
+                        "category_number": CATEGORY_NUMBER,
                     })
                 elif term == 12:
                     # Monthly equivalent rate
@@ -316,6 +334,7 @@ def fetch_plans_for_club(club: Dict[str, Any]) -> List[Dict[str, Any]]:
                         "commitment_type": "Peşin Yıllık (Aylık)",
                         "term_months": 12,
                         "url": google_maps_url,
+                        "category_number": CATEGORY_NUMBER,
                     })
 
                     # Total annual sum (12 x monthly discounted rate)
@@ -335,6 +354,7 @@ def fetch_plans_for_club(club: Dict[str, Any]) -> List[Dict[str, Any]]:
                         "commitment_type": "Peşin Yıllık (Toplam)",
                         "term_months": 12,
                         "url": google_maps_url,
+                        "category_number": CATEGORY_NUMBER,
                     })
 
     return items_collected

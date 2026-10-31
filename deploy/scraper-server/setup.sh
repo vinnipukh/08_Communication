@@ -23,7 +23,7 @@ fi
 # files copied from Windows may carry CRLF
 sed -i 's/\r$//' "$ROOT"/bin/*.sh
 chmod +x "$ROOT"/bin/*.sh
-mkdir -p server_logs export InflationItems/Datas/08_Communication
+mkdir -p server_logs export InflationItems/Datas/08_Communication InflationItems/Datas/09_Recreation
 
 echo "== 2/6 time zone -> Europe/Istanbul"
 timedatectl set-timezone Europe/Istanbul
@@ -32,7 +32,7 @@ timedatectl | grep -i 'time zone'
 echo "== 3/6 system packages"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -q
-apt-get install -y -q curl ca-certificates gnupg cron util-linux procps coreutils git
+apt-get install -y -q curl ca-certificates gnupg cron util-linux procps coreutils git libgl1 libglib2.0-0
 
 echo "== 4/6 Google Chrome (the Beymen fallback, the TurkNet cookie visit and tabii use it)"
 if ! command -v google-chrome >/dev/null 2>&1; then
@@ -56,7 +56,7 @@ if [ -x venv/bin/python ] && ! venv/bin/python -c 'import sys; sys.exit(sys.vers
 fi
 [ -x venv/bin/python ] || "$UV" venv --python 3.11 venv
 "$UV" pip install --python venv/bin/python -r "$HERE/requirements.txt"
-venv/bin/python -c 'import requests, bs4, lxml, pandas, curl_cffi, undetected_chromedriver, pypdf, certifi; print("python packages OK")'
+venv/bin/python -c 'import requests, bs4, lxml, pandas, curl_cffi, undetected_chromedriver, pypdf, certifi, pypdfium2, cryptography, rapidocr_onnxruntime; print("python packages OK")'
 
 echo "== 6/6 crontab (replaces only our block, keeps your other jobs)"
 {

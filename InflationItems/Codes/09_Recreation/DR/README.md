@@ -66,7 +66,7 @@ InflationItems/Datas/09_Recreation/DR/dr_YYYY-MM-DD.csv
 
 Kolonlar:
 ```csv
-product_name,price,category_name,sub_category_number
+product_name,price,category_number,sub_category_number,category_name
 ```
 
 ---

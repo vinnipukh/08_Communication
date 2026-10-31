@@ -42,7 +42,7 @@ CATEGORIES = {
     "other_books": 342
 }
 
-CATEGORY_NUMBER = "09"
+CATEGORY_NUMBER = "9"
 
 SUB_CATEGORY_NUMBERS = {
     "children_books": "0971901",
@@ -101,6 +101,7 @@ def scrape_category(category_name, category_id):
         )
 
         success = False
+        end_of_list = False
 
         for attempt in range(1, 4):
 
@@ -124,6 +125,17 @@ def scrape_category(category_name, category_id):
                 )
 
                 if not products:
+                    # A page past the last one loads fine but has no cards: the list
+                    # has ended. Only an empty first page is worth retrying.
+                    if page_number > 1:
+                        logger.info(
+                            "%s: page %d is empty, end of list",
+                            category_name,
+                            page_number
+                        )
+                        end_of_list = True
+                        break
+
                     logger.warning(
                         "No products found: %s page %d",
                         category_name,
@@ -223,6 +235,9 @@ def scrape_category(category_name, category_id):
                 )
 
                 time.sleep(3 * attempt)
+
+        if end_of_list:
+            break
 
         if not success:
             logger.error(

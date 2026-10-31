@@ -13,6 +13,7 @@ ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)"  # <rep
 # Only the folders this server writes; the other 04_Housing stores come from Actions or people.
 DATA=(
   InflationItems/Datas/08_Communication
+  InflationItems/Datas/09_Recreation
   InflationItems/Datas/04_Housing/IGDAS
   InflationItems/Datas/04_Housing/Baskentgaz
   InflationItems/Datas/04_Housing/Izmirgaz

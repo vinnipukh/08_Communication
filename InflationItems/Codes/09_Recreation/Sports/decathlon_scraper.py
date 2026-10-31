@@ -1,3 +1,4 @@
+import argparse
 import csv
 import logging
 import os
@@ -9,27 +10,36 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from urllib.parse import urljoin, urlsplit, urlunsplit
 
-import requests
 from bs4 import BeautifulSoup
+from curl_cffi import requests
+from curl_cffi.requests.exceptions import HTTPError, RequestException
 
 
 BASE_URL = "https://www.decathlon.com.tr"
 
-CATEGORY_URL = (
-    "https://www.decathlon.com.tr/"
-    "ekipmanlar/evde-spor-aletleri"
-)
+CATEGORY_NUMBER = "9"
 
-CATEGORY_NUMBER = "09"
-CATEGORY_CODE = "0922102"
+# (group, listing path, COICOP code, page cap). Clothing paths come from the
+# category-product-listing sitemap; the cap keeps a full run under ~25 minutes
+# (10 s per page): 33 fitness pages + at most 51 clothing pages.
+CATEGORIES = [
+    ("fitness", "ekipmanlar/evde-spor-aletleri", "0922102", 60),
+    ("clothing", "tum-sporlar/kosu/kosu-ve-yuruyus-kiyafetleri", "0922107", 8),
+    ("clothing", "tum-sporlar/fitness-kardiyo/tum-fitness-kiyafetleri", "0922107", 9),
+    ("clothing", "tum-sporlar/bisiklet/bisikletci-kiyafetleri", "0922107", 4),
+    ("clothing", "tum-sporlar/yuzme/yuzme-kiyafetleri", "0922107", 16),
+    ("clothing", "tum-sporlar/kayak-snowboard/kayak-snowboard-kiyafet-ve-giyim", "0922107", 7),
+    ("clothing", "tum-sporlar/hiking-trekking-outdoor/giyim", "0922107", 12),
+    ("clothing", "tum-sporlar/yoga/yoga-kiyafetleri", "0922107", 2),
+]
 
 PAGE_SIZE = 40
-MAX_PAGES = 60
 REQUEST_DELAY = 10
 REQUEST_TIMEOUT = 30
 
+# Cloudflare (__cf_bm) answers 403 to python-requests; curl_cffi Chrome impersonation passes.
 HEADERS = {
-    "User-Agent": "DecathlonPriceScraper/1.0"
+    "Accept-Language": "tr-TR,tr;q=0.9,en;q=0.8"
 }
 
 CSV_COLUMNS = [
@@ -111,7 +121,7 @@ def normalize_url(href):
     ))
 
 
-def extract_product(card):
+def extract_product(card, category_code):
     heading = card.select_one("h2")
 
     if heading is None:
@@ -161,7 +171,7 @@ def extract_product(card):
         "product_name": name,
         "price": price,
         "category_number": CATEGORY_NUMBER,
-        "sub_category_number": CATEGORY_CODE,
+        "sub_category_number": category_code,
         "product_url": product_url
     }
 
@@ -245,7 +255,7 @@ def save_csv(products):
             temporary_file.unlink()
 
 
-def fetch_page(session, page_number):
+def fetch_page(session, category_url, category_code, page_number):
     offset = (page_number - 1) * PAGE_SIZE
 
     logger.info(
@@ -256,7 +266,7 @@ def fetch_page(session, page_number):
 
     try:
         response = session.get(
-            CATEGORY_URL,
+            category_url,
             params={
                 "from": offset,
                 "size": PAGE_SIZE
@@ -264,7 +274,7 @@ def fetch_page(session, page_number):
             timeout=REQUEST_TIMEOUT
         )
 
-    except requests.RequestException as error:
+    except RequestException as error:
         logger.error(
             "Request failed: %s",
             error
@@ -296,7 +306,7 @@ def fetch_page(session, page_number):
     try:
         response.raise_for_status()
 
-    except requests.HTTPError as error:
+    except HTTPError as error:
         logger.error(
             "HTTP error: %s",
             error
@@ -315,7 +325,7 @@ def fetch_page(session, page_number):
     failed = 0
 
     for card in cards:
-        product = extract_product(card)
+        product = extract_product(card, category_code)
 
         if product is None:
             failed += 1
@@ -341,7 +351,57 @@ def fetch_page(session, page_number):
     return products, "success"
 
 
-def scrape():
+def scrape_category(session, url, code, max_pages, all_products, products_by_key):
+    stats = {"pages": 0, "cards": 0, "new": 0, "duplicates": 0}
+    stop_reason = "maximum_pages"
+    previous_page_keys = None
+
+    for page_number in range(1, max_pages + 1):
+        products, status = fetch_page(session, url, code, page_number)
+
+        if status != "success":
+            return stats, status
+
+        if not products:
+            return stats, "empty_page"
+
+        current_page_keys = {product_key(p) for p in products}
+
+        if current_page_keys == previous_page_keys:
+            logger.warning("Page %s repeats the previous page.", page_number)
+            return stats, "repeated_page"
+
+        previous_page_keys = current_page_keys
+
+        stats["cards"] += len(products)
+        stats["pages"] += 1
+
+        for product in products:
+            key = product_key(product)
+
+            if key in products_by_key:
+                stats["duplicates"] += 1
+                products_by_key[key].update(product)
+            else:
+                products_by_key[key] = product
+                all_products.append(product)
+                stats["new"] += 1
+
+        save_csv(all_products)
+
+        logger.info(
+            "Page %s completed | Total: %s",
+            page_number,
+            len(all_products)
+        )
+
+        if page_number < max_pages:
+            time.sleep(REQUEST_DELAY)
+
+    return stats, stop_reason
+
+
+def scrape(categories, max_pages=None):
     all_products = load_existing_products()
 
     products_by_key = {
@@ -354,109 +414,90 @@ def scrape():
             "Existing CSV contains duplicate product keys."
         )
 
-    session = requests.Session()
+    session = requests.Session(impersonate="chrome")
     session.headers.update(HEADERS)
 
-    total_cards = 0
-    pages_completed = 0
-    duplicates = 0
-    stop_reason = "maximum_pages"
-    previous_page_keys = None
+    # Homepage first so the Cloudflare cookies are set before the listing requests.
+    try:
+        session.get(BASE_URL + "/", timeout=REQUEST_TIMEOUT)
+        time.sleep(2)
+    except RequestException as error:
+        logger.warning("Homepage request failed: %s", error)
+
+    summary = []
 
     try:
-        for page_number in range(1, MAX_PAGES + 1):
-            products, status = fetch_page(
-                session,
-                page_number
-            )
-
-            if status != "success":
-                stop_reason = status
-                break
-
-            if not products:
-                stop_reason = "empty_page"
-
-                logger.info(
-                    "No products found on page %s.",
-                    page_number
-                )
-
-                break
-
-            current_page_keys = {
-                product_key(product)
-                for product in products
-            }
-
-            if current_page_keys == previous_page_keys:
-                stop_reason = "repeated_page"
-
-                logger.warning(
-                    "Page %s repeats the previous page.",
-                    page_number
-                )
-
-                break
-
-            previous_page_keys = current_page_keys
-
-            total_cards += len(products)
-            pages_completed += 1
-
-            new_products = 0
-
-            for product in products:
-                key = product_key(product)
-
-                if key in products_by_key:
-                    duplicates += 1
-                    products_by_key[key].update(product)
-
-                else:
-                    products_by_key[key] = product
-                    all_products.append(product)
-                    new_products += 1
-
-            save_csv(all_products)
-
-            logger.info(
-                "Page %s completed | New: %s | Total: %s",
-                page_number,
-                new_products,
-                len(all_products)
-            )
-
-            if len(products) < PAGE_SIZE:
-                logger.info(
-                    "Page %s has %s products. "
-                    "Checking the next page.",
-                    page_number,
-                    len(products)
-                )
-
-            if page_number < MAX_PAGES:
+        for index, (group, path, code, cap) in enumerate(categories):
+            if index:
                 time.sleep(REQUEST_DELAY)
+
+            pages = max_pages if max_pages else cap
+            url = f"{BASE_URL}/{path}"
+
+            logger.info("Category %s | %s | code %s | max pages %s", group, path, code, pages)
+
+            stats, reason = scrape_category(
+                session, url, code, pages, all_products, products_by_key
+            )
+
+            summary.append((path, code, stats, reason))
+
+            if reason in ("forbidden", "rate_limited"):
+                logger.error("Stopping the run: %s", reason)
+                break
 
     finally:
         session.close()
 
     logger.info("----------------------------------")
     logger.info("Decathlon scraping finished")
-    logger.info("Pages completed: %s", pages_completed)
-    logger.info("Product cards: %s", total_cards)
-    logger.info("Duplicate occurrences: %s", duplicates)
+
+    for path, code, stats, reason in summary:
+        logger.info(
+            "%s (%s): pages %s | cards %s | new %s | duplicates %s | stop: %s",
+            path,
+            code,
+            stats["pages"],
+            stats["cards"],
+            stats["new"],
+            stats["duplicates"],
+            reason
+        )
+
     logger.info("CSV rows: %s", len(all_products))
-    logger.info("Stop reason: %s", stop_reason)
     logger.info("Output: %s", OUTPUT_FILE)
 
 
 def main():
-    logger.info("Decathlon Home Equipment Scraper")
-    logger.info("Category: %s", CATEGORY_CODE)
-    logger.info("Maximum pages: %s", MAX_PAGES)
+    parser = argparse.ArgumentParser(
+        description="Decathlon scraper: home fitness equipment (0922102) "
+        "and sports clothing (0922107)"
+    )
+    parser.add_argument(
+        "--only",
+        choices=["fitness", "clothing"],
+        help="Scrape one group only (default: both).",
+    )
+    parser.add_argument(
+        "--max-pages",
+        type=int,
+        default=None,
+        help="Pages per category, overriding the built-in caps; "
+        "use 1-2 for a bounded live run.",
+    )
+    args = parser.parse_args()
 
-    scrape()
+    if args.max_pages is not None and args.max_pages < 1:
+        parser.error("--max-pages must be >= 1")
+
+    categories = [
+        category for category in CATEGORIES
+        if args.only is None or category[0] == args.only
+    ]
+
+    logger.info("Decathlon Scraper | categories: %s", len(categories))
+
+    scrape(categories, max_pages=args.max_pages)
 
 
 if __name__ == "__main__":

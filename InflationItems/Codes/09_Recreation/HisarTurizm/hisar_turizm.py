@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 import logging
 import re
 import sys
@@ -11,10 +12,8 @@ from datetime import datetime, timedelta
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 
-import requests
-from bs4 import BeautifulSoup
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
+from curl_cffi import requests
+from curl_cffi.requests.exceptions import RequestException
 
 
 logging.basicConfig(
@@ -54,7 +53,7 @@ CULTURE_URL = "https://hisarturizm.com.tr/kultur-turlari/"
 UMRAH_URL = "https://hisarturizm.com.tr/umre-turlari/"
 TCMB_URL = "https://www.tcmb.gov.tr/kurlar/today.xml"
 
-CATEGORY_NUMBER = "09"
+CATEGORY_NUMBER = "9"
 
 DOMESTIC_WEEKEND = "0980002"
 DOMESTIC_OTHER = "0980003"
@@ -62,60 +61,28 @@ INTERNATIONAL_PACKAGE = "0980006"
 UMRAH_AGENCY = "0980009"
 
 REQUEST_TIMEOUT = 45
-BROWSER_TIMEOUT_MS = 60000
-SCROLL_WAIT_MS = 700
-MAX_SCROLL_ROUNDS = 100
-STABLE_SCROLL_ROUNDS = 4
+MAX_RETRIES = 4
+AJAX_PER_PAGE = 50
+AJAX_DELAY_SECONDS = 1.5
 
 HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/140.0.0.0 Safari/537.36"
-    ),
-    "Accept": (
-        "text/html,application/xhtml+xml,application/xml;q=0.9,"
-        "image/avif,image/webp,*/*;q=0.8"
-    ),
     "Accept-Language": "tr-TR,tr;q=0.9,en;q=0.8",
 }
 
-TOUR_CODE_RE = re.compile(r"\bTR\d{7}\b", re.IGNORECASE)
-
-DATE_RE = re.compile(
-    r"Gidiş\s*:\s*(\d{2}\.\d{2}\.\d{4}).*?"
-    r"Dönüş\s*:\s*(\d{2}\.\d{2}\.\d{4})",
-    re.IGNORECASE | re.DOTALL,
+TOUR_FRONTEND_RE = re.compile(
+    r"var\s+tourFrontend\s*=\s*(\{.*?\});\s*\n",
+    re.DOTALL,
 )
 
-DURATION_RE = re.compile(
-    r"(\d+)\s*Gece\s*/?\s*(\d+)\s*Gün",
-    re.IGNORECASE,
-)
-
-ROOM_PRICE_RE = re.compile(
-
-    r"(?P<room>[234])\s*['’]?\s*l[ıiuü]\s+Oda"
-    r".{0,120}?"
-    r"(?:(?P<tl>TL)\s*|(?P<usd>\$)\s*|(?P<eur>€)\s*)"
-    r"(?P<price>\d{1,3}(?:\.\d{3})*(?:,\d{1,2})?|\d+(?:,\d{1,2})?)",
-    re.IGNORECASE | re.DOTALL,
-)
-
-STATUS_RE = re.compile(
-    r"\b(?:"
-    r"Son\s+\d+\s+kişi|"
-    r"\d+\s+kontenjan|"
-    r"DOLU"
-    r")\b",
-    re.IGNORECASE,
-)
-
-TITLE_CODE_RE = re.compile(
-    r"(?P<title>.+?)\s+"
-    r"(?:(?:Son\s+\d+\s+kişi|\d+\s+kontenjan|DOLU)\s+)?"
-    r"(?P<code>TR\d{7})\b",
-    re.IGNORECASE,
+FILTER_KEYS = (
+    "tur_kodu",
+    "branch",
+    "ay_yil",
+    "concept",
+    "duration",
+    "parkur",
+    "sezon",
+    "urun",
 )
 
 FOREIGN_WORDS = {
@@ -215,313 +182,219 @@ def clean_tour_title(value):
     return value
 
 
-def is_sold_out_for_code(text, code):
-
-    value = normalize_text(text)
-
-    match = re.search(
-        re.escape(code),
-        value,
-        flags=re.IGNORECASE,
-    )
-
-    if not match:
-        return False
-
-
-    before = value[
-        max(0, match.start() - 90):
-        match.start()
-    ]
-
-    return bool(
-        re.search(
-            r"\bDOLU\b",
-            before,
-            flags=re.IGNORECASE,
-        )
-    )
-
-
-STATUS_BY_CODE_RE = re.compile(
-    r"(?P<status>"
-    r"DOLU|"
-    r"Son\s+\d+\s+kişi|"
-    r"\d+\s+kontenjan"
-    r")\s+"
-    r"(?P<code>TR\d{7})\b",
-    re.IGNORECASE,
-)
-
-
-def extract_status_by_code(html_text):
-
-    soup = BeautifulSoup(
-        html_text,
-        "html.parser",
-    )
-
-    page_text = normalize_text(
-        soup.get_text(
-            " ",
-            strip=True,
-        )
-    )
-
-    statuses = {}
-
-    for match in STATUS_BY_CODE_RE.finditer(
-        page_text
-    ):
-        code = match.group(
-            "code"
-        ).upper()
-
-        status = normalize_text(
-            match.group(
-                "status"
-            )
-        )
-
-        statuses[
-            code
-        ] = status
-
-    return statuses
-
-
 
 def build_session():
-    session = requests.Session()
-
-    retry = Retry(
-        total=5,
-        connect=5,
-        read=5,
-        status=5,
-        backoff_factor=1,
-        status_forcelist=[429, 500, 502, 503, 504],
-        allowed_methods=["GET"],
-        respect_retry_after_header=True,
+    session = requests.Session(
+        impersonate="chrome",
     )
 
-    adapter = HTTPAdapter(
-        max_retries=retry,
-        pool_connections=10,
-        pool_maxsize=10,
-    )
-
-    session.mount("https://", adapter)
-    session.mount("http://", adapter)
     session.headers.update(HEADERS)
 
     return session
 
 
-def fetch_requests_html(session, url):
-    response = session.get(
-        url,
-        timeout=REQUEST_TIMEOUT,
-    )
-
-    response.raise_for_status()
-
-    if (
-        not response.encoding
-        or response.encoding.lower() == "iso-8859-1"
-    ):
-        response.encoding = (
-            response.apparent_encoding
-            or "utf-8"
-        )
-
-    return response.text
-
-
-def count_tour_codes(html_text):
-    return len(
-        set(
-            code.upper()
-            for code in TOUR_CODE_RE.findall(
-                BeautifulSoup(
-                    html_text,
-                    "html.parser",
-                ).get_text(
-                    " ",
-                    strip=True,
-                )
+def request_with_retry(session, method, url, **kwargs):
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            response = session.request(
+                method,
+                url,
+                timeout=REQUEST_TIMEOUT,
+                **kwargs,
             )
-        )
+
+            if response.status_code not in (429, 500, 502, 503, 504):
+                response.raise_for_status()
+                return response
+
+            logger.warning(
+                "HTTP %s for %s (attempt %d)",
+                response.status_code,
+                url,
+                attempt,
+            )
+
+        except RequestException as exc:
+            if attempt == MAX_RETRIES:
+                raise
+
+            logger.warning(
+                "Request failed for %s (attempt %d): %s",
+                url,
+                attempt,
+                exc,
+            )
+
+        time.sleep(2 ** attempt)
+
+    raise RequestException(
+        f"Giving up on {url} after {MAX_RETRIES} attempts"
     )
 
 
-def fetch_browser_html(url):
+def extract_frontend_config(html_text):
+    # The listing page embeds its first page of tours and the AJAX nonce in
+    # `var tourFrontend = {...};` (WordPress plugin tour-api-integration).
+    match = TOUR_FRONTEND_RE.search(
+        html_text
+    )
 
-    try:
-        from playwright.sync_api import sync_playwright
-    except ImportError as exc:
+    if not match:
         raise RuntimeError(
-            "The Hisar page is dynamic on this run, but Playwright is not installed. "
-            "Run: pip install playwright && playwright install chromium"
-        ) from exc
+            "tourFrontend config was not found on the Hisar page."
+        )
 
-    logger.info(
-        "Requests did not expose tour cards; using browser fallback."
+    return json.loads(
+        match.group(1)
     )
 
-    with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(
-            headless=True,
-        )
 
-        context = browser.new_context(
-            locale="tr-TR",
-            viewport={
-                "width": 1440,
-                "height": 1000,
-            },
-        )
-
-
-        context.route(
-            "**/*",
-            lambda route: (
-                route.abort()
-                if route.request.resource_type
-                in {"image", "media", "font"}
-                else route.continue_()
-            ),
-        )
-
-        page = context.new_page()
-
-        response = page.goto(
-            url,
-            wait_until="domcontentloaded",
-            timeout=BROWSER_TIMEOUT_MS,
-        )
-
-        if response is not None:
-            logger.info(
-                "Browser HTTP status: %s",
-                response.status,
-            )
-
-
-        page.wait_for_timeout(1500)
-
-        stable_rounds = 0
-        previous_count = -1
-
-        for round_number in range(
-            1,
-            MAX_SCROLL_ROUNDS + 1,
-        ):
-            body_text = page.locator(
-                "body"
-            ).inner_text(
-                timeout=10000
-            )
-
-            code_count = len(
-                set(
-                    code.upper()
-                    for code in TOUR_CODE_RE.findall(
-                        body_text
-                    )
-                )
-            )
-
-            logger.info(
-                "Browser load round %d | visible tour codes: %d",
-                round_number,
-                code_count,
-            )
-
-            if code_count == previous_count:
-                stable_rounds += 1
-            else:
-                stable_rounds = 0
-
-            previous_count = code_count
-
-            if stable_rounds >= STABLE_SCROLL_ROUNDS:
-                break
-
-            page.evaluate(
-                "() => window.scrollTo(0, document.body.scrollHeight)"
-            )
-
-            page.wait_for_timeout(
-                SCROLL_WAIT_MS
-            )
-
-        html_text = page.content()
-
-        context.close()
-        browser.close()
-
-    return html_text
-
-
-def fetch_full_html(session, url):
-    html_text = fetch_requests_html(
+def fetch_tours(session, url):
+    response = request_with_retry(
         session,
+        "GET",
         url,
     )
 
-    soup = BeautifulSoup(
-        html_text,
-        "html.parser",
+    config = extract_frontend_config(
+        response.text
     )
 
-    page_text = normalize_text(
-        soup.get_text(
-            " ",
-            strip=True,
-        )
+    total = int(
+        config.get("total_tour_count") or 0
     )
 
-    total_match = re.search(
-        r"(\d+)\s+tur\s+bulundu",
-        page_text,
-        flags=re.IGNORECASE,
-    )
-
-    reported_total = (
-        int(total_match.group(1))
-        if total_match
-        else None
-    )
-
-    card_count = len(
-        extract_tour_cards(
-            html_text
-        )
-    )
+    tours = {
+        tour["id"]: tour
+        for tour in config.get("first_page_tours") or []
+        if tour.get("id")
+    }
 
     logger.info(
-        "Requests HTML tour cards: %d%s",
-        card_count,
-        (
-            f" / site reports {reported_total}"
-            if reported_total is not None
-            else ""
-        ),
+        "Page JSON: %d of %d tours",
+        len(tours),
+        total,
     )
 
-    if (
-        card_count > 0
-        and (
-            reported_total is None
-            or card_count >= reported_total
+    if len(tours) >= total:
+        return list(tours.values())
+
+    # Same request the site's pagination buttons send (frontend.js filter_tours).
+    data = [
+        ("action", "filter_tours"),
+        ("nonce", config["nonce"]),
+    ]
+
+    for key in FILTER_KEYS:
+        data.append((key, ""))
+
+    for key in ("allowed_categories", "excluded_categories"):
+        for value in config.get(key) or []:
+            data.append((f"{key}[]", value))
+
+    ajax_headers = {
+        "Accept": "application/json, text/javascript, */*; q=0.01",
+        "X-Requested-With": "XMLHttpRequest",
+        "Origin": "https://hisarturizm.com.tr",
+        "Referer": url,
+    }
+
+    page = 1
+    total_pages = 1
+
+    while page <= total_pages:
+        time.sleep(AJAX_DELAY_SECONDS)
+
+        payload = request_with_retry(
+            session,
+            "POST",
+            config["ajax_url"],
+            data=data + [
+                ("page", str(page)),
+                ("per_page", str(AJAX_PER_PAGE)),
+            ],
+            headers=ajax_headers,
+        ).json()
+
+        if not payload.get("success"):
+            raise RuntimeError(
+                f"filter_tours failed on page {page}: {str(payload)[:200]}"
+            )
+
+        result = payload["data"]
+        total_pages = int(
+            result.get("total_pages") or 1
         )
-    ):
-        return html_text
 
-    return fetch_browser_html(
-        url
+        for tour in result.get("tours") or []:
+            if tour.get("id"):
+                tours[tour["id"]] = tour
+
+        logger.info(
+            "filter_tours page %d/%d | tours: %d / %s",
+            page,
+            total_pages,
+            len(tours),
+            result.get("count"),
+        )
+
+        page += 1
+
+    return list(tours.values())
+
+
+def parse_card_date(value):
+    try:
+        return datetime.strptime(
+            normalize_text(value),
+            "%d.%m.%Y",
+        ).date()
+    except ValueError:
+        return None
+
+
+def tour_room_prices(tour):
+    currency = (
+        tour.get("currency")
+        or "USD"
+    ).upper()
+
+    if currency == "TL":
+        currency = "TRY"
+
+    # frontend.js shows 2/3/4-person rooms for economy packages, otherwise only 2-person.
+    room_counts = (
+        (2, 3, 4)
+        if tour.get("is_ekonomik")
+        else (2,)
     )
+
+    result = []
+
+    for room_count in room_counts:
+        raw = normalize_text(
+            tour.get(f"price_{room_count}")
+        )
+
+        if not re.fullmatch(r"[\d.,]+", raw):
+            continue
+
+        amount = parse_decimal(
+            raw
+        )
+
+        if amount <= 0:
+            continue
+
+        result.append(
+            {
+                "room_count": room_count,
+                "amount": amount,
+                "currency": currency,
+            }
+        )
+
+    return result
 
 
 def parse_decimal(number_text):
@@ -647,279 +520,6 @@ def convert_to_try(
         Decimal("0.01"),
         rounding=ROUND_HALF_UP,
     )
-
-
-def find_card_for_code(code_element, code):
-    current = code_element
-
-    for _ in range(12):
-        current = current.parent
-
-        if current is None:
-            break
-
-        text = normalize_text(
-            current.get_text(
-                " ",
-                strip=True,
-            )
-        )
-
-        codes = {
-            item.upper()
-            for item in TOUR_CODE_RE.findall(
-                text
-            )
-        }
-
-        if codes != {code.upper()}:
-            continue
-
-        lower = text.casefold()
-
-        if (
-            "gidiş:" in lower
-            and "dönüş:" in lower
-            and "oda" in lower
-        ):
-            return current
-
-    return None
-
-
-def find_title_and_status(
-    card,
-    code,
-):
-    candidates = []
-
-    for tag in card.find_all(
-        [
-            "h1",
-            "h2",
-            "h3",
-            "h4",
-            "h5",
-            "h6",
-            "strong",
-            "p",
-            "div",
-            "span",
-        ]
-    ):
-        text = normalize_text(
-            tag.get_text(
-                " ",
-                strip=True,
-            )
-        )
-
-        if code.casefold() not in text.casefold():
-            continue
-
-
-        if len(text) <= 250:
-            candidates.append(text)
-
-    candidates.sort(
-        key=len
-    )
-
-    for text in candidates:
-        match = TITLE_CODE_RE.search(
-            text
-        )
-
-        if not match:
-            continue
-
-        title = normalize_text(
-            match.group("title")
-        )
-
-
-        title = re.sub(
-            r"^(?:Tur Programı|PDF)\s+",
-            "",
-            title,
-            flags=re.IGNORECASE,
-        )
-
-        sold_out = bool(
-            re.search(
-                r"\bDOLU\b",
-                text,
-                flags=re.IGNORECASE,
-            )
-        )
-
-        return clean_tour_title(title), sold_out
-
-    full_text = normalize_text(
-        card.get_text(
-            " ",
-            strip=True,
-        )
-    )
-
-    code_index = full_text.casefold().find(
-        code.casefold()
-    )
-
-    if code_index < 0:
-        return code, False
-
-    prefix = full_text[
-        max(0, code_index - 180):
-        code_index
-    ].strip()
-
-    prefix = STATUS_RE.sub(
-        " ",
-        prefix,
-    )
-
-    prefix = normalize_text(
-        prefix
-    )
-
-
-    title = prefix[-120:].strip(
-        " -|"
-    )
-
-    sold_out = bool(
-        re.search(
-            r"\bDOLU\b",
-            full_text[:code_index + len(code)],
-            flags=re.IGNORECASE,
-        )
-    )
-
-    return clean_tour_title(title or code), sold_out
-
-
-def parse_card_dates(text):
-    match = DATE_RE.search(
-        text
-    )
-
-    if not match:
-        return None, None
-
-    start = datetime.strptime(
-        match.group(1),
-        "%d.%m.%Y",
-    ).date()
-
-    end = datetime.strptime(
-        match.group(2),
-        "%d.%m.%Y",
-    ).date()
-
-    return start, end
-
-
-def parse_duration(text):
-    match = DURATION_RE.search(
-        text
-    )
-
-    if not match:
-        return None
-
-    nights = int(
-        match.group(1)
-    )
-
-    days = int(
-        match.group(2)
-    )
-
-    return nights, days
-
-
-def parse_room_prices(text):
-    result = []
-
-    for match in ROOM_PRICE_RE.finditer(
-        text
-    ):
-        room_count = int(
-            match.group("room")
-        )
-
-        amount = parse_decimal(
-            match.group("price")
-        )
-
-        if match.group("tl"):
-            currency = "TRY"
-
-        elif match.group("usd"):
-            currency = "USD"
-
-        elif match.group("eur"):
-            currency = "EUR"
-
-        else:
-            continue
-
-        result.append(
-            {
-                "room_count": room_count,
-                "amount": amount,
-                "currency": currency,
-            }
-        )
-
-    return result
-
-
-def extract_tour_cards(html_text):
-    soup = BeautifulSoup(
-        html_text,
-        "html.parser",
-    )
-
-    cards = {}
-
-    for text_node in soup.find_all(
-        string=TOUR_CODE_RE,
-    ):
-        parent = text_node.parent
-
-        if parent is None:
-            continue
-
-        text = normalize_text(
-            parent.get_text(
-                " ",
-                strip=True,
-            )
-        )
-
-        match = TOUR_CODE_RE.search(
-            text
-        )
-
-        if not match:
-            continue
-
-        code = match.group(0).upper()
-
-        if code in cards:
-            continue
-
-        card = find_card_for_code(
-            parent,
-            code,
-        )
-
-        if card is not None:
-            cards[code] = card
-
-    return cards
 
 
 def range_contains_full_weekend(
@@ -1051,81 +651,50 @@ def make_product_name(
     )
 
 
-def parse_listing(
-    html_text,
+def parse_tours(
+    tours,
     listing_type,
     rates,
     include_sold_out=False,
 ):
-    cards = extract_tour_cards(
-        html_text
-    )
-
-    status_by_code = extract_status_by_code(
-        html_text
-    )
-
     logger.info(
-        "%s listing: %d unique tour cards found",
+        "%s listing: %d unique tours found",
         listing_type,
-        len(cards),
-    )
-
-    logger.info(
-        "%s listing: %d exact status labels found",
-        listing_type,
-        len(status_by_code),
+        len(tours),
     )
 
     rows = []
 
-    for code, card in cards.items():
-        text = normalize_text(
-            card.get_text(
-                " ",
-                strip=True,
-            )
+    for tour in tours:
+        code = tour["id"].upper()
+
+        title = clean_tour_title(
+            tour.get("title") or code
         )
 
-        title, _ = find_title_and_status(
-            card,
-            code,
-        )
-
-
-        exact_status = status_by_code.get(
-            code
-        )
-
-        sold_out = (
-            exact_status is not None
-            and exact_status.casefold() == "dolu"
-        )
-
-        if sold_out and not include_sold_out:
+        if tour.get("is_full") and not include_sold_out:
             logger.info(
-                "%s is sold out (%s); skipped",
+                "%s is sold out (DOLU); skipped",
                 code,
-                exact_status,
             )
             continue
 
-        if exact_status is None:
-            logger.warning(
-                "%s has no exact availability label; keeping because a numeric price exists",
-                code,
-            )
-
-        start_date, end_date = parse_card_dates(
-            text
+        start_date = parse_card_date(
+            tour.get("departure")
         )
 
-        duration = parse_duration(
-            text
+        end_date = parse_card_date(
+            tour.get("return")
         )
 
-        room_prices = parse_room_prices(
-            text
+        duration = (
+            (int(tour["gece"]), int(tour["duration"]))
+            if tour.get("gece") is not None and tour.get("duration") is not None
+            else None
+        )
+
+        room_prices = tour_room_prices(
+            tour
         )
 
         if not room_prices:
@@ -1140,6 +709,11 @@ def parse_listing(
             source_label = "Umre"
 
         else:
+            text = " ".join(
+                normalize_text(tour.get(key))
+                for key in ("destination", "gidis_route", "donus_route")
+            )
+
             subcategory = classify_culture_tour(
                 title,
                 text,
@@ -1334,13 +908,13 @@ def main():
                 "Starting Hisar culture tours..."
             )
 
-            culture_html = fetch_full_html(
+            culture_tours = fetch_tours(
                 session,
                 CULTURE_URL,
             )
 
-            culture_rows = parse_listing(
-                culture_html,
+            culture_rows = parse_tours(
+                culture_tours,
                 "culture",
                 rates,
                 include_sold_out=args.include_sold_out,
@@ -1355,13 +929,13 @@ def main():
                 "Starting Hisar Umrah tours..."
             )
 
-            umrah_html = fetch_full_html(
+            umrah_tours = fetch_tours(
                 session,
                 UMRAH_URL,
             )
 
-            umrah_rows = parse_listing(
-                umrah_html,
+            umrah_rows = parse_tours(
+                umrah_tours,
                 "umrah",
                 rates,
                 include_sold_out=args.include_sold_out,

@@ -25,15 +25,24 @@ Milli Piyango Online (`millipiyangoonline.com` / Sisal Şans - Milli Piyango İd
    - Hızlı On Numara - 1 Kolon
 
 2. **Milli Piyango Çekiliş Biletleri:**
-   - Milli Piyango - Çeyrek Bilet (Standart Çekiliş)
-   - Milli Piyango - Yarım Bilet (Standart Çekiliş)
-   - Milli Piyango - Tam Bilet (Standart Çekiliş)
    - Milli Piyango - Çeyrek Bilet (Yılbaşı Özel)
    - Milli Piyango - Yarım Bilet (Yılbaşı Özel)
    - Milli Piyango - Tam Bilet (Yılbaşı Özel)
 
 3. **Kazı Kazan Kartları (5 TL – 500 TL):**
    - Altın, Şans Dağı, 10'a Katla, 500 Matik, 12 Ay Şans, Altın Yumurta, Şans Yıldızı, Para Yağmuru, 30'a Katla, Elmas 7, Altın Gol, 50'ye Katla, Her Yönde Kazan, Şanslı Kasa, 100'e Katla, Ödül Yağmuru, Elmas, Çifte Şans, Bovling, Çok Oyun Çok Şans, Mücevher Kulesi, Kral Tacı, 500'e Katla vb.
+
+---
+
+## Veri Kaynağı ve Hata Davranışı (2026-10-31)
+
+- Site düz `requests` bağlantılarını cevapsız bırakıyor (read timeout); istekler `curl_cffi`
+  (Chrome TLS) ile atılır.
+- Yalnızca sayfada canlı bulunan fiyatlar yazılır. Bulunamayan kalem loglanır ve atlanır; hiçbir
+  fiyat bulunamazsa CSV yazılmaz (çıkış kodu 1). Eskiden koddaki sabit "yedek" fiyatlar sessizce
+  yazılıyordu ve `requests` her seferinde zaman aşımına düştüğü için bütün satırlar bu sabitlerden geliyordu.
+- "Standart Çekiliş" biletleri kaldırıldı: güncel fiyatları sitede yayınlanmıyor (kurallar sayfası
+  hâlâ eski 24/12/6 TL fiyatlarını gösteriyor).
 
 ---
 
@@ -46,20 +55,20 @@ InflationItems/Datas/09_Recreation/Milli_Piyango/milli_piyango_YYYY-MM-DD.csv
 
 Kolonlar:
 ```csv
-product_name,price,category_name,sub_category_number
+product_name,price,category_number,sub_category_number,category_name
 ```
 
 Örnek veri:
 ```csv
-product_name,price,category_name,sub_category_number
-Çılgın Sayısal Loto - 1 Kolon,25.00,Games of chance,0947001
-Süper Loto - 1 Kolon,25.00,Games of chance,0947001
-Şans Topu - 1 Kolon,15.00,Games of chance,0947001
-On Numara - 1 Kolon,15.00,Games of chance,0947001
-Milli Piyango - Çeyrek Bilet (Yılbaşı Özel),200.00,Games of chance,0947001
-Milli Piyango - Tam Bilet (Yılbaşı Özel),800.00,Games of chance,0947001
-Kazı Kazan - 100'e Katla (100 TL),100.00,Games of chance,0947001
-Kazı Kazan - Kral Tacı (500 TL),500.00,Games of chance,0947001
+product_name,price,category_number,sub_category_number,category_name
+Çılgın Sayısal Loto - 1 Kolon,25.00,9,0947001,Games of chance
+Süper Loto - 1 Kolon,25.00,9,0947001,Games of chance
+Şans Topu - 1 Kolon,15.00,9,0947001,Games of chance
+On Numara - 1 Kolon,15.00,9,0947001,Games of chance
+Milli Piyango - Çeyrek Bilet (Yılbaşı Özel),200.00,9,0947001,Games of chance
+Milli Piyango - Tam Bilet (Yılbaşı Özel),800.00,9,0947001,Games of chance
+Kazı Kazan - 100'e Katla (100 TL),100.00,9,0947001,Games of chance
+Kazı Kazan - Kral Tacı (500 TL),500.00,9,0947001,Games of chance
 ```
 
 ---

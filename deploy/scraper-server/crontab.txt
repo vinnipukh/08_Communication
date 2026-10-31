@@ -20,4 +20,11 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 35 8 * * * @ROOT@/bin/run_scraper.sh internet >> @ROOT@/log.txt 2>&1
 0  10 * * * @ROOT@/bin/run_scraper.sh streaming >> @ROOT@/log.txt 2>&1
 25 10 * * * @ROOT@/bin/run_scraper.sh repair    >> @ROOT@/log.txt 2>&1
+# TÜİK 09 (recreation, sport, culture): after the telecom jobs, in the idle afternoon/evening window.
+# Worst case (every job hits its timeout): 12:30 +45m, 13:25 +120m, 15:35 +240m, 19:45 +240m = 23:47.
+# Measured on a PC: small ~10 min, medium ~30 min, shops ~55 min, rec_dr ~65 min (timeouts are ~4x).
+30 12 * * * @ROOT@/bin/run_scraper.sh rec_small  >> @ROOT@/log.txt 2>&1
+25 13 * * * @ROOT@/bin/run_scraper.sh rec_medium >> @ROOT@/log.txt 2>&1
+35 15 * * * @ROOT@/bin/run_scraper.sh rec_shops  >> @ROOT@/log.txt 2>&1
+45 19 * * * @ROOT@/bin/run_scraper.sh rec_dr     >> @ROOT@/log.txt 2>&1
 # END inflation-scrapers

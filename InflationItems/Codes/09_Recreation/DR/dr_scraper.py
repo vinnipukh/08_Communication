@@ -1,7 +1,7 @@
 """D&R scraper for TÜİK group 09 (stationery, toys, hobby, sport, games, books).
 
 Output: InflationItems/Datas/09_Recreation/DR/dr_YYYY-MM-DD.csv
-Columns: product_name, price, category_name, sub_category_number
+Columns: product_name, price, category_number, sub_category_number, category_name
 """
 
 from __future__ import annotations
@@ -24,8 +24,9 @@ from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 import requests
 from bs4 import BeautifulSoup
 
+CATEGORY_NUMBER = 9
 BASE_URL = "https://www.dr.com.tr"
-CSV_COLUMNS = ["product_name", "price", "category_name", "sub_category_number"]
+CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number", "category_name"]
 
 # TÜİK 2026 CPI (COICOP 2018) kod -> ad eşlemesi (belgedeki İngilizce adlar)
 CATEGORY_NAMES = {
@@ -450,6 +451,7 @@ def process_product(
         "price": p["price"],
         "category_name": CATEGORY_NAMES.get(code, ""),
         "sub_category_number": code,
+        "category_number": CATEGORY_NUMBER,
     }
 
 
@@ -470,6 +472,7 @@ def load_existing_csv(out_path: Path) -> tuple[list[dict[str, Any]], set[str], s
                     continue
                 code = (r.get("sub_category_number") or "").strip()
                 cat_name = (r.get("category_name") or "").strip()
+                cat_num = r.get("category_number") or CATEGORY_NUMBER
                 if name and price > 0:
                     key = (norm(name), price)
                     if key not in seen_name_price:
@@ -479,6 +482,7 @@ def load_existing_csv(out_path: Path) -> tuple[list[dict[str, Any]], set[str], s
                             "price": price,
                             "category_name": cat_name,
                             "sub_category_number": code,
+                            "category_number": cat_num,
                         })
         log.info("Önceki çalışmadan %d ürün yüklendi (%s)", len(rows), out_path.name)
     except Exception as exc:

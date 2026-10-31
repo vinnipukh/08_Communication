@@ -59,7 +59,13 @@ PRODUCT_DATA_PATTERN = re.compile(
     re.DOTALL,
 )
 
+CATEGORY_NUMBER = "9"
+
 CSV_COLUMNS = [
+    "product_name",
+    "price",
+    "category_number",
+    "sub_category_number",
     "Product Name",
     "Product Cost",
     "Product Original Cost",
@@ -273,6 +279,56 @@ def _split_category_fields(
     return top_category, category, subcategory, " > ".join(full_segments)
 
 
+# Site category (second level of Nezih's path) -> TÜİK 2026 COICOP item code.
+# "" = outside group 09 (bags, bottles, calculators, instruments); such rows are dropped.
+STATIONERY_CODES = {
+    "Defter ve Bloknotlar": "0974001",
+    "Kalemler ve Yazı Gereçleri": "0974003",
+    "Boyalar ve Boya Ürünleri": "0974004",
+    "Kağıt Ürünleri": "0974005",
+    "Oyun Hamuru ve Setleri": "0921204",
+    "Kırtasiye Hobi Ürünleri": "0921204",
+    "Puzzle": "0921204",
+    "Müzik Aletleri": "",
+    "Çanta ve Mataralar": "0974009",  # only pencil cases are kept, see _coicop_code
+}
+STATIONERY_SUB_CODES = {
+    "Kalemtraş ve Silgiler": "0974009",
+    "Sıvı ve Şerit Siliciler": "0974009",
+    "Mürekkepler": "0974009",
+    "Resim Defterleri": "0974005",
+    "Etiketler": "0974009",
+    "Stickerlar": "0974009",
+    "Zarflar": "0974009",
+    "Resmi ve Ticari Evraklar": "0974009",
+    "Müzik Aletleri": "",
+    "Hesap Makineleri": "",
+}
+SANATSAL_CODES = {
+    "Grafik ve Çizim Kalemleri": "0974003",
+    "Sanatsal Boyalar": "0974004",
+    "Hobi Boyaları ve Yardımcı Malzemeler": "0974004",
+    "Boyama Zeminleri": "0974005",
+}
+
+
+def _coicop_code(top_category: str, category: str, subcategory: str) -> str:
+    leaf = subcategory.split(" > ")[0]
+    if top_category == "Kitap":
+        if category == "Ders & Sınav Kitapları":
+            return "0971102" if leaf.startswith("Sınav Kitapları") else "0971103"
+        if category == "Çocuk Kitapları":
+            return "0971901"
+        return "0971902"
+    if category == "Çanta ve Mataralar":
+        return "0974009" if leaf == "Kalem Kutuları" else ""
+    if leaf in STATIONERY_SUB_CODES:
+        return STATIONERY_SUB_CODES[leaf]
+    if top_category == "Sanatsal":
+        return SANATSAL_CODES.get(category, "0974009")
+    return STATIONERY_CODES.get(category, "0974009")
+
+
 def _campaign_label(original_price: float | None, current_price: float | None) -> str:
     if not original_price or not current_price or original_price <= current_price:
         return ""
@@ -307,6 +363,10 @@ def _product_row(
     product_url = urljoin(f"{BASE_URL}/", _normalise_text(payload.get("url")))
     image_url = urljoin(f"{BASE_URL}/", _normalise_text(payload.get("image")))
 
+    sub_category_number = _coicop_code(top_category, category, subcategory)
+    if not sub_category_number:
+        return None
+
     quantity = payload.get("quantity")
     try:
         in_stock = int(quantity) > 0
@@ -314,6 +374,10 @@ def _product_row(
         in_stock = bool(quantity)
 
     return {
+        "product_name": product_name,
+        "price": round(current_price, 2),
+        "category_number": CATEGORY_NUMBER,
+        "sub_category_number": sub_category_number,
         "Product Name": product_name,
         "Product Cost": round(current_price, 2),
         "Product Original Cost": round(original_price, 2) if original_price is not None else "",
