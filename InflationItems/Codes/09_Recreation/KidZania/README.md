@@ -14,7 +14,9 @@ A table row whose price equals a ticket-shop price (the general entry) is not wr
 
 ## Mapping rule
 All rows -> `0946103`. Product names: `KidZania Istanbul - Bireysel Giris - <ticket>` (shop) and
-`KidZania Istanbul - <row name>` (table). Extra columns: list_price, ticket_name, source, ticket_id, product_url.
+`KidZania Istanbul - <row name>` (table). The CSV has exactly four columns: `product_name, price,
+category_number, sub_category_number` (`category_number` is `9`); list price, ticket id, source (shop or table)
+and ticket URL are not saved, so the name is the only hint of where a row came from.
 
 ## Run
 ```

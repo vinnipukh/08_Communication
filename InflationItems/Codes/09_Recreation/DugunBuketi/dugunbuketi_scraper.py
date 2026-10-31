@@ -61,24 +61,9 @@ PER_PERSON_MAX = 10000
 PER_PERSON_MIN = 100
 PACKAGE_MIN = 5000
 
-CSV_COLUMNS = [
-    "product_name",
-    "price",
-    "category_number",
-    "sub_category_number",
-    "venue_name",
-    "city",
-    "district",
-    "price_type",
-    "menu_type",
-    "week_period",
-    "price_type_source",
-    "listing_start_price",
-    "max_capacity",
-    "membership_type",
-    "place_id",
-    "source_url",
-]
+# Only the four shared columns are written. Other per-product fields are used inside the run
+# (deduplication, naming) but are not saved.
+CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number"]
 
 MAX_PAGES = 60
 PAGE_DELAY = 1.5
@@ -238,7 +223,7 @@ def save_to_csv(rows, output_file):
     output_file.parent.mkdir(parents=True, exist_ok=True)
 
     with open(output_file, "w", newline="", encoding="utf-8-sig") as file:
-        writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS)
+        writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(rows)
 

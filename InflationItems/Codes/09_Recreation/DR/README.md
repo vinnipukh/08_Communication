@@ -64,10 +64,12 @@ Toplanan ürünler kural tabanlı NLP ve kategori yolu eşlemesiyle aşağıdaki
 InflationItems/Datas/09_Recreation/DR/dr_YYYY-MM-DD.csv
 ```
 
-Kolonlar:
+Kolonlar (yalnızca dört kolon; `category_number` her satırda `9`):
 ```csv
-product_name,price,category_number,sub_category_number,category_name
+product_name,price,category_number,sub_category_number
 ```
+
+Kategori adı/yolu yalnızca çalışma sırasında kalem kodunu belirlemek için kullanılır, CSV'ye yazılmaz.
 
 ---
 

@@ -17,7 +17,7 @@ GET https://spor.istanbul/wp-json/wp/v2/pages?slug=uyelik-bilgileri&_fields=id,s
 
 If that slug ever stops holding the tariff, the scraper searches
 `/wp-json/wp/v2/pages?search=Ücret Tarifesi` and takes the first page with a "BİRİM FİYAT"
-table. `modified` is written to the CSV (`page_modified`), so a tariff change is visible.
+table. `modified` is written to the run log (not to the CSV), so a tariff change can be seen there.
 
 The other price pages were checked on 2026-10-31 and add nothing new: `spor-okullari`
 (300 TL term fee = tariff row 29.1) and `paket-uyelikleri` (1,600 / 1,600 / 1,800 / 200 TL =
@@ -50,8 +50,10 @@ Units: `Kullanım (12)` → `12 Kullanım`, `Saat` → `Saatlik`, `Ay`/`Aylık` 
 
 `InflationItems/Datas/09_Recreation/SporIstanbul/sporistanbul_YYYY-MM-DD.csv` (UTF-8 with BOM):
 
-`product_name, price, category_number (9), sub_category_number, tariff_item, section, item,
-unit, tariff_year, vat_included, page_modified, source_url`
+exactly four columns: `product_name, price, category_number, sub_category_number`
+(`category_number` is `9`, `sub_category_number` is `0946201` or `0946203`). Section, item and unit are only
+in `product_name` (see above); tariff row number, tariff year, VAT status, page modification date and source URL are
+not saved.
 
 Prices are TRY. Tariff rule 18: prices **include VAT** (VAT is added only for rentals to
 companies, which are dropped). Discounts (students, retirees, 65+, İBB staff…) and the 3×
@@ -78,7 +80,7 @@ needed). The sitemap would only add requests.
 - **Rate limit**: HTTP 429 on quick bursts. The scraper waits 8 s between requests and backs
   off 16 s / 32 s on errors.
 - The tariff is yearly (2026); prices change in January or by council decision. The table
-  numbering has typos (row "31,1" inside section 34), so `section` comes from the section
-  header row, not from the item number.
+  numbering has typos (row "31,1" inside section 34), so the section in the name comes from the
+  section header row, not from the item number.
 - Section names are kept as published (upper case), not title-cased, to avoid Turkish
   İ/I mistakes.

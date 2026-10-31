@@ -63,20 +63,9 @@ BEFORE_PRICE_RE = re.compile(r'<del[^>]*>\s*([\d.,]+)\s*</del>')
 PROVIDER_ID_RE = re.compile(r'data-provider-id="(\d+)"')
 NEXT_RE = re.compile(r'<link rel="next" href="([^"]+)"')
 
-CSV_COLUMNS = [
-    "product_name",
-    "price",
-    "category_number",
-    "sub_category_number",
-    "venue_name",
-    "city",
-    "district",
-    "price_type",
-    "list_price",
-    "price_valid_until",
-    "provider_id",
-    "source_url",
-]
+# Only the four shared columns are written. Other per-product fields are used inside the run
+# (deduplication, naming) but are not saved.
+CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number"]
 
 MAX_PAGES = 40
 PAGE_DELAY = 1.5
@@ -243,7 +232,7 @@ def save_to_csv(rows, output_file):
     output_file.parent.mkdir(parents=True, exist_ok=True)
 
     with open(output_file, "w", newline="", encoding="utf-8-sig") as file:
-        writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS)
+        writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(rows)
 

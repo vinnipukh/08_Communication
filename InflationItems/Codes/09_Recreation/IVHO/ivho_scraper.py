@@ -526,21 +526,9 @@ def build_output(rows, source_url, tariff_period, kdv_pages):
     return output
 
 
-CSV_COLUMNS = [
-    "product_name",
-    "price",
-    "category_number",
-    "sub_category_number",
-    "price_max",
-    "price_text",
-    "animal",
-    "section",
-    "service",
-    "page",
-    "tariff_period",
-    "kdv_included",
-    "source_url",
-]
+# Only the four shared columns are written. Other per-product fields are used inside the run
+# (deduplication, naming) but are not saved.
+CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number"]
 
 
 def save_csv(rows, date_str):
@@ -548,7 +536,7 @@ def save_csv(rows, date_str):
     output_file = DATA_DIR / f"ivho_{date_str}.csv"
 
     with output_file.open("w", newline="", encoding="utf-8-sig") as file:
-        writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS)
+        writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(rows)
 

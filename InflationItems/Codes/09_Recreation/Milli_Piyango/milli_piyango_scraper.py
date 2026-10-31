@@ -13,7 +13,7 @@ Output:
   InflationItems/Datas/09_Recreation/Milli_Piyango/milli_piyango_YYYY-MM-DD.csv
 
 Columns:
-  product_name,price,category_number,sub_category_number,category_name
+  product_name,price,category_number,sub_category_number
 """
 
 from __future__ import annotations
@@ -57,13 +57,9 @@ COMMON_HEADERS = {
     "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
 }
 
-CSV_COLUMNS = [
-    "product_name",
-    "price",
-    "category_number",
-    "sub_category_number",
-    "category_name",
-]
+# Only the four shared columns are written. Other per-product fields are used inside the run
+# (deduplication, naming) but are not saved.
+CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number"]
 
 # ── Logging Setup ─────────────────────────────────────────────────────────────
 logging.basicConfig(
@@ -232,7 +228,7 @@ def save_csv(rows: List[Dict[str, Any]], output_path: Path) -> None:
     """Save rows into standard UTF-8 CSV."""
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
+        writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(rows)
     logger.info("Saved %d rows to %s", len(rows), output_path)

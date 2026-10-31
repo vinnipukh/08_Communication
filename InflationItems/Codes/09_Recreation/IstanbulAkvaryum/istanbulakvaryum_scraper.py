@@ -45,17 +45,9 @@ HEADERS = {
     "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8"
 }
 
-CSV_COLUMNS = [
-    "product_name",
-    "price",
-    "category_number",
-    "sub_category_number",
-    "ticket_name",
-    "price_type",
-    "section",
-    "ticket_id",
-    "product_url",
-]
+# Only the four shared columns are written. Other per-product fields are used inside the run
+# (deduplication, naming) but are not saved.
+CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number"]
 
 PAGE_DELAY = 2
 REQUEST_TIMEOUT = 30
@@ -168,7 +160,7 @@ def save_to_csv(rows, output_file):
     output_file.parent.mkdir(parents=True, exist_ok=True)
 
     with open(output_file, "w", newline="", encoding="utf-8-sig") as file:
-        writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS)
+        writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(rows)
 

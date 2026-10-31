@@ -57,8 +57,9 @@ Product name: `Arnavutköy Belediyesi - <facility> - <group or caption> - <label
 `InflationItems/Datas/09_Recreation/ArnavutkoyBelediyesi/arnavutkoy_YYYY-MM-DD.csv`
 (UTF-8 with BOM):
 
-`product_name, price, category_number (9), sub_category_number, facility, group, item,
-vat_included, source_url`
+exactly four columns: `product_name, price, category_number, sub_category_number`
+(`category_number` is `9`, `sub_category_number` is `0946201` or `0946203`). Facility, group and label are
+only in `product_name` (see above); the source URL and the VAT status are not saved.
 
 Prices are TRY and **include VAT** ("Yukarıdaki ücretlere KDV dahildir" under the tables and in
 the council tariff). Discounts (students 60 %, retirees / 60+ / public staff 15 %) are not

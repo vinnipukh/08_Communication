@@ -21,7 +21,7 @@ Output:
   InflationItems/Datas/09_Recreation/MACFit/macfit_YYYY-MM-DD.csv
 
 Columns:
-  product_name,price,category_number,sub_category_number,category_name,city,district,club_name,club_type,plan_name,membership_category,commitment_type,term_months,url
+  product_name,price,category_number,sub_category_number
 """
 
 from __future__ import annotations
@@ -66,22 +66,9 @@ COMMON_HEADERS = {
     "Referer": "https://portal.macfit.com/",
 }
 
-CSV_COLUMNS = [
-    "product_name",
-    "price",
-    "category_number",
-    "sub_category_number",
-    "category_name",
-    "city",
-    "district",
-    "club_name",
-    "club_type",
-    "plan_name",
-    "membership_category",
-    "commitment_type",
-    "term_months",
-    "url",
-]
+# Only the four shared columns are written. Other per-product fields are used inside the run
+# (deduplication, naming) but are not saved.
+CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number"]
 
 # ── Logging Setup ─────────────────────────────────────────────────────────────
 logging.basicConfig(
@@ -450,7 +437,7 @@ def scrape_macfit(
     # Write atomically via .tmp file
     tmp_path = output_path.with_suffix(".csv.tmp")
     with open(tmp_path, "w", encoding="utf-8-sig", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
+        writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(deduped)
 

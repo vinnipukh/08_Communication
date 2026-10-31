@@ -31,20 +31,15 @@ No CSV is written when no rows are parsed. 21 rows on 2026-10-31.
 
 ## CSV
 
-`utf-8-sig`; first columns `product_name, price, category_number, sub_category_number`.
+`utf-8-sig`, exactly four columns: `product_name, price, category_number, sub_category_number`.
 
-| Column | Content |
-|---|---|
-| `product_name` | `VetArt - <section> - <service> - <animal>` |
-| `price` | TRY, dot decimal, 2 decimals |
-| `category_number` / `sub_category_number` | `9` / `0945001` |
-| `price_max` | equals `price` (the page has no ranges) |
-| `price_text` | the cell as published |
-| `animal` | `Kedi`, `Köpek` or `Kafes Kuşlar` (cage birds) |
-| `section`, `service` | as published |
-| `tariff_period` | `2026/1` |
-| `kdv_included` | empty: the page does not say whether VAT is included |
-| `source_url` | the price page |
+- `product_name`: `VetArt - <section> - <service> - <animal>`; section, service and animal (`Kedi`, `Köpek` or
+  `Kafes Kuşlar`, cage birds) are as published and only in the name.
+- `price`: TRY, dot decimal, 2 decimals (the page has no ranges).
+- `category_number` / `sub_category_number`: `9` / `0945001`.
+
+Not saved: the cell as published, the tariff period (`2026/1`, read from the page), the price page URL, and any
+VAT flag (the page does not say whether VAT is included).
 
 ## robots.txt and sitemap
 

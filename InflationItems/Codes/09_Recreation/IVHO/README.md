@@ -6,11 +6,13 @@ vaccines, laboratory, imaging, surgery, dentistry) are read; farm-animal pages (
 advertisement pages are skipped. Prices include VAT ("Tüm fiyatlara KDV dahildir", read from the pages).
 
 Output: `InflationItems/Datas/09_Recreation/IVHO/ivho_YYYY-MM-DD.csv`, 695 rows on 2026-10-31.
-Columns: `product_name, price, category_number, sub_category_number` (`9`, `0945001`), then `price_max, price_text,
-animal, section, service, page, tariff_period, kdv_included, source_url`. One row per service and animal column
-(Kedi / Köpek); a cell merged across both columns (birds and exotic animals) is one row with
-`animal = "Kedi ve Köpek dışı (ortak hücre)"`. Services priced for one animal only (cat or dog vaccines, dog weight
-classes) have one row. A range cell ("A - B") gives the minimum as `price` and the maximum in `price_max`.
+Exactly four columns: `product_name, price, category_number, sub_category_number` (`category_number` is `9`,
+`sub_category_number` is `0945001`). `product_name` is `İVHO - <section> - <service> - <animal>` (the section is
+left out when the row has none); a duplicate name gets the suffix ` (sayfa N)`. One row per service and animal column
+(Kedi / Köpek); a cell merged across both columns (birds and exotic animals) is one row with the animal part
+"Kedi ve Köpek dışı (ortak hücre)". Services priced for one animal only (cat or dog vaccines, dog weight
+classes) have one row. A range cell ("A - B") gives the minimum as `price`; the maximum is not saved. Tariff period,
+VAT status and PDF URL are not saved either (the PDF URL is in the run log; prices include VAT, see above).
 
 Run (from the repository root):
 

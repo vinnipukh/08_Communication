@@ -839,6 +839,10 @@ requests than the listing pages and APIs; no scraper uses it. Two sites disallow
 in robots.txt (Düğün.com `/api`, worked around via listing pages; Paribu Cineverse `/biletleme/`, scraper
 dropped and its folder moved to the Recycle Bin).
 
+TÜİK 09 CSVs are four columns only (2026-10-31, later the same day): every 09 scraper writes `product_name, price,
+category_number, sub_category_number` and nothing else; the 183 history CSVs were rewritten the same way (old files
+without the columns were completed or re-coded, details in `docs/site-analysis/recreation/README.md` §11).
+
 TÜİK 09 on the cron server (2026-10-31): four jobs in the idle 12:30–23:47 window (`rec_small`, `rec_medium`,
 `rec_shops` via `InflationItems/Codes/09_Recreation/run_group.py`, and `rec_dr`), no browser; `setup.sh` now also
 installs `libgl1`/`libglib2.0-0`, `pypdfium2`, `rapidocr-onnxruntime` and `cryptography`; `push_data.sh` and

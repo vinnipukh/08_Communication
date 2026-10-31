@@ -53,22 +53,22 @@ Milli Piyango Online (`millipiyangoonline.com` / Sisal Şans - Milli Piyango İd
 InflationItems/Datas/09_Recreation/Milli_Piyango/milli_piyango_YYYY-MM-DD.csv
 ```
 
-Kolonlar:
+Kolonlar (yalnızca dört kolon; `category_number` her satırda `9`):
 ```csv
-product_name,price,category_number,sub_category_number,category_name
+product_name,price,category_number,sub_category_number
 ```
 
 Örnek veri:
 ```csv
-product_name,price,category_number,sub_category_number,category_name
-Çılgın Sayısal Loto - 1 Kolon,25.00,9,0947001,Games of chance
-Süper Loto - 1 Kolon,25.00,9,0947001,Games of chance
-Şans Topu - 1 Kolon,15.00,9,0947001,Games of chance
-On Numara - 1 Kolon,15.00,9,0947001,Games of chance
-Milli Piyango - Çeyrek Bilet (Yılbaşı Özel),200.00,9,0947001,Games of chance
-Milli Piyango - Tam Bilet (Yılbaşı Özel),800.00,9,0947001,Games of chance
-Kazı Kazan - 100'e Katla (100 TL),100.00,9,0947001,Games of chance
-Kazı Kazan - Kral Tacı (500 TL),500.00,9,0947001,Games of chance
+product_name,price,category_number,sub_category_number
+Çılgın Sayısal Loto - 1 Kolon,25.00,9,0947001
+Süper Loto - 1 Kolon,25.00,9,0947001
+Şans Topu - 1 Kolon,15.00,9,0947001
+On Numara - 1 Kolon,15.00,9,0947001
+Milli Piyango - Çeyrek Bilet (Yılbaşı Özel),200.00,9,0947001
+Milli Piyango - Tam Bilet (Yılbaşı Özel),800.00,9,0947001
+Kazı Kazan - 100'e Katla (100 TL),100.00,9,0947001
+Kazı Kazan - Kral Tacı (500 TL),500.00,9,0947001
 ```
 
 ---

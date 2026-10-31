@@ -10,9 +10,11 @@ reassembled by `parse_try`. No API call.
 
 ## Mapping rule
 Every card -> `0946103`. A card with a struck-through price yields two rows: `... - liste fiyati`
-(`price_type=list`, the struck price) and `... - TC vatandasi kampanya fiyati` (`citizen_campaign`, the
-large price, valid for Turkish citizens). A card with a single price yields one `... - TC vatandasi fiyati`
-row (`citizen`). Extra columns: ticket_name, price_type, section, ticket_id, product_url.
+(the struck price) and `... - TC vatandasi kampanya fiyati` (the large price, valid for Turkish citizens).
+A card with a single price yields one `... - TC vatandasi fiyati` row. The price kind is only in the
+`product_name` suffix (`İstanbul Akvaryum - <ticket> - ...`). The CSV has exactly four columns: `product_name,
+price, category_number, sub_category_number` (`category_number` is `9`); ticket id, section and ticket URL are
+not saved.
 
 ## Run
 ```

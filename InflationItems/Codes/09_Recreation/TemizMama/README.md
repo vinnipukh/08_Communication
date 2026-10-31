@@ -10,9 +10,9 @@ TÜİK 09 source for BonaCibo/Micho/Mito/Kennel/Kucho dry and wet cat and dog fo
   (`self.__next_f.push([1,"…"])`) as objects `{"productId", "variantId", "productDetailUrl", "variantEcommerceTitle",
   "variantTitle", "variantPrice", "variantOldPrice", "variantActive", "variantAvailableForSale", "variantStatus",
   "variantBarcode", …}`. `variantPrice` is the selling price including VAT (equals the JSON-LD `offers.price`);
-  `variantOldPrice` is the list price (0 when there is none) and goes to `list_price`.
+  `variantOldPrice` is the list price (0 when there is none); it is read but not saved.
 - Variants that are not active or not available for sale are skipped. Status `Üretimde` (in production, ships a few
-  days later) is still orderable and is kept; the `status` column shows it.
+  days later) is still orderable and is kept; the status is not saved in the CSV.
 - robots.txt (checked): `/api/` and `/_next/` are disallowed, so the category-list API (infinite scroll) and the Next
   data routes are not used. Only the homepage, the sitemap and product pages (all allowed) are requested; the
   payload is read from the page HTML. The JSON-LD on category pages holds only 10 items and the HTML cards 19, so
@@ -30,10 +30,10 @@ By the first segment of the product URL (the site category):
 
 ## Columns
 
-`product_name, price, category_number, sub_category_number` first (`category_number` is `9`), then `list_price, brand,
-variant, site_category, status, barcode, product_url`. `product_name` is the site's own variant title (brand + product +
+Exactly four columns: `product_name, price, category_number, sub_category_number` (`category_number` is `9`).
+`product_name` is the site's own variant title (brand + product +
 size, for example `BonaCibo Tavuklu Yavru Kedi Maması 5 kg`). Multipacks (`2 kg x 2 Adet`) are separate rows, as on the
-site.
+site. List price, brand, variant, site category, status, barcode and product URL are not saved.
 
 ## Run
 
@@ -54,4 +54,4 @@ their API is disallowed. The sitemap holds no prices.
 
 - The variant payload format belongs to the Next.js build; if the page structure changes the scraper finds no
   variants and writes no CSV.
-- The same barcode appears on a pack and its multipack (they share a product); it is not a unique key.
+- The same barcode appears on a pack and its multipack (they share a product); barcodes are not saved.

@@ -46,13 +46,9 @@ HEADERS = {
 MAX_PAGES = 50
 PAGE_DELAY = 2
 
-CSV_COLUMNS = [
-    "product_name",
-    "price",
-    "category_number",
-    "sub_category_number",
-    "product_url"
-]
+# Only the four shared columns are written. Other per-product fields are used inside the run
+# (deduplication, naming) but are not saved.
+CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number"]
 
 logging.basicConfig(
     level=logging.INFO,
@@ -200,7 +196,8 @@ def save_to_csv(products):
 
         writer = csv.DictWriter(
             file,
-            fieldnames=CSV_COLUMNS
+            fieldnames=CSV_COLUMNS,
+            extrasaction="ignore"
         )
 
         writer.writeheader()

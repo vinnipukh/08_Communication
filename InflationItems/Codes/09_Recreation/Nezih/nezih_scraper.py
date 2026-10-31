@@ -61,29 +61,9 @@ PRODUCT_DATA_PATTERN = re.compile(
 
 CATEGORY_NUMBER = "9"
 
-CSV_COLUMNS = [
-    "product_name",
-    "price",
-    "category_number",
-    "sub_category_number",
-    "Product Name",
-    "Product Cost",
-    "Product Original Cost",
-    "Currency",
-    "Product ID",
-    "Variation ID",
-    "Brand",
-    "In Stock",
-    "Campaign Label",
-    "Top Category",
-    "Category",
-    "Subcategory",
-    "Category Path",
-    "Source Category",
-    "Source Category URL",
-    "Product URL",
-    "Image URL",
-]
+# Only the four shared columns are written. Other per-product fields are used inside the run
+# (deduplication, naming) but are not saved.
+CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number"]
 
 
 @dataclass(frozen=True)
@@ -491,7 +471,7 @@ def _write_rows(rows: list[dict[str, Any]], output_path: Path) -> None:
     # Write to a temp file first so a crash never leaves an empty/partial CSV.
     tmp_path = output_path.with_name(output_path.name + ".tmp")
     with tmp_path.open("w", newline="", encoding="utf-8-sig") as handle:
-        writer = csv.DictWriter(handle, fieldnames=CSV_COLUMNS)
+        writer = csv.DictWriter(handle, fieldnames=CSV_COLUMNS, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(rows)
     tmp_path.replace(output_path)

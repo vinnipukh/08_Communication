@@ -7,8 +7,9 @@ Scope:
 - reads Nezih's embedded `PRODUCT_DATA` payloads instead of scraping visual text
 - paginates through `?pg=N` listing pages
 - writes daily CSVs to `InflationItems/Datas/09_Recreation/Nezih/`
-- since 2026-10-31 the CSV starts with the four required columns `product_name, price,
-  category_number, sub_category_number`, followed by the original Nezih columns. The TÜİK item code
+- since 2026-10-31 the CSV has exactly four columns: `product_name, price,
+  category_number, sub_category_number` (`category_number` is `9`). The earlier 17-column files
+  (original Nezih store columns) were converted to these four, and rows outside group 09 were dropped. The TÜİK item code
   comes from the site category path (`_coicop_code`); bags, bottles, calculators and musical
   instruments are dropped as outside group 09. Mapping table: `docs/site-analysis/recreation/README.md` §11.1.
 

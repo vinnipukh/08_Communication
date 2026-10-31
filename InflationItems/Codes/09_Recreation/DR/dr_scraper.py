@@ -1,7 +1,7 @@
 """D&R scraper for TÜİK group 09 (stationery, toys, hobby, sport, games, books).
 
 Output: InflationItems/Datas/09_Recreation/DR/dr_YYYY-MM-DD.csv
-Columns: product_name, price, category_number, sub_category_number, category_name
+Columns: product_name, price, category_number, sub_category_number
 """
 
 from __future__ import annotations
@@ -26,7 +26,9 @@ from bs4 import BeautifulSoup
 
 CATEGORY_NUMBER = 9
 BASE_URL = "https://www.dr.com.tr"
-CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number", "category_name"]
+# Only the four shared columns are written. Other per-product fields are used inside the run
+# (deduplication, naming) but are not saved.
+CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number"]
 
 # TÜİK 2026 CPI (COICOP 2018) kod -> ad eşlemesi (belgedeki İngilizce adlar)
 CATEGORY_NAMES = {
@@ -411,7 +413,7 @@ def write_csv(rows: list[dict[str, Any]], out: Path) -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     part = out.with_suffix(".csv.part")
     with part.open("w", newline="", encoding="utf-8-sig") as fh:
-        writer = csv.DictWriter(fh, fieldnames=CSV_COLUMNS)
+        writer = csv.DictWriter(fh, fieldnames=CSV_COLUMNS, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(rows)
     os.replace(part, out)

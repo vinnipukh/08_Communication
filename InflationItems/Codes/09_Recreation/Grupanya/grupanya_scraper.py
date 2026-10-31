@@ -102,19 +102,9 @@ JSON_HEADERS = {
     "X-Requested-With": "XMLHttpRequest",
 }
 
-CSV_COLUMNS = [
-    "product_name",
-    "price",
-    "category_number",
-    "sub_category_number",
-    "list_price",
-    "grupanya_category",
-    "merchant",
-    "location",
-    "city",
-    "deal_id",
-    "product_url",
-]
+# Only the four shared columns are written. Other per-product fields are used inside the run
+# (deduplication, naming) but are not saved.
+CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number"]
 
 MAX_PAGES = 20
 PAGE_DELAY = 2
@@ -282,7 +272,7 @@ def save_to_csv(rows, output_file):
     output_file.parent.mkdir(parents=True, exist_ok=True)
 
     with open(output_file, "w", newline="", encoding="utf-8-sig") as file:
-        writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS)
+        writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(rows)
 

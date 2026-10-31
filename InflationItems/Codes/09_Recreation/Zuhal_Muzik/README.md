@@ -26,14 +26,14 @@ Zuhal Müzik geniş bir müzik aleti (elektro gitar, amfi, piyano vb.) envanteri
 | `0971902` | Other books | Müzik, sanat, hobi, bilim, edebiyat, tarih ve çizgi roman kitapları |
 | `0921204` | Other toys | Oyuncak, puzzle, eğitici oyunlar, kutu oyunları, figürler |
 | `0922103` | Sports equipment | Kaykay ve scooter ürünleri; kamp malzemeleri (kartlık/cüzdan hariç) |
-
-2026-10-31'e kadar puzzle/oyun/figür `09212`, kamp malzemeleri `0922` üst kodlarıyla yazılıyordu;
-artık DR ile aynı kalem kodları (`0921204`, `0922103`) kullanılıyor.
 | `0932204` | Other pet products | Tasma ve evcil hayvan gezdirme aksesuarları |
 | `0974001` | School notebooks | Okul defterleri |
 | `0974003` | Pens and pencils | Kalemler, tükenmezler, markerlar, finelinerlar |
 | `0974005` | Paper for writing and drawing | Resim ve çizim defterleri (sketchbook, drawing pad) |
 | `0974009` | Other stationery | Silgi, kalemtraş, ataş, zımba, dosya, klips, yapışkan notlar |
+
+2026-10-31'e kadar puzzle/oyun/figür `09212`, kamp malzemeleri `0922` üst kodlarıyla yazılıyordu;
+artık DR ile aynı kalem kodları (`0921204`, `0922103`) kullanılıyor.
 
 ---
 
@@ -56,10 +56,13 @@ artık DR ile aynı kalem kodları (`0921204`, `0922103`) kullanılıyor.
 InflationItems/Datas/09_Recreation/Zuhal_Muzik/zuhal_muzik_YYYY-MM-DD.csv
 ```
 
-Kolonlar:
+Kolonlar (yalnızca dört kolon; `category_number` her satırda `9`):
 ```csv
-product_name,price,category_number,sub_category_number,category_name
+product_name,price,category_number,sub_category_number
 ```
+
+Kategori etiketi ve COICOP adı yalnızca çalışma sırasında kalem kodunu belirlemek için kullanılır, CSV'ye yazılmaz.
+Eski dosyalardaki `coicop_code` değeri kalem koduna (`sub_category_number`) çevrilmiştir.
 
 ---
 

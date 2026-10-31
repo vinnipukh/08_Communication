@@ -9,7 +9,8 @@ curl_cffi only, no browser.
 - Each product page carries all variants (weights) as `<a data-subproduct-id data-type="6 KG" data-price data-vat
   data-not-discounted data-instock …>` and the product's `PRODUCT_DATA` JSON (name, brand/menu, category, VAT, stock).
 - T-Soft's `data-price` is without VAT. Price written = `data-price * (1 + data-vat / 100)` (checked: 2887.50 at
-  20 % = 3465.00, the price on the page; a few products have 1 % VAT). `list_price` uses `data-not-discounted`.
+  20 % = 3465.00, the price on the page; a few products have 1 % VAT). `data-not-discounted` (list price) is read
+  but not saved.
 - Products without variants use `PRODUCT_DATA.total_sale_price` (VAT included).
 - Only in-stock variants are written.
 - robots.txt (checked): everything is allowed except `/ajax.php`, `*?pg*` (pagination), `*sort*`, `*arama*`, `*stock*`,
@@ -23,13 +24,14 @@ curl_cffi only, no browser.
 | bowls (`Mama Kasesi`), supplements (oil `Yağ`, calcium powder, collagen supplement) | `0932204` |
 | the book and the silicone baking mould | dropped |
 
-`menu` is the site's sub-brand (for example `Chef's Cooked Menü`); `brand` is always `PetChef`, which is prepended to the
+`menu` is the site's sub-brand (for example `Chef's Cooked Menü`); the brand is always `PetChef`, which is prepended to the
 name when it is missing. Dog cakes (`Fresh … Köpek Pastası`, about 1,250-1,550 TL) are treated as treats.
 
 ## Columns
 
-`product_name, price, category_number, sub_category_number` first (`category_number` is `9`), then `list_price, brand,
-menu, variant, category, sku, product_url`.
+Exactly four columns: `product_name, price, category_number, sub_category_number` (`category_number` is `9`). The
+variant (weight, e.g. `6 KG`) is appended to `product_name` when the name does not already contain it. List price, brand,
+menu, category, SKU and product URL are not saved.
 
 ## Run
 

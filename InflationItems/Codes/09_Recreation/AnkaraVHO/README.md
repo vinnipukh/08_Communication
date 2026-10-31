@@ -38,8 +38,8 @@ Run time on 2026-10-31: about 4 s with `--extract text`, about 15 s with `--extr
    half). Only the one-page table ("Tablo" in the link text or file name, e.g. "A3 Tablo") is used:
    the multi-page booklet of the same period has a different layout and is not parsed.
    The newest period wins, then the newest upload folder.
-4. The chosen PDF is logged and written to the `source_url` column; `tariff_period` holds the
-   period (e.g. `2026/2`).
+4. The chosen PDF and its period (e.g. `2026/2`) are logged and printed at the end of the run; they
+   are not saved in the CSV.
 
 On 2026-10-31 this picks
 `https://www.avho.org.tr/wp-content/uploads/2026/07/20262-Asgari-Ucret-Tablosu.pdf`
@@ -73,7 +73,7 @@ Rows are found from geometry, the same way for both text sources:
 `--extract ocr` (default): every page is OCR'd. Where the page has a text layer, the text-layer
 values are written and OCR is compared row by row (same rule band): every price cell or label that
 differs is logged as a warning. A page without a text layer (scanned tariff) is written from OCR;
-then `value_source` is `ocr` and names may lack Turkish letters (OCR reads "Küçük" as "Kucuk",
+then the rows come from OCR (logged: "no text layer; using OCR rows") and names may lack Turkish letters (OCR reads "Küçük" as "Kucuk",
 "İ" as "i"), so labels are compared accent-folded.
 
 OCR accuracy on the 2026/2 table (2026-10-31): **155 of 155 price cells** and 82 of 83 row labels
@@ -84,25 +84,18 @@ output (text layer ignored) also gives 155 rows with the same prices, names with
 
 ## CSV
 
-`utf-8-sig`, one row per service and animal (a "-" cell means the service is not offered for that
-animal and is skipped). 155 rows on 2026-10-31.
+`utf-8-sig`, exactly four columns: `product_name, price, category_number, sub_category_number`.
+`category_number` is `9`, `sub_category_number` is `0945001` for every row. One row per service and animal
+(a "-" cell means the service is not offered for that animal and is skipped). 155 rows on 2026-10-31.
 
-| Column | Content |
-|---|---|
-| `product_name` | `Ankara VHO - <section> - <service> - <Kedi/Köpek>`, e.g. `Ankara VHO - MUAYENE - KLİNİKTE - Kedi` |
-| `price` | TRY, dot decimal, 2 decimals; minimum when the cell has several values |
-| `category_number` | `9` |
-| `sub_category_number` | `0945001` for every row |
-| `price_max` | maximum of the cell (equals `price` for a single value) |
-| `price_text` | the cell as published, e.g. `750 / 900 / 1.000` (weight classes) or `24.500 - 28.500` (range) |
-| `animal` | `Kedi` or `Köpek` |
-| `section`, `service` | table section and service name as published |
-| `tariff_period` | e.g. `2026/2` |
-| `kdv_included` | `1`: prices include VAT (see below) |
-| `value_source` | `text` (PDF text layer) or `ocr` |
-| `source_url` | the tariff PDF |
+- `product_name`: `Ankara VHO - <section> - <service> - <Kedi/Köpek>`, e.g.
+  `Ankara VHO - MUAYENE - KLİNİKTE - Kedi`. Section, service and animal are only in the name.
+- `price`: TRY, dot decimal, 2 decimals; the minimum when the cell has several values (weight classes
+  `750 / 900 / 1.000`, range `24.500 - 28.500`). The maximum and the cell as published are not saved.
+- Not saved (so not in the CSV): tariff period, source PDF URL, text/OCR origin of a value. The period and URL
+  are in the run log.
 
-**KDV:** prices include VAT. The one-page table does not say so, but the booklet of the same
+**KDV:** prices include VAT (not saved in the CSV). The one-page table does not say so, but the booklet of the same
 period (`20262-Ev-Hayvanlari-Asgari-Ucret-Tarifesi.pdf`) states "Tüm fiyatlara KDV dahildir" and
 heads its price column "%10 KDV DAHİL FİYAT (TL)", with the same prices (e.g. muayene 1.700).
 
@@ -117,6 +110,6 @@ heads its price column "%10 KDV DAHİL FİYAT (TL)", with the same prices (e.g. 
   the chamber fixes them.
 - 2026/1 was published only as a booklet (no one-page table). If the newest period again has no
   table, the scraper stops with an error rather than writing the older table under today's date;
-  `--allow-older` overrides that (the `tariff_period` column then shows the older period). Parsing
+  `--allow-older` overrides that (the older period then appears only in the run log, since the CSV does not save it). Parsing
   the booklet would need a separate parser.
 - Column order Kedi, Köpek is taken from the header icons and is fixed in the code (`ANIMALS`).

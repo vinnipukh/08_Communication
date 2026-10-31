@@ -275,7 +275,7 @@ All 09 scrapers now run without a browser. `curl_cffi` means Chrome TLS imperson
 | DR | `requests` | HTML (`data-gtm` JSON on cards) | upstream `category_number` column copied |
 | MACFit | `curl_cffi` (fallback `requests`) | JSON API `portal-gateway.marsathletic.com` | upstream `category_number` column copied; the club list is retried on 404 (a transient 404 stopped a full run on 2026-10-31) |
 | Zuhal Müzik | `requests` | AJAX `/urun?category=&page=` (JSON with an HTML fragment) | upstream `category_number`; parent codes `09212`/`0922` replaced by `0921204`/`0922103` |
-| Nezih | `requests`, `curl_cffi` fallback | `PRODUCT_DATA` JSON in the HTML (T-Soft) | four required columns added in front; COICOP code from the site category path |
+| Nezih | `requests`, `curl_cffi` fallback | `PRODUCT_DATA` JSON in the HTML (T-Soft) | writes the four shared columns only (its 17 store columns are no longer saved); COICOP code from the site category path |
 | **Toyzzshop** | `curl_cffi` | JSON API `core.toyzzshop.com/api/categories/<id>/products?limit=48&order=ocd&page=N` | **Playwright removed** (the site is a JS app; its HTML has no products) |
 | **Biletinial** | `curl_cffi` | Listing HTML (50 server-rendered cards) + `/List/GetMoreItems` JSON; event pages HTML | **Playwright scroll removed** |
 | **Hisar Turizm** | `curl_cffi` | `var tourFrontend = {...}` JSON in the page + `admin-ajax.php` `action=filter_tours` (POST, nonce from the page) | **Playwright fallback removed**. The static HTML never had cards, so the browser ran every day and saw only page 1 (20 of 556 umrah tours) |
@@ -309,14 +309,24 @@ mürekkep → 0974009), Boyalar → 0974004, Kağıt → 0974005 (etiket, sticke
 oyun hamuru, Kırtasiye Hobi and Puzzle → 0921204, Kalem Kutuları → 0974009, other stationery →
 0974009. Dropped as outside 09: bags and bottles, calculators, musical instruments.
 
-CSV format (all 16 scrapers, from 2026-10-31): the first four columns are
-`product_name, price, category_number, sub_category_number` in this order, and `category_number`
-is `9` without a leading zero, like this repo's 04/08 data (`4`, `8`) and upstream's shared
-`InflationItems/Codes/price_csv.py` (`str(group)`). Upstream `AGENTS.md` rule 4 only requires the
-four columns; its inflation code reads `category_number` with `zfill(2)`, so `9` and `09` both
-parse. Source-specific columns (DR/Zuhal/Milli Piyango `category_name`, MACFit club fields, Nezih
-store fields, `product_url`) follow after the four. CSVs written before this date keep `09`
-(12 sources) or the old DR/MACFit/Milli Piyango/Zuhal order with `category_number` last.
+CSV format (every 09 scraper, from 2026-10-31): exactly four columns,
+`product_name, price, category_number, sub_category_number`, and `category_number` is `9` without a
+leading zero, like this repo's 04/08 data (`4`, `8`) and upstream's shared
+`InflationItems/Codes/price_csv.py` (`str(group)`). Upstream's inflation code reads `category_number`
+with `zfill(2)`, so `9` and `09` both parse. The scrapers still compute extra per-product fields
+(brand, SKU, list price, product URL, club, tariff period, …) for deduplication and naming, but they
+are not saved; whatever identifies a product has to be in `product_name`.
+
+History (2026-10-31): all 183 existing 09 CSVs were rewritten to the same four columns. Files that
+lacked some of them were completed from what they carried: `category_number` 9 (DR, MACFit, Milli Piyango,
+Zuhal), Kitapyurdu's `book_category` and Zuhal's `coicop_code` mapped to item codes, and Nezih's 56 old
+17-column files (no codes at all) re-coded with the scraper's own `_coicop_code` from their category
+columns, which also drops the 26,353 rows (3.7 %) outside group 09, exactly as the scraper now does.
+`category_number` `09` became `9` everywhere. The original files stay in git history. Left as they are:
+Zuhal's 2,772 rows with parent codes `09212` and `0922` in the old files, and the stray
+`Nezih/beymen_enflasyon_2026-10-02.csv` (a Beymen file with its own columns, not 09 data).
+Decathlon rows are matched by name and price now (no product URL), so rows equal in all four columns
+collapse into one.
 
 ### 11.2 Do the upstream stores in other groups already collect 09?
 

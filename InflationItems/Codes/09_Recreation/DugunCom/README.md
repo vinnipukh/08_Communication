@@ -12,10 +12,10 @@ Prices for "Event hall rental for wedding, engagement, and other events" (catego
 All provinces linked there, every listing page of each. Request count per run is printed at the end of the log (`listing requests`), about 105 on 2026-10-31 (75 cities), 1.5 s pause between requests, about 3.5 minutes. Most venues (about 1,940 of 2,170 on 2026-10-31) publish no price and are skipped, so only about 18 cities yield rows (about 230 rows).
 
 ## Price types
-Per-person and package prices are never mixed. `product_name` ends with `Kişi Başı` or `Paket`, and the `price_type` column is `per_person` or `package`. Compare only within one type. `price` is the current (discounted) price; `list_price` is the struck-through price when present.
+Per-person and package prices are never mixed. `product_name` ends with `Kişi Başı` or `Paket`; compare only within one type. `price` is the current (discounted) price; the struck-through list price is read in the run but not saved.
 
 ## Output
-`InflationItems/Datas/09_Recreation/DugunCom/dugun_com_YYYY-MM-DD.csv` (`utf-8-sig`). First columns: `product_name,price,category_number,sub_category_number`; then `venue_name, city, district, price_type, list_price, price_valid_until, provider_id, source_url`. The CSV is only written if rows exist.
+`InflationItems/Datas/09_Recreation/DugunCom/dugun_com_YYYY-MM-DD.csv` (`utf-8-sig`). Exactly four columns: `product_name,price,category_number,sub_category_number` (`category_number` is `9`). `product_name` is `<venue> - <city/district> - <Kişi Başı|Paket>`. Not saved: list price, price validity date, provider id, source URL. The CSV is only written if rows exist.
 
 ## Run
 ```

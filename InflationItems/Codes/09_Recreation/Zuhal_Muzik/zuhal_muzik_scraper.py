@@ -24,7 +24,9 @@ REQUEST_DELAY = 2.0
 REQUEST_TIMEOUT = 25
 RETRY_BASE_SECONDS = 5
 CATEGORY_NUMBER = 9
-CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number", "category_name"]
+# Only the four shared columns are written. Other per-product fields are used inside the run
+# (deduplication, naming) but are not saved.
+CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number"]
 ISTANBUL_TIME = ZoneInfo("Europe/Istanbul")
 
 # Only these 24 site categories are visited. No unrelated store categories are crawled.
@@ -404,11 +406,14 @@ def main():
                         continue
 
                     cat_num = row.get("category_number") or CATEGORY_NUMBER
-                    if stored_code in COICOP_LABELS and stored_category == COICOP_LABELS[stored_code]:
+                    # The CSV has no label column any more (four shared columns only): a row with
+                    # an item code we use is kept as it is. An older CSV that does carry a label
+                    # keeps being checked against it.
+                    if stored_code in COICOP_LABELS and stored_category in ("", COICOP_LABELS[stored_code]):
                         products[key] = {
                             "product_name": name,
                             "price": price,
-                            "category_name": stored_category,
+                            "category_name": COICOP_LABELS[stored_code],
                             "sub_category_number": stored_code,
                             "category_number": cat_num,
                         }
@@ -442,7 +447,7 @@ def main():
     print("Temporary connection/server errors and HTTP 429 are retried with increasing waits.")
     print("HTTP 403 pages/categories are skipped; duplicate product names are not added.")
     print(f"Unique products loaded from the existing CSV: {len(products)}")
-    print("CSV columns: product_name, price, category_number, sub_category_number, category_name (COICOP label).\n")
+    print("CSV columns: product_name, price, category_number, sub_category_number.\n")
 
     robots = RobotFileParser()
     robots.set_url(f"{BASE_URL}/robots.txt")
@@ -468,7 +473,7 @@ def main():
     def save_products():
         temp_path = output_path.with_name(output_path.name + ".tmp")
         with temp_path.open("w", newline="", encoding="utf-8-sig") as file:
-            writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS)
+            writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS, extrasaction="ignore")
             writer.writeheader()
             writer.writerows(products.values())
         temp_path.replace(output_path)

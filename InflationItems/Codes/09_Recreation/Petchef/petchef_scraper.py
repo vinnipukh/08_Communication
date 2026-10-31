@@ -52,19 +52,9 @@ OUTPUT_DIR = (
     / "Petchef"
 )
 
-CSV_COLUMNS = [
-    "product_name",
-    "price",
-    "category_number",
-    "sub_category_number",
-    "list_price",
-    "brand",
-    "menu",
-    "variant",
-    "category",
-    "sku",
-    "product_url",
-]
+# Only the four shared columns are written. Other per-product fields are used inside the run
+# (deduplication, naming) but are not saved.
+CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number"]
 
 HEADERS = {"Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8"}
 
@@ -250,7 +240,7 @@ def write_csv(rows, date_text):
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     path = OUTPUT_DIR / f"petchef_{date_text}.csv"
     with path.open("w", newline="", encoding="utf-8-sig") as file:
-        writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS)
+        writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(rows)
     return path

@@ -22,7 +22,7 @@ curl_cffi only, no browser.
 ## Price
 
 `discountPrice` is the current selling price including VAT (it equals the JSON-LD `offers.price` on the product page);
-`sellPrice` is the list price (kept as `list_price`). Order-level campaigns (fixed amount or percentage at checkout)
+`sellPrice` is the list price (read but not saved). Order-level campaigns (fixed amount or percentage at checkout)
 are not in the listing and are ignored.
 
 ## Stock
@@ -40,14 +40,15 @@ Decided from the product's category slugs at any level of its category path:
 | any other product under Kedi, Köpek, Kuş, Balık, Kemirgen, Sürüngen (litter, toys, bowls, collars, beds, care, vitamins and supplements, aquarium equipment) | `0932204` |
 | products outside these categories | dropped |
 
-The `animal` column (kedi/kopek/kus/balik/kemirgen/surungen) lets users keep only cat and dog food. Vitamins and
+The animal (kedi/kopek/kus/balik/kemirgen/surungen) and the category path are used for the mapping only and are
+not saved, so the CSV cannot be filtered by animal except through words in `product_name`. Vitamins and
 supplements (`*-vitamin-ve-ek-besinleri`) go to 0932204.
 
 ## Columns
 
-`product_name, price, category_number, sub_category_number` first (`category_number` is `9`), then `list_price, brand,
-variant, animal, category_path, sku, barcode, product_url`. The name is product name, with the brand added if missing
-and the variant option (for example `15 Kg`) added if it is not already in the name.
+Exactly four columns: `product_name, price, category_number, sub_category_number` (`category_number` is `9`). The name
+is the product name, with the brand added if missing and the variant option (for example `15 Kg`) added if it is not
+already in the name. List price, brand, variant, animal, category path, SKU, barcode and product URL are not saved.
 
 ## Run
 
@@ -68,6 +69,6 @@ need one request per product (about 10,000), so the API (99 requests for everyth
 
 - The API key and ids are read from the homepage each run; if ikas changes the `searchProducts` input type the run
   logs the GraphQL error and stops without writing a CSV.
-- Aquarium equipment (filters, pumps) is included as 0932204 because it sits under the pet categories; filter by
-  `animal` and `category_path` if a narrower basket is needed.
-- Names such as "Kedi ve Köpek …" products sit in several categories; `animal` then reads `kedi/kopek`.
+- Aquarium equipment (filters, pumps) is included as 0932204 because it sits under the pet categories; the CSV
+  has no animal or category column, so a narrower basket has to be cut by product name or by re-reading the API.
+- Products such as "Kedi ve Köpek …" sit in several categories; the animal is not saved.

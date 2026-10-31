@@ -68,21 +68,9 @@ HEADERS = {
     "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8",
 }
 
-CSV_COLUMNS = [
-    "product_name",
-    "price",
-    "category_number",
-    "sub_category_number",
-    "price_max",
-    "price_text",
-    "animal",
-    "section",
-    "service",
-    "tariff_period",
-    "kdv_included",
-    "value_source",
-    "source_url",
-]
+# Only the four shared columns are written. Other per-product fields are used inside the run
+# (deduplication, naming) but are not saved.
+CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number"]
 
 PDF_LINK_PATTERN = re.compile(
     r'<a[^>]+href="(?P<href>[^"]*/wp-content/uploads/(?P<year>\d{4})/(?P<month>\d{2})/[^"]+\.pdf)"[^>]*>'
@@ -654,7 +642,7 @@ def save_csv(rows, date_str):
     output_file = DATA_DIR / f"ankara_vho_{date_str}.csv"
 
     with output_file.open("w", newline="", encoding="utf-8-sig") as file:
-        writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS)
+        writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(rows)
 

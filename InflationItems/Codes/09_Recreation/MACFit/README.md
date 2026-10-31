@@ -36,24 +36,18 @@ Kulüp Konseptleri:
 InflationItems/Datas/09_Recreation/MACFit/macfit_YYYY-MM-DD.csv
 ```
 
-Kolonlar:
-`product_name,price,category_number,sub_category_number,category_name,city,district,club_name,club_type,plan_name,membership_category,commitment_type,term_months,url`
+Kolonlar (yalnızca dört kolon):
+`product_name,price,category_number,sub_category_number`
 
-### Kolon Açıklamaları
-- `product_name`: Standart ürün adı (Örn: `MACFit Ankara Ankamall - CLASSIC (12 Ay Taahhütlü Aylık Üyelik)`)
-- `price`: Fiyat (TL, float)
-- `category_name`: `Payments for sports facilities (membership, rental, etc.)`
-- `sub_category_number`: `0946201`
-- `city`: Kulübün bulunduğu il (İstanbul, Ankara, İzmir, Bursa, Adana vb.)
-- `district`: Kulübün bulunduğu ilçe
-- `club_name`: Kulüp şube adı
-- `club_type`: Konsept türü (`MACFit`, `MAC/One`, `MACStudio`, `MACRaw`)
-- `plan_name`: Paket adı (`CLASSIC`, `GOLD`, `PLATINUM`, `Kayıt Bedeli`)
-- `membership_category`: Kategori (`Standard`, `Gold`, `MAC All Access`, `Enrollment`)
-- `commitment_type`: Taahhüt türü (`12 Ay Taahhütlü`, `Taahhütsüz Aylık`, `Peşin Yıllık (Aylık)`, `Peşin Yıllık (Toplam)`, `Tek Seferlik`)
-- `term_months`: Üyelik süresi ay (`12`, `1`, `0`)
-- `url`: Kulüp harita / bilgi bağlantısı
+- `product_name`: `<kulüp türü> <il> <kulüp adı> - <paket adı> (<üyelik modeli>)`; kulüp türü, il, kulüp, paket
+  (`CLASSIC`, `GOLD`, `PLATINUM`, `Kayıt Bedeli`) ve taahhüt/süre bilgisi yalnızca bu adın içindedir.
+  Örnek: `MACFit Ankara Ankamall - CLASSIC (12 Ay Taahhütlü Aylık Üyelik)`
+- `price`: Fiyat (TL)
 - `category_number`: `9`
+- `sub_category_number`: `0946201`
+
+İl, ilçe, kulüp konsepti, paket kategorisi, taahhüt türü, süre (ay) ve kulüp bağlantısı ayrı kolon olarak
+kaydedilmez.
 
 ## Çalıştırma
 

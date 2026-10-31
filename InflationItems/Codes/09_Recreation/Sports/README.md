@@ -1,7 +1,8 @@
 # Sports scrapers (TÜİK 09)
 
 Three scrapers, one CSV per store and day under `InflationItems/Datas/09_Recreation/<Store>/<store>_YYYY-MM-DD.csv`.
-Columns: `product_name, price, category_number, sub_category_number, product_url` (`category_number` is `9`).
+Columns: exactly four, `product_name, price, category_number, sub_category_number` (`category_number` is `9`);
+the product URL is not saved.
 All use `curl_cffi` with Chrome impersonation and request the homepage first (Cloudflare `__cf_bm`; plain
 `requests` gets 403). Run from the repository root:
 
@@ -12,7 +13,8 @@ uv run python -I -X utf8 InflationItems/Codes/09_Recreation/Sports/<script>.py
 ## Decathlon (`decathlon_scraper.py`)
 
 Source: category listing HTML, `?from=<offset>&size=40`, `.product-card` parsing, 10 s between pages.
-A run merges into an existing same-day CSV (key: product URL + name).
+A run merges into an existing same-day CSV (key: product name + price, since the CSV has no product URL; rows
+identical in all four columns collapse into one).
 
 | Group (`--only`) | Listing path | Code | Page cap |
 |---|---|---|---|
@@ -26,7 +28,7 @@ A run merges into an existing same-day CSV (key: product URL + name).
 | clothing | `tum-sporlar/yoga/yoga-kiyafetleri` | 0922107 | 2 |
 
 Caps are set just above each listing's size (about 85 pages, roughly 15 minutes per full run).
-Listings overlap (the same product can appear under several categories); duplicates are merged by key.
+Listings overlap (the same product can appear under several categories); duplicates are merged by key (name + price).
 The yüzme and hiking listings include children's items and some accessories (goggles, socks), and
 the hiking listing has outdoor trousers and jackets; there is no cleaner per-item filter on the site.
 

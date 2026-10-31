@@ -21,9 +21,10 @@ A deal is mapped by its own `categoryName` (not by the listing it was found in):
 Also dropped: sold-out/inactive deals, deals without a real price (`dealValue` 0 = token booking fee),
 deals located in another province or with a comma-separated departure-city list. Deals are de-duplicated by id.
 
-`price` = `dealPrice` (or voucher discounted price); `list_price` = `dealValue`. Product names are
-`Grupanya <City>: <deal title>`. Extra columns: list_price, grupanya_category, merchant, location, city,
-deal_id, product_url.
+`price` = `dealPrice` (or voucher discounted price); `dealValue` (list price) is read but not saved. Product
+names are `Grupanya <City>: <deal title>`. The CSV has exactly four columns: `product_name, price,
+category_number, sub_category_number` (`category_number` is `9`); the deal id, merchant, location, site
+category and deal URL are not saved (the deal id is only used inside the run to drop duplicate deals).
 
 ## Run
 ```
@@ -40,7 +41,7 @@ handler is the fast path. The robots.txt `*` group does not disallow the categor
 
 ## Caveats
 - Deals are time-limited campaigns; the basket changes daily and a deal's price is a promotional price,
-  so row counts and the product set vary. List price equals price for some deals (no discount).
+  so row counts and the product set vary.
 - Some deals are multi-person or multi-session bundles (title says "2 Kisi", "5 Ders"); the title is kept in
   `product_name` so the unit is visible, but prices are not normalised per unit.
 - Mapping by category name depends on the site's taxonomy; new category names are dropped silently.

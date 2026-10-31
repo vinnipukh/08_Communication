@@ -42,13 +42,9 @@ HEADERS = {
     "Accept-Language": "tr-TR,tr;q=0.9,en;q=0.8"
 }
 
-CSV_COLUMNS = [
-    "product_name",
-    "price",
-    "category_number",
-    "sub_category_number",
-    "product_url"
-]
+# Only the four shared columns are written. Other per-product fields are used inside the run
+# (deduplication, naming) but are not saved.
+CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number"]
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 
@@ -177,9 +173,11 @@ def extract_product(card, category_code):
 
 
 def product_key(product):
+    # The CSV has no product URL, so rows read back from a same-day CSV and rows scraped now
+    # are matched by name and price (rows equal in all four columns are the same row).
     return (
-        product["product_url"],
-        product["product_name"].strip().casefold()
+        product["product_name"].strip().casefold(),
+        f"{Decimal(str(product['price'])):.2f}"
     )
 
 
@@ -195,7 +193,7 @@ def load_existing_products():
     ) as file:
         reader = csv.DictReader(file)
 
-        if reader.fieldnames != CSV_COLUMNS:
+        if (reader.fieldnames or [])[:len(CSV_COLUMNS)] != CSV_COLUMNS:
             raise ValueError(
                 "Today's CSV uses an older format. "
                 "It has not been modified. "
@@ -214,7 +212,12 @@ def load_existing_products():
                 "Existing CSV contains incomplete records."
             )
 
-    return products
+    unique = {}
+
+    for product in products:
+        unique.setdefault(product_key(product), product)
+
+    return list(unique.values())
 
 
 def save_csv(products):
@@ -236,7 +239,8 @@ def save_csv(products):
         ) as file:
             writer = csv.DictWriter(
                 file,
-                fieldnames=CSV_COLUMNS
+                fieldnames=CSV_COLUMNS,
+                extrasaction="ignore"
             )
 
             writer.writeheader()
