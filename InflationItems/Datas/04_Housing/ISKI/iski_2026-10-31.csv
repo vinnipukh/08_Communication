@@ -1,0 +1,4 @@
+product_name,price,category_number,sub_category_number,province,utility,subscriber_type,tier_from_m3,tier_to_m3,water_price,wastewater_price,total,unit,vat_included,ctv_included,effective_date,source_url,collected_at
+Su İstanbul İSKİ konut 0-15 m³,65.52,4,0441101,İstanbul,İSKİ,konut,0,15,43.7,21.82,65.52,TL/m³,false,false,2026-10-05,https://iski.istanbul/abone-hizmetleri/abone-rehberi/su-birim-fiyatlari/,2026-10-31T03:15:03+00:00
+Su İstanbul İSKİ konut 16-30 m³,99.83,4,0441101,İstanbul,İSKİ,konut,16,30,66.55,33.28,99.83,TL/m³,false,false,2026-10-05,https://iski.istanbul/abone-hizmetleri/abone-rehberi/su-birim-fiyatlari/,2026-10-31T03:15:03+00:00
+Su İstanbul İSKİ konut 31+ m³,144.4,4,0441101,İstanbul,İSKİ,konut,31,,96.27,48.13,144.4,TL/m³,false,false,2026-10-05,https://iski.istanbul/abone-hizmetleri/abone-rehberi/su-birim-fiyatlari/,2026-10-31T03:15:03+00:00
