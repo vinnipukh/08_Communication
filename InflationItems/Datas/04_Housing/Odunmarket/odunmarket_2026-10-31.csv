@@ -1,0 +1,6 @@
+product_name,price,category_number,sub_category_number,handle,product_type,species,weight_kg,price_per_kg,package_price,unit,available,shipping_included,vat_included,delivery_fee,shopify_published_at,source_url,collected_at,province
+Yuvarlak Şömine Odunu (10 kg),45.9,4,0454201,yuvarlak-somine-odunu-10-kg,Şömine Odunu,,10,45.9,459,TL/kg,false,true,true,,,https://www.odunmarket.com/yuvarlak-somine-odunu,2026-10-31T06:18:43+00:00,Türkiye
+Yuvarlak Şömine Odunu (20 kg),27.25,4,0454201,yuvarlak-somine-odunu-20-kg,Şömine Odunu,,20,27.25,545,TL/kg,false,true,true,,,https://www.odunmarket.com/yuvarlak-somine-odunu,2026-10-31T06:18:43+00:00,Türkiye
+Yuvarlak Şömine Odunu (İnce (18kg)),30.28,4,0454201,yuvarlak-somine-odunu-ince-18kg,Şömine Odunu,,18,30.28,545,TL/kg,false,true,true,,,https://www.odunmarket.com/yuvarlak-somine-odunu,2026-10-31T06:18:43+00:00,Türkiye
+Yarma Şömine Odunu (10 kg),45.9,4,0454201,yarma-somine-odunu-10-kg,Şömine Odunu,,10,45.9,459,TL/kg,false,true,true,,,https://www.odunmarket.com/yarma-somine-odunu,2026-10-31T06:18:43+00:00,Türkiye
+Yarma Şömine Odunu (20 kg),27.75,4,0454201,yarma-somine-odunu-20-kg,Şömine Odunu,,20,27.75,555,TL/kg,false,true,true,,,https://www.odunmarket.com/yarma-somine-odunu,2026-10-31T06:18:43+00:00,Türkiye
