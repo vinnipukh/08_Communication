@@ -23,6 +23,7 @@ NAME="${1:-}"
 case "$NAME" in
   samsung)  TIMEOUT=20m;  CMD=("$PY" -u "$CODES/Samsung/scripts/main.py") ;;
   huawei)   TIMEOUT=10m;  CMD=("$PY" -u "$CODES/Huawei/huawei_scraper.py") ;;
+  xiaomi)   TIMEOUT=15m;  CMD=("$PY" -u "$CODES/Xiaomi/xiaomi_scraper.py") ;;
   pozitif)  TIMEOUT=15m;  CMD=("$PY" -u "$CODES/PozitifTeknoloji/pozitifTeknoloji_scraper.py") ;;
   beymen)   TIMEOUT=45m;  CMD=("$PY" -u "$CODES/Beymen/scraper.py") ;;
   dr)       TIMEOUT=20m;  CMD=("$PY" -u "$CODES/DR/dr_scraper.py") ;;
@@ -40,7 +41,7 @@ case "$NAME" in
   rec_medium) TIMEOUT=120m; CMD=("$PY" -u "$RECREATION/run_group.py" medium) ;;
   rec_shops)  TIMEOUT=240m; CMD=("$PY" -u "$RECREATION/run_group.py" shops) ;;
   rec_dr)     TIMEOUT=240m; CMD=("$PY" -u "$RECREATION/DR/dr_scraper.py") ;;
-  *) echo "usage: $0 {samsung|huawei|pozitif|beymen|dr|vatan|telecom|internet|streaming|repair|naturalgas|iski|rec_small|rec_medium|rec_shops|rec_dr}"; exit 2 ;;
+  *) echo "usage: $0 {samsung|huawei|xiaomi|pozitif|beymen|dr|vatan|telecom|internet|streaming|repair|naturalgas|iski|rec_small|rec_medium|rec_shops|rec_dr}"; exit 2 ;;
 esac
 
 cd "$ROOT" || exit 1

@@ -114,6 +114,7 @@ Bellek = USS (process'e özel bellek, Chrome alt process'leri dahil).
 | 00:30 | cleanup | - | - | - | - | - |
 | 01:00 | samsung | 1 dk | 412 | 61 MB | 20 dk | yok |
 | 01:35 | huawei | 0.5 dk | 108 | 22 MB | 10 dk | yok |
+| kuyrukta huawei'den sonra | xiaomi | ~2.5 dk (2026-11-02) | ~535 (298 ürünün varyantları) | düşük | 15 dk | yok |
 | 01:55 | pozitif | 1 dk | 1.239 | 30 MB | 15 dk | yok |
 | 02:20 | dr | 1 dk | 1.345 | ~95 MB | 20 dk | yok |
 | 02:50 | naturalgas (TÜİK 04: İGDAŞ, Başkentgaz, İzmirgaz + bağlantı bedelleri) | ~0.5 dk (sunucu, 2026-10-28) | 15 | düşük | 15 dk | yok |
@@ -158,7 +159,7 @@ aşımlarıyla yavaşladı, iş 90 dk sınırına takıldı ve sonra gelen NetGS
 geliştirici PC'sinde ölçüldü; süreyi Türk Telekom'un sitemap'teki ~490 + ~340 detay sayfası belirler
 (sıralı, 1.5-3.5 sn bekleme). Kaynak notları: `docs/site-analysis/telecom/NOTES.md`.
 
-Bu on işin, iki 04 işinin ve dört 09 işinin verisini GitHub'a sunucu push'lar (aşağıda "GitHub'a push"). `.github/workflows/scraper_<isim>.yml`
+Bu on bir işin, iki 04 işinin ve dört 09 işinin verisini GitHub'a sunucu push'lar (aşağıda "GitHub'a push"). `.github/workflows/scraper_<isim>.yml`
 iş akışlarının artık zamanlaması yok, sadece elle (`workflow_dispatch`) çalışır; `bin/run_scraper.sh` ve
 `requirements.txt` dosyalarını doğrudan kullandıkları için bu dosyalardaki bir değişiklik iki tarafı da etkiler.
 Emlakjet ve Beymen tech iş akışları ayrıdır ve kendi zamanlamalarıyla çalışmaya devam eder.
@@ -170,7 +171,7 @@ yılın Aralık fiyatlarını yazar (uyarı, hata değil).
 ## Telegram özeti
 
 `bin/daily_report.sh [tech|telecom|recreation] [YYYY-MM-DD]` günün `log.txt` satırlarını okur, her işin CSV satırlarını sayar
-ve dünküne göre %20+ düşüşü işaretler. `tech` 6 teknoloji işi + `naturalgas` + `iski`, `telecom` 4 telecom işi,
+ve dünküne göre %20+ düşüşü işaretler. `tech` 7 teknoloji işi (xiaomi dahil) + `naturalgas` + `iski`, `telecom` 4 telecom işi,
 `recreation` 4 TÜİK 09 işi (`rec_*`; telecom gibi her kaynak için satır sayısı ve düşüş uyarısı). `REPORT_DRY_RUN=1` iken
 mesajı göndermez, ekrana yazar (elle kontrol için). Sunucudaki `telegram-report-local` bloğuna bir kere şu satır eklenir
 (en kötü durumda son iş 23:47'de biter):
@@ -216,6 +217,9 @@ Kapsam her mağazada sitemap / sitenin kendi ürün sayısıyla kontrol edildi (
   (`queryMinPriceAndInv`); sadece fiyatı olanlar (satışta) yazılır. İsim kategori
   sayfalarının JSON'undan; aksesuarlar hiçbir sayfada listelenmiyor, onların adı URL'den
   üretilir ve `listed_on_site=False` olur. Garanti/test (`offer`) ürünleri hariç.
+- **Xiaomi** (2026-11-02, ~535 satır): upstream'in Selenium sürümü yerine mi.com mağaza API'si
+  (`go.buy.mi.com/tr/search/product-list` + `/v2/item/category/nav`), `curl_cffi` (Chrome TLS) ile; önce
+  `https://www.mi.com/tr/` ana sayfası açılıp cookie'leri alınır (homepage-first). Her renk/bellek varyantı bir satır.
 - **Pozitif** (507 → 1.239): kategori sayfası taraması yerine WooCommerce Store API
   (`/wp-json/wc/store/v1/products`, tüm katalog). Stokta olmayan ve outlet ürünler artık
   atılmıyor; `in_stock`, `is_outlet` sütunları var.

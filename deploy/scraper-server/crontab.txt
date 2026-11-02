@@ -2,7 +2,7 @@
 # Installed by setup.sh (it replaces only the block between the BEGIN/END markers).
 # One cron line: run_queue.sh runs cleanup, every scraper and the Telegram reports back to back
 # (order = DEFAULT_QUEUE in bin/run_queue.sh), starting at 00:30 when the target sites are quiet.
-# Measured 2026-11-01: all jobs together ~340 min, so the queue is done around 06:15.
+# Measured 2026-11-01: all jobs together ~340 min (+~3 min for xiaomi), so the queue is done around 06:20.
 # Worst case (every job hits its timeout) is ~20 h, still inside the day.
 # BEGIN inflation-scrapers
 SHELL=/bin/bash

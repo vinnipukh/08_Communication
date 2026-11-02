@@ -1,0 +1,15 @@
+name: Xiaomi Scraper
+
+on:
+  # no schedule: the cron server scrapes this daily and pushes the CSVs itself
+  # (deploy/scraper-server/bin/push_data.sh); run here by hand only
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    uses: ./.github/workflows/_communication_scraper.yml
+    with:
+      scraper: xiaomi

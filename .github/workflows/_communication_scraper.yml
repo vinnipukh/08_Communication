@@ -8,7 +8,7 @@ on:
   workflow_call:
     inputs:
       scraper:
-        description: run_scraper.sh name (samsung, huawei, pozitif, dr, beymen, vatan, telecom, internet, streaming, repair)
+        description: run_scraper.sh name (samsung, huawei, xiaomi, pozitif, dr, beymen, vatan, telecom, internet, streaming, repair)
         required: true
         type: string
 

@@ -33,6 +33,7 @@ status() { echo "$(date '+%F %T') [report] $*" >> "$STATUS_LOG"; }
 TECH=(
   samsung:08_Communication/Samsung/samsung
   huawei:08_Communication/Huawei/huawei
+  xiaomi:08_Communication/Xiaomi/xiaomi_urunler
   pozitif:08_Communication/PozitifTeknoloji/pozitifTeknoloji
   dr:08_Communication/DR/dr
   beymen:08_Communication/Beymen/beymen

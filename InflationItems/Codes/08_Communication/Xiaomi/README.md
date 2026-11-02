@@ -47,7 +47,8 @@ Bilinen fark: listeleme sayfası "Tüm Ürünler (302)" diyor, API sayfaları 29
 python InflationItems/Codes/08_Communication/Xiaomi/xiaomi_scraper.py
 ```
 
-Henüz zamanlanmış değil (GitHub Actions / sunucu cron yok).
+Sunucuda her gün 00:30 kuyruğuyla çalışır (`bin/run_scraper.sh xiaomi`, kuyrukta huawei'den sonra, 15 dk timeout);
+CSV'yi sunucu GitHub'a push'lar. GitHub Actions'ta `scraper_xiaomi.yml` sadece elle çalıştırılır.
 
 ## Çıktı
 

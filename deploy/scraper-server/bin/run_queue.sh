@@ -19,7 +19,7 @@ CLEANER="${CLEANER:-$ROOT/bin/cleanup.sh}"
 # Same order as the old cron table; a report follows the jobs it summarises.
 DEFAULT_QUEUE=(
   cleanup
-  samsung huawei pozitif dr naturalgas iski beymen vatan
+  samsung huawei xiaomi pozitif dr naturalgas iski beymen vatan
   report:tech
   telecom internet streaming repair
   report:telecom
