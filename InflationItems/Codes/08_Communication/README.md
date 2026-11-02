@@ -35,7 +35,7 @@ bunlardan sonra gelir:
 | `0` | 08 sitesinde ama 08 sepetinde değil |
 
 Kodlar ve sınıflandırma `tuik08.py` içinde. Samsung ve Huawei sitenin kendi kategorisinden birebir
-eşlenir. Beymen, D&R, Pozitif ve Vatan için `tuik08.classify(ürün adı, site kategorisi)`
+eşlenir; Xiaomi de sitenin yaprak kategorisinden (`Xiaomi/README.md`). Beymen, D&R, Pozitif ve Vatan için `tuik08.classify(ürün adı, site kategorisi)`
 anahtar kelime kurallarını kullanır. Kurallar 2026-10-18 verisinde örneklenerek kontrol edildi ve
 ürün adına dayandığı için birkaç yüz üründe hata payı var. `python tuik08.py` kural sırasını kontrol eder.
 2026-10-18'de eski dosyalar da bu düzene çevrildi (çevrilmeden önceki hali: `export/datas_08_before_tuik_columns_2026-10-18.tar.gz`, gitignore'da).
@@ -68,6 +68,7 @@ Scraper'lar listede o kalemdeki ürün sayısına göre büyükten küçüğe s�
 | DR | 3 | — | 89 | ~480 | — | 30 | ~370 | ~430 | ~1.400 |
 | Samsung | 61 | 22 | 32 | 16 | 52 | 10 | ~100 | 92 | ~390 |
 | Huawei | 12 | 15 | 9 | 13 | — | 27 | 40 | — | 116 |
+| Xiaomi (2026-11-02, varyant satırı) | 179 | 28 | 39 | 63 | 8 | 37 | 57 | 124 | 535 |
 
 Nasıl sayıldı:
 

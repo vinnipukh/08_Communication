@@ -855,3 +855,14 @@ Decathlon sports clothing (0922107) were added. İVHO (0945001, İstanbul chambe
 was added with a TLS workaround: the server omits its Sectigo intermediate certificate, so the scraper fetches the
 intermediate from the certificate's CA-issuers URL, verifies its signature against a `certifi` root with
 `cryptography`, and trusts the resulting bundle for ivho.org.tr only; certificate verification stays on.
+
+## 3.18 Xiaomi scraper imported and moved to the store API (2026-11-02)
+
+The Xiaomi scraper came from upstream (`Codes/08_Communication/Xiomi/xiaomi_scraper.py`): Selenium, headless
+Chrome with a machine-specific chromedriver path, scrolling five category pages and regex-parsing "TL" strings
+out of the DOM. The product-list page turned out to read everything from the store's own JSON:
+`go.buy.mi.com/tr/search/product-list` (page size capped at 20, `page_index` from 0, optional `category_tag`)
+and `go.buy.mi.com/tr/v2/item/category/nav` (category tree). A `curl_cffi` Chrome session that opens the
+homepage first (cookies `xm_geo`, `xm_user_bucket`) gets both with HTTP 200; no browser and no anti-bot cookie
+are needed. One full run: ~120 requests, ~2.5 min, 298 products / 535 variant rows with numeric prices,
+TÜİK codes from the leaf category. Details: `InflationItems/Codes/08_Communication/Xiaomi/README.md`.
