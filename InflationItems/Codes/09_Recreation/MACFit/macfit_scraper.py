@@ -30,6 +30,7 @@ import argparse
 import csv
 import logging
 import os
+import random
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -88,7 +89,7 @@ def find_project_root() -> Path:
     return current.parents[3]
 
 
-RETRY_STATUSES = (429, 500, 502, 503, 504)
+RETRY_STATUSES = (429, 500, 502, 503, 504, 520)
 
 
 def request_get_json(
@@ -132,7 +133,7 @@ def request_get_json(
 
 
 def request_post_json(url: str, payload: Dict[str, Any], timeout: int = 15, retries: int = 3) -> Optional[Dict[str, Any]]:
-    """Execute POST request with retry and JSON response parsing."""
+    """Execute POST request with retries for transient gateway failures."""
     for attempt in range(1, retries + 1):
         try:
             if curl_requests is not None:
@@ -153,13 +154,27 @@ def request_post_json(url: str, payload: Dict[str, Any], timeout: int = 15, retr
 
             if resp.status_code == 200:
                 return resp.json()
-            elif resp.status_code in (429, 500, 502, 503, 504):
-                wait_sec = attempt * 2
-                logger.warning("POST %s returned HTTP %d, retrying in %ds...", url, resp.status_code, wait_sec)
+            if resp.status_code == 404 and attempt < retries:
+                wait_sec = random.uniform(3, 4)
+                logger.warning(
+                    "POST %s returned HTTP 404 for club %s, retry %d/%d in %.1fs...",
+                    url, payload.get("clubId"), attempt, retries - 1, wait_sec,
+                )
                 time.sleep(wait_sec)
-            else:
-                logger.debug("POST %s returned HTTP %d for payload %s", url, resp.status_code, payload)
-                return None
+                continue
+            if resp.status_code in RETRY_STATUSES and attempt < retries:
+                wait_sec = attempt * 2
+                logger.warning(
+                    "POST %s returned HTTP %d for club %s, retrying in %ds...",
+                    url, resp.status_code, payload.get("clubId"), wait_sec,
+                )
+                time.sleep(wait_sec)
+                continue
+            logger.warning(
+                "POST %s failed with HTTP %d for club %s on attempt %d/%d",
+                url, resp.status_code, payload.get("clubId"), attempt, retries,
+            )
+            return None
         except Exception as exc:
             if attempt == retries:
                 logger.error("POST %s failed after %d attempts: %s", url, retries, exc)
@@ -213,6 +228,8 @@ def fetch_plans_for_club(club: Dict[str, Any]) -> List[Dict[str, Any]]:
         "channel": "Portal",
     }
     resp1 = request_post_json(PLAN_RULES_ENDPOINT, p_committed)
+    if resp1 is None:
+        raise RuntimeError(f"12-month commitment plan request failed for club {cid}")
     if resp1 and resp1.get("isValid") and resp1.get("data"):
         for grp in resp1["data"].get("paymentPlans") or []:
             for it in grp.get("items") or []:
@@ -274,6 +291,8 @@ def fetch_plans_for_club(club: Dict[str, Any]) -> List[Dict[str, Any]]:
         "channel": "Portal",
     }
     resp2 = request_post_json(PLAN_RULES_ENDPOINT, p_flex_upfront)
+    if resp2 is None:
+        raise RuntimeError(f"Flexible/upfront plan request failed for club {cid}")
     if resp2 and resp2.get("isValid") and resp2.get("data"):
         for grp in resp2["data"].get("paymentPlans") or []:
             for it in grp.get("items") or []:
@@ -402,6 +421,7 @@ def scrape_macfit(
 
     all_items: List[Dict[str, Any]] = []
     completed_count = 0
+    failed_clubs: List[str] = []
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         future_to_club = {
@@ -421,6 +441,13 @@ def scrape_macfit(
                     logger.info("Progress: %d/%d clubs processed (%d items collected)", completed_count, len(clubs_to_scrape), len(all_items))
             except Exception as exc:
                 logger.error("Error scraping club %s: %s", club_title, exc)
+                failed_clubs.append(club_title)
+
+    if failed_clubs:
+        raise RuntimeError(
+            f"{len(failed_clubs)} of {len(clubs_to_scrape)} clubs failed plan requests; "
+            f"refusing to write an incomplete CSV at {output_path}."
+        )
 
     # Deduplicate records by unique product_name
     seen_names: set = set()

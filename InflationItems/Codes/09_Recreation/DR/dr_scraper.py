@@ -54,8 +54,8 @@ CATEGORIES = [
     ("Hobi & Oyuncak", f"{BASE_URL}/kategori/hobi-oyuncak", None),
     ("Spor, Outdoor", f"{BASE_URL}/kategori/Spor-Outdoor", None),
     ("Oyun & Konsol", f"{BASE_URL}/kategori/oyun-konsol", None),
-    # Kitaplar: son alan varsayılan kod; çocuk / test / ders kitabı book_code() ile ayrılır
-    ("Kitap", f"{BASE_URL}/kategori/Kitap/Ders-Sinav-Kitaplari/grupno=10000000", "0971902"),
+    # Kitap kökü; kitap alt kategorileri aşağıda bir seviye derinliğe kadar taranır.
+    ("Kitap", f"{BASE_URL}/kategori/kitap", "0971902"),
 ]
 
 HEADERS = {
@@ -197,13 +197,13 @@ def parse_price(text: str | None) -> float | None:
         return None
 
 
-def fetch_html(session: requests.Session, url: str) -> str:
+def fetch_html(session: requests.Session, url: str) -> requests.Response:
     last_error: Exception | None = None
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             r = session.get(url, timeout=REQUEST_TIMEOUT)
             r.raise_for_status()
-            return r.text
+            return r
         except requests.RequestException as exc:
             last_error = exc
             status = getattr(getattr(exc, "response", None), "status_code", None)
@@ -365,7 +365,9 @@ def sub_links(soup: BeautifulSoup, current_url: str) -> list[str]:
 
 def scrape_category(session: requests.Session, name: str, url: str, book: bool = False,
                     depth: int = 0, max_pages: int = MAX_PAGES) -> list[dict[str, Any]]:
-    first = BeautifulSoup(fetch_html(session, url), "lxml")
+    first_response = fetch_html(session, url)
+    url = first_response.url
+    first = BeautifulSoup(first_response.text, "lxml")
     pages = min(total_pages(first), max_pages)
 
     if pages == 0:
@@ -398,7 +400,8 @@ def scrape_category(session: requests.Session, name: str, url: str, book: bool =
     for n in range(2, pages + 1):
         time.sleep(PAGE_DELAY)
         try:
-            got = parse_page(BeautifulSoup(fetch_html(session, page_url(url, n)), "lxml"))
+            response = fetch_html(session, page_url(url, n))
+            got = parse_page(BeautifulSoup(response.text, "lxml"))
         except RuntimeError as exc:
             log.error("%s sayfa %d atlandı: %s", name, n, exc)
             continue

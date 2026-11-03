@@ -267,13 +267,13 @@ run and its CSV output, not by these probes.
 All 09 scrapers now run without a browser. `curl_cffi` means Chrome TLS impersonation
 (`impersonate="chrome"`) with the homepage requested first.
 
-| Scraper | HTTP client | Data source | Change on 2026-10-31 |
+| Scraper | HTTP client | Data source | Change notes |
 |---|---|---|---|
 | Avansas, Petlebi, Jollytur | `requests` | Server HTML | none |
 | Kitapyurdu | `requests` | Server HTML `index.php?route=product/list` | an empty page after page 1 now ends the category (it was retried 3× per page up to page 20); history CSVs moved out of the nested `Kitapyurdu/Kitapyurdu/` folder |
 | Diyanet | `requests` | Brochure PDF + TCMB XML | **OCR added** (see below) |
-| DR | `requests` | HTML (`data-gtm` JSON on cards) | upstream `category_number` column copied |
-| MACFit | `curl_cffi` (fallback `requests`) | JSON API `portal-gateway.marsathletic.com` | upstream `category_number` column copied; the club list is retried on 404 (a transient 404 stopped a full run on 2026-10-31) |
+| DR | `requests` | HTML (`data-gtm` JSON on cards) | upstream `category_number` column copied; books use `/kategori/kitap`; pagination follows the final redirect URL (2026-11-03) |
+| MACFit | `curl_cffi` (fallback `requests`) | JSON API `portal-gateway.marsathletic.com` | club-list GET retries 404; plan POST retries 404 twice; failed plan requests abort before writing partial CSVs (2026-11-03) |
 | Zuhal Müzik | `requests` | AJAX `/urun?category=&page=` (JSON with an HTML fragment) | upstream `category_number`; parent codes `09212`/`0922` replaced by `0921204`/`0922103` |
 | Nezih | `requests`, `curl_cffi` fallback | `PRODUCT_DATA` JSON in the HTML (T-Soft) | writes the four shared columns only (its 17 store columns are no longer saved); COICOP code from the site category path |
 | **Toyzzshop** | `curl_cffi` | JSON API `core.toyzzshop.com/api/categories/<id>/products?limit=48&order=ocd&page=N` | **Playwright removed** (the site is a JS app; its HTML has no products) |

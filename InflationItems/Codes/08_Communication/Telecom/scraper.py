@@ -122,8 +122,14 @@ class Fetcher:
         self.get(home)
 
     def get(self, url, min_len=5000):
-        for attempt in range(4):
-            if self.n:
+        attempt = 0
+        not_found_retries = 0
+        retry_wait = None
+        while attempt < 4:
+            if retry_wait is not None:
+                time.sleep(retry_wait)
+                retry_wait = None
+            elif self.n:
                 time.sleep(random.uniform(1.5, 3.5))
             self.n += 1
             try:
@@ -131,14 +137,24 @@ class Fetcher:
             except Exception as e:  # network error -> retry
                 log.warning("GET %s failed: %s", url, e)
                 time.sleep(10 * 2 ** attempt)
+                attempt += 1
+                not_found_retries = 0
                 continue
+            if r.status_code == 404:
+                if not_found_retries >= 2:
+                    return None
+                not_found_retries += 1
+                retry_wait = random.uniform(3, 4)
+                log.warning("GET %s -> 404, retry %d/2 in %.1fs",
+                            url, not_found_retries, retry_wait)
+                continue
+            not_found_retries = 0
             if r.status_code == 429 or r.status_code >= 500:
                 wait = int(r.headers.get("Retry-After") or 10 * 2 ** attempt)
                 log.warning("GET %s -> %s, retry in %ss", url, r.status_code, wait)
                 time.sleep(min(wait, 300))
+                attempt += 1
                 continue
-            if r.status_code == 404:
-                return None
             body = r.text
             if r.status_code == 403 or len(body) < min_len or re.search(
                     r"cf-chl-|px-captcha|_Incapsula_Resource|<title>Access Denied", body[:20000], re.I):

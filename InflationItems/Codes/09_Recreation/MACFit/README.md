@@ -22,6 +22,7 @@ Her kulüp için Mars Athletic gateway üzerinden aşağıdaki paketler çekilir
 3. **Peşin Yıllık Üyelik (Aylık Karşılığı):** 12 aylık peşin üyelik paketinin aylık birim maliyeti.
 4. **Peşin Yıllık Üyelik (Toplam Bedel):** 12 aylık peşin üyelik için tek seferde ödenen yıllık toplam tutar.
 5. **Kayıt Bedeli (Giriş Ücreti):** İlk üyelik sırasında kulüp bazında uygulanan tek seferlik katılım/kayıt bedeli (`enrolmentFee`).
+Plan API'sindeki 404 yanıtları iki kez, her denemede 3–4 saniye beklenerek yeniden denenir. Bir kulübün plan isteği retry'lerden sonra hâlâ başarısızsa, eksik kapsamlı CSV yazılmaz ve scraper hata verir.
 
 Kulüp Konseptleri:
 - `MACFit`: Standart kulüpler (Classic, Gold, Platinum paketleri)

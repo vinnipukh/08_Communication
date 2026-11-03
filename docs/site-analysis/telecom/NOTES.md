@@ -8,8 +8,9 @@ and prepaid tariffs **and** add-on packages. Where a page shows both a commitmen
 and a no-commitment price, both are stored (`price`, `list_price`).
 
 All four sites answer a `curl_cffi` `chrome124` client with HTTP 200 and full content; no
-browser, no cookies, no challenge seen. Homepage is fetched first per operator, requests are
-serial with 1.5–3.5 s jitter.
+browser, no cookies, no challenge seen. Homepage is fetched first per operator; requests are
+serial with 1.5–3.5 s jitter. Consecutive HTTP 404 responses are retried twice, with a 3–4 s
+random wait between attempts; after the third 404, existing caller handling applies.
 
 ## G0 — robots.txt (fetched 2026-10-08)
 

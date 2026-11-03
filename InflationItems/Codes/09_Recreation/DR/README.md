@@ -13,7 +13,7 @@ Scraper, D&R üzerindeki 5 ana kategoriyi tarar:
 2. **Hobi & Oyuncak** (`/kategori/hobi-oyuncak`)
 3. **Spor, Outdoor** (`/kategori/Spor-Outdoor`)
 4. **Oyun & Konsol** (`/kategori/oyun-konsol`)
-5. **Kitap** (`/kategori/Kitap/Ders-Sinav-Kitaplari/grupno=10000000`)
+5. **Kitap** (`/kategori/kitap`; kitap alt kategorileri bir seviye derinliğe kadar taranır)
 
 Toplanan ürünler kural tabanlı NLP ve kategori yolu eşlemesiyle aşağıdaki 7 haneli TÜİK COICOP 2018 / 2026 kodlarına atanır:
 
@@ -54,6 +54,7 @@ Toplanan ürünler kural tabanlı NLP ve kategori yolu eşlemesiyle aşağıdaki
 1. **Periyodik ve Atomik Kayıt:** Her kategori tamamlandığında veriler `.csv.part` dosyasına yazılıp atomik olarak hedef CSV'ye taşınır. Tarama yarıda kesilse bile toplanan tüm kategoriler korunur.
 2. **Kaldığı Yerden Devam Edebilme:** Hedef günün CSV dosyası mevcutsa, önceden toplanan ürünler belleğe alınır ve mükerrer kayıt oluşturulmadan eksik kategoriler tamamlanır.
 3. **Paralel Çalışma:** Kategori bazında `ThreadPoolExecutor` desteği vardır.
+4. **Canonical sayfalama:** Sayfa istekleri ilk yanıtın son URL'sine göre oluşturulur; D&R canonical yönlendirmelerinde `Page=N` parametresi korunur.
 
 ---
 
