@@ -1,7 +1,7 @@
 """D&R scraper for TÜİK group 09 (stationery, toys, hobby, sport, games, books).
 
 Output: InflationItems/Datas/09_Recreation/DR/dr_YYYY-MM-DD.csv
-Columns: product_name, price, category_number, sub_category_number
+Columns: product_name, price, category_number, sub_category_number, product_id (D&R source ID)
 """
 
 from __future__ import annotations
@@ -12,13 +12,14 @@ import json
 import logging
 import os
 import re
+import sqlite3
 import sys
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 import requests
@@ -26,9 +27,8 @@ from bs4 import BeautifulSoup
 
 CATEGORY_NUMBER = 9
 BASE_URL = "https://www.dr.com.tr"
-# Only the four shared columns are written. Other per-product fields are used inside the run
-# (deduplication, naming) but are not saved.
-CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number"]
+# The shared four columns stay first; D&R's stable product ID is the source-specific field.
+CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number", "product_id"]
 
 # TÜİK 2026 CPI (COICOP 2018) kod -> ad eşlemesi (belgedeki İngilizce adlar)
 CATEGORY_NAMES = {
@@ -75,12 +75,14 @@ RETRY_BACKOFF = 2.0
 PAGE_DELAY = 0.5
 MAX_PAGES = 5000
 MAX_SUBLINKS = 40
+RETRY_STATUSES = (404, 429, 500, 502, 503, 504, 520)
 
 _HERE = Path(__file__).resolve()
 if len(_HERE.parents) > 4 and _HERE.parents[2].name == "Codes":
     OUT_DIR = _HERE.parents[4] / "InflationItems" / "Datas" / "09_Recreation" / "DR"
 else:
     OUT_DIR = _HERE.parent / "dr_output"
+CHECKPOINT_DIR = _HERE.parent / "checkpoints"
 
 log = logging.getLogger("dr09")
 SEEN_IDS: set[str] = set()
@@ -207,7 +209,7 @@ def fetch_html(session: requests.Session, url: str) -> requests.Response:
         except requests.RequestException as exc:
             last_error = exc
             status = getattr(getattr(exc, "response", None), "status_code", None)
-            if attempt == MAX_RETRIES or (status is not None and 400 <= status < 500 and status != 429):
+            if attempt == MAX_RETRIES or (status is not None and status not in RETRY_STATUSES):
                 break
             wait = RETRY_BACKOFF * attempt
             log.warning("%s deneme %d/%d başarısız: %s (%.0fs sonra tekrar)", url, attempt, MAX_RETRIES, exc, wait)
@@ -343,6 +345,29 @@ def parse_page(soup: BeautifulSoup) -> list[dict[str, Any]]:
     parsed = (parse_card(card) for card in soup.select(".prd.js-prd-item"))
     return [p for p in parsed if p is not None]
 
+def parse_listing_page(
+    soup: BeautifulSoup, name: str, page: int, pages: int
+) -> list[dict[str, Any]]:
+    products = parse_page(soup)
+    if products:
+        return products
+
+    cards = soup.select(".prd.js-prd-item")
+    unavailable = {"no", "false", "0", "yok", "out of stock"}
+    if not cards or any(
+        norm_space(str(parse_gtm(card).get("item_stock", ""))).lower() not in unavailable
+        for card in cards
+    ):
+        raise RuntimeError(f"{name} page {page}/{pages} had no parseable products")
+
+    log.info(
+        "%s sayfa %d/%d yalnızca stokta olmayan fiyatlanmamış kartlar içeriyor",
+        name,
+        page,
+        pages,
+    )
+    return []
+
 
 def sub_links(soup: BeautifulSoup, current_url: str) -> list[str]:
     """Vitrin sayfasındaki alt kategori bağlantıları."""
@@ -363,53 +388,95 @@ def sub_links(soup: BeautifulSoup, current_url: str) -> list[str]:
     return found[:MAX_SUBLINKS]
 
 
-def scrape_category(session: requests.Session, name: str, url: str, book: bool = False,
-                    depth: int = 0, max_pages: int = MAX_PAGES) -> list[dict[str, Any]]:
+def scrape_category(
+    session: requests.Session,
+    name: str,
+    url: str,
+    book: bool,
+    page_handler: Callable[[str, str, int, list[dict[str, Any]]], None],
+    completed_pages: set[tuple[str, int]],
+    progress_lock: threading.Lock,
+    stop_event: threading.Event,
+    depth: int = 0,
+    max_pages: int = MAX_PAGES,
+) -> None:
+    if stop_event.is_set():
+        return
+
     first_response = fetch_html(session, url)
     url = first_response.url
     first = BeautifulSoup(first_response.text, "lxml")
     pages = min(total_pages(first), max_pages)
 
     if pages == 0:
-        # vitrin sayfası: alt kategorilere in (en fazla bir seviye)
+        with progress_lock:
+            has_completed_pages = any(scope_url == url for scope_url, _ in completed_pages)
+        if has_completed_pages:
+            raise RuntimeError(f"{name}: checkpointed listing no longer reports products")
         if depth >= 1:
-            return []
-        out: list[dict[str, Any]] = []
+            return
         for link in sub_links(first, url):
+            if stop_event.is_set():
+                return
             slug = link.rstrip("/").rsplit("/", 1)[-1].lower()
             if book and slug in BOOK_SKIP_SLUGS:
                 continue
             time.sleep(PAGE_DELAY)
-            try:
-                out.extend(scrape_category(session, f"{name} > {slug[:40]}", link, book, depth + 1, max_pages=max_pages))
-            except Exception as exc:
-                log.error("%s hata verdi: %s", link, exc)
-        return out
+            scrape_category(
+                session,
+                f"{name} > {slug[:40]}",
+                link,
+                book,
+                page_handler,
+                completed_pages,
+                progress_lock,
+                stop_event,
+                depth + 1,
+                max_pages,
+            )
+        return
 
-    products = parse_page(first)
-    log.info("%s sayfa 1/%d -> %d ürün", name, pages, len(products))
+    page_one = (url, 1)
+    with progress_lock:
+        page_one_completed = page_one in completed_pages
+    if page_one_completed:
+        products = []
+    else:
+        products = parse_listing_page(first, name, 1, pages)
     if book and products:
         with SEEN_LOCK:
-            # kitap dışı ya da ilk sayfası tamamen daha önce alınmış liste atlanır
-            if all(nonbook_root(p["path"]) for p in products) or all(p["product_id"] in SEEN_IDS for p in products):
-                log.info("  liste atlandı (kitap dışı veya çakışan)")
-                return []
-    with SEEN_LOCK:
-        SEEN_IDS.update(p["product_id"] for p in products)
+            duplicate_listing = not page_one_completed and all(
+                p["product_id"] in SEEN_IDS for p in products
+            )
+            nonbook_listing = all(nonbook_root(p["path"]) for p in products)
+        if duplicate_listing or nonbook_listing:
+            log.info("  %s: liste atlandı (kitap dışı veya çakışan)", name)
+            return
 
-    for n in range(2, pages + 1):
-        time.sleep(PAGE_DELAY)
-        try:
-            response = fetch_html(session, page_url(url, n))
-            got = parse_page(BeautifulSoup(response.text, "lxml"))
-        except RuntimeError as exc:
-            log.error("%s sayfa %d atlandı: %s", name, n, exc)
-            continue
-        log.info("%s sayfa %d/%d -> %d ürün", name, n, pages, len(got))
-        products.extend(got)
+    if not page_one_completed:
         with SEEN_LOCK:
-            SEEN_IDS.update(p["product_id"] for p in got)
-    return products
+            SEEN_IDS.update(p["product_id"] for p in products)
+        page_handler(name, url, 1, products)
+        log.info("%s sayfa 1/%d -> %d ürün", name, pages, len(products))
+
+    for number in range(2, pages + 1):
+        key = (url, number)
+        with progress_lock:
+            already_completed = key in completed_pages
+        if already_completed:
+            continue
+        if stop_event.is_set():
+            return
+        time.sleep(PAGE_DELAY)
+        if stop_event.is_set():
+            return
+        response = fetch_html(session, page_url(url, number))
+        page_soup = BeautifulSoup(response.text, "lxml")
+        products = parse_listing_page(page_soup, name, number, pages)
+        with SEEN_LOCK:
+            SEEN_IDS.update(p["product_id"] for p in products)
+        page_handler(name, url, number, products)
+        log.info("%s sayfa %d/%d -> %d ürün", name, number, pages, len(products))
 
 
 def write_csv(rows: list[dict[str, Any]], out: Path) -> None:
@@ -453,6 +520,7 @@ def process_product(
 
     return {
         "product_name": p["product_name"],
+        "product_id": pid,
         "price": p["price"],
         "category_name": CATEGORY_NAMES.get(code, ""),
         "sub_category_number": code,
@@ -478,12 +546,16 @@ def load_existing_csv(out_path: Path) -> tuple[list[dict[str, Any]], set[str], s
                 code = (r.get("sub_category_number") or "").strip()
                 cat_name = (r.get("category_name") or "").strip()
                 cat_num = r.get("category_number") or CATEGORY_NUMBER
+                product_id = (r.get("product_id") or "").strip()
+                if product_id:
+                    seen_ids.add(product_id)
                 if name and price > 0:
                     key = (norm(name), price)
                     if key not in seen_name_price:
                         seen_name_price.add(key)
                         rows.append({
                             "product_name": name,
+                            "product_id": product_id,
                             "price": price,
                             "category_name": cat_name,
                             "sub_category_number": code,
@@ -494,6 +566,161 @@ def load_existing_csv(out_path: Path) -> tuple[list[dict[str, Any]], set[str], s
         log.warning("Önceki CSV okunamadı: %s", exc)
     return rows, seen_ids, seen_name_price
 
+class CrawlCheckpoint:
+    """SQLite journal for completed product pages; one page and its rows commit together."""
+
+    def __init__(self, path: Path, config: dict[str, Any], seed_rows: list[dict[str, Any]], fresh: bool):
+        self.path = path
+        self.lock = threading.Lock()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if fresh:
+            for suffix in ("", "-journal", "-wal", "-shm"):
+                Path(f"{path}{suffix}").unlink(missing_ok=True)
+
+        self.connection: sqlite3.Connection | None = sqlite3.connect(
+            path, timeout=30, check_same_thread=False
+        )
+        self.connection.execute("PRAGMA synchronous=FULL")
+        self.connection.executescript(
+            """
+            CREATE TABLE IF NOT EXISTS metadata (
+                key TEXT PRIMARY KEY,
+                value TEXT NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS products (
+                normalized_name TEXT NOT NULL,
+                price REAL NOT NULL,
+                product_name TEXT NOT NULL,
+                product_id TEXT NOT NULL,
+                category_number INTEGER NOT NULL,
+                sub_category_number TEXT NOT NULL,
+                PRIMARY KEY (normalized_name, price)
+            );
+            CREATE TABLE IF NOT EXISTS seen_ids (
+                product_id TEXT PRIMARY KEY
+            );
+            CREATE TABLE IF NOT EXISTS seen_name_prices (
+                normalized_name TEXT NOT NULL,
+                price REAL NOT NULL,
+                PRIMARY KEY (normalized_name, price)
+            );
+            CREATE TABLE IF NOT EXISTS completed_pages (
+                url TEXT NOT NULL,
+                page INTEGER NOT NULL,
+                PRIMARY KEY (url, page)
+            );
+            """
+        )
+
+        config_json = json.dumps(config, ensure_ascii=False, sort_keys=True)
+        saved_config = self.connection.execute(
+            "SELECT value FROM metadata WHERE key = 'config'"
+        ).fetchone()
+        if saved_config and saved_config[0] != config_json:
+            self.close()
+            raise RuntimeError(
+                f"Checkpoint options differ from this run: {path}. "
+                "Use --fresh to discard this checkpoint."
+            )
+        if saved_config is None:
+            with self.connection:
+                self.connection.execute(
+                    "INSERT INTO metadata (key, value) VALUES ('config', ?)",
+                    (config_json,),
+                )
+                self._insert_rows(seed_rows)
+                self.connection.executemany(
+                    "INSERT OR IGNORE INTO seen_ids VALUES (?)",
+                    ((str(row["product_id"]),) for row in seed_rows if row.get("product_id")),
+                )
+                self.connection.executemany(
+                    "INSERT OR IGNORE INTO seen_name_prices VALUES (?, ?)",
+                    ((norm(row["product_name"]), float(row["price"])) for row in seed_rows),
+                )
+
+    def _insert_rows(self, rows: list[dict[str, Any]]) -> None:
+        assert self.connection is not None
+        self.connection.executemany(
+            """
+            INSERT OR IGNORE INTO products
+                (normalized_name, price, product_name, product_id, category_number, sub_category_number)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (
+                (
+                    norm(row["product_name"]),
+                    float(row["price"]),
+                    row["product_name"],
+                    str(row.get("product_id", "")),
+                    int(row["category_number"]),
+                    str(row["sub_category_number"]),
+                )
+                for row in rows
+            ),
+        )
+
+    def load(self) -> tuple[
+        list[dict[str, Any]], set[str], set[tuple[str, float]], set[tuple[str, int]]
+    ]:
+        assert self.connection is not None
+        rows = [
+            {
+                "product_name": name,
+                "product_id": product_id,
+                "price": price,
+                "category_number": category,
+                "sub_category_number": subcategory,
+            }
+            for name, product_id, price, category, subcategory in self.connection.execute(
+                """
+                SELECT product_name, product_id, price, category_number, sub_category_number
+                FROM products ORDER BY rowid
+                """
+            )
+        ]
+        seen_ids = {
+            row[0] for row in self.connection.execute("SELECT product_id FROM seen_ids")
+        }
+        seen_name_prices = {
+            (row[0], row[1])
+            for row in self.connection.execute(
+                "SELECT normalized_name, price FROM seen_name_prices"
+            )
+        }
+        completed_pages = {
+            (row[0], row[1])
+            for row in self.connection.execute("SELECT url, page FROM completed_pages")
+        }
+        return rows, seen_ids, seen_name_prices, completed_pages
+
+    def save_page(
+        self,
+        url: str,
+        page: int,
+        product_ids: list[str],
+        rows: list[dict[str, Any]],
+        seen_name_prices: list[tuple[str, float]],
+    ) -> None:
+        assert self.connection is not None
+        with self.lock, self.connection:
+            self._insert_rows(rows)
+            self.connection.executemany(
+                "INSERT OR IGNORE INTO seen_ids VALUES (?)",
+                ((product_id,) for product_id in product_ids),
+            )
+            self.connection.executemany(
+                "INSERT OR IGNORE INTO seen_name_prices VALUES (?, ?)",
+                seen_name_prices,
+            )
+            self.connection.execute(
+                "INSERT OR IGNORE INTO completed_pages VALUES (?, ?)", (url, page)
+            )
+
+    def close(self) -> None:
+        if self.connection is not None:
+            self.connection.close()
+            self.connection = None
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="D&R scraper for TÜİK group 09")
@@ -502,64 +729,162 @@ def main() -> None:
     parser.add_argument("--page-limit", type=int, default=MAX_PAGES, help="Max pages per category/subcategory")
     parser.add_argument("--only", type=str, default=None, help="Filter categories by keyword (e.g. 'Kitap', 'Kırtasiye')")
     parser.add_argument("--workers", type=int, default=1, help="Number of concurrent category workers (default 1)")
+    parser.add_argument(
+        "--fresh",
+        action="store_true",
+        help="Discard the page checkpoint and start a new crawl (the existing CSV remains a baseline).",
+    )
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s", datefmt="%H:%M:%S")
 
     out = args.output if args.output else (OUT_DIR / f"dr_{args.date}.csv")
-    rows, seen_ids, seen_name_price = load_existing_csv(out)
-
-    categories = CATEGORIES
+    categories = list(CATEGORIES)
     if args.only:
         kw = args.only.lower()
-        categories = [c for c in CATEGORIES if kw in c[0].lower()]
+        categories = [category for category in CATEGORIES if kw in category[0].lower()]
         if not categories:
             log.warning("Filtreye uyan kategori bulunamadı ('%s'). Mevcutlar: %s", args.only, [c[0] for c in CATEGORIES])
             return
 
+    checkpoint_path = CHECKPOINT_DIR / f"{out.stem}.sqlite3"
+    config = {
+        "version": 2,
+        "date": args.date,
+        "output": out.name,
+        "categories": categories,
+        "page_limit": args.page_limit,
+    }
+    seed_rows: list[dict[str, Any]] = []
+    if args.fresh or not checkpoint_path.exists():
+        seed_rows, _, _ = load_existing_csv(out)
+
+    checkpoint = CrawlCheckpoint(checkpoint_path, config, seed_rows, args.fresh)
+    rows, seen_ids, seen_name_price, completed_pages = checkpoint.load()
+    SEEN_IDS.clear()
+    SEEN_IDS.update(seen_ids)
+    if completed_pages:
+        log.info(
+            "Checkpoint resumed: %d pages and %d CSV rows already saved.",
+            len(completed_pages),
+            len(rows),
+        )
+
     save_lock = threading.Lock()
+    stop_event = threading.Event()
+    failed_categories: list[str] = []
 
-    def process_and_save(got_products: list[dict[str, Any]], cat_name: str):
+    def process_page(
+        scope_name: str,
+        scope_url: str,
+        page_number: int,
+        products: list[dict[str, Any]],
+        book_default: str | None,
+    ) -> None:
         with save_lock:
-            added = 0
-            for p in got_products:
-                row = process_product(p, seen_ids, seen_name_price)
+            new_rows: list[dict[str, Any]] = []
+            new_name_prices: list[tuple[str, float]] = []
+            product_ids = [product["product_id"] for product in products]
+            for product in products:
+                product["book_default"] = book_default
+                old_name_price_count = len(seen_name_price)
+                row = process_product(product, seen_ids, seen_name_price)
+                if len(seen_name_price) != old_name_price_count:
+                    new_name_prices.append(
+                        (norm(product["product_name"]), float(product["price"]))
+                    )
                 if row:
-                    rows.append(row)
-                    added += 1
-            if rows:
-                write_csv(rows, out)
-            log.info("Kategori '%s' bitti -> +%d yeni ürün eklendi (Toplam kaydedilen: %d satır)", cat_name, added, len(rows))
+                    new_rows.append(row)
 
-    def worker_job(name: str, url: str, book_default: str | None):
+            checkpoint.save_page(
+                scope_url, page_number, product_ids, new_rows, new_name_prices
+            )
+            completed_pages.add((scope_url, page_number))
+            rows.extend(new_rows)
+            log.info(
+                "%s sayfa %d -> %d yeni ürün (checkpoint toplamı: %d)",
+                scope_name,
+                page_number,
+                len(new_rows),
+                len(rows),
+            )
+
+    def worker_job(name: str, url: str, book_default: str | None) -> None:
+        if stop_event.is_set():
+            return
         session = requests.Session()
         session.headers.update(HEADERS)
+
+        def save_page(scope_name: str, scope_url: str, page: int, products: list[dict[str, Any]]) -> None:
+            process_page(scope_name, scope_url, page, products, book_default)
+
         try:
-            got = scrape_category(session, name, url, book=book_default is not None, max_pages=args.page_limit)
-            for p in got:
-                p["book_default"] = book_default
-            process_and_save(got, name)
+            scrape_category(
+                session,
+                name,
+                url,
+                book=book_default is not None,
+                page_handler=save_page,
+                completed_pages=completed_pages,
+                progress_lock=save_lock,
+                stop_event=stop_event,
+                max_pages=args.page_limit,
+            )
         except Exception as exc:
+            with save_lock:
+                failed_categories.append(name)
             log.error("Kategori '%s' hata verdi: %s", name, exc)
 
-    if args.workers > 1 and len(categories) > 1:
-        log.info("Multi-threaded tarama başlatılıyor (workers=%d, kategoriler=%d)...", args.workers, len(categories))
-        with ThreadPoolExecutor(max_workers=args.workers) as executor:
-            futures = [executor.submit(worker_job, name, url, bdef) for name, url, bdef in categories]
-            for f in as_completed(futures):
+    try:
+        if args.workers > 1 and len(categories) > 1:
+            log.info("Multi-threaded tarama başlatılıyor (workers=%d, kategoriler=%d)...", args.workers, len(categories))
+            with ThreadPoolExecutor(max_workers=args.workers) as executor:
+                futures = [executor.submit(worker_job, name, url, book_default) for name, url, book_default in categories]
                 try:
-                    f.result()
-                except Exception as exc:
-                    log.error("Worker hatası: %s", exc)
-    else:
-        for name, url, book_default in categories:
-            worker_job(name, url, book_default)
+                    for future in as_completed(futures):
+                        future.result()
+                except KeyboardInterrupt:
+                    stop_event.set()
+                    for future in futures:
+                        future.cancel()
+                    raise
+        else:
+            for name, url, book_default in categories:
+                if stop_event.is_set():
+                    break
+                worker_job(name, url, book_default)
+    except KeyboardInterrupt:
+        stop_event.set()
+        log.warning(
+            "Stopped after the last committed page. Progress is saved in %s; rerun the same command to resume.",
+            checkpoint_path,
+        )
+        checkpoint.close()
+        raise SystemExit(130)
 
-    if not rows:
-        log.error("No data collected.")
-        sys.exit(1)
+    try:
+        if stop_event.is_set():
+            log.warning(
+                "Stopped after the last committed page. Progress is saved in %s; rerun the same command to resume.",
+                checkpoint_path,
+            )
+            raise SystemExit(130)
+        if failed_categories:
+            failed = ", ".join(failed_categories)
+            raise SystemExit(
+                f"Scrape incomplete; failed categories: {failed}. "
+                f"Checkpoint retained at {checkpoint_path}; rerun the same command to resume."
+            )
+        if not rows:
+            log.error("No data collected.")
+            raise SystemExit(1)
 
-    log.info("Tarama tamamlandı. Toplam %d satır kaydedildi: %s", len(rows), out)
+        checkpoint.close()
+        write_csv(rows, out)
+        checkpoint_path.unlink(missing_ok=True)
+        log.info("Tarama tamamlandı. Toplam %d satır kaydedildi: %s", len(rows), out)
+    finally:
+        checkpoint.close()
 
 
 if __name__ == "__main__":

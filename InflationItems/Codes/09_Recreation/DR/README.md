@@ -47,14 +47,28 @@ Toplanan ürünler kural tabanlı NLP ve kategori yolu eşlemesiyle aşağıdaki
   - Mobilya, ofis teknolojileri ve seyahat ürünleri (`EXCLUDE_PATH_WORDS`, `EXCLUDE_NAME_WORDS`) otomatik filtrelenir.
 - **Vitrin Sayfası Çözümleme (`sub_links`):** Doğrudan ürün listelemeyen üst kategori sayfalarında alt kategorileri otomatik tespit edip bir seviye derinliğe kadar iner.
 
+## Katalog API denemesi
+
+Ürün listeleri (`/kategori/.../grupno=...`) ürün kartlarını ve `Page=N` sayfalamasını HTML içinde sunuyor.
+Tarayıcı ağ kaydında görünen `POST /Catalog/ListCatalogProductJson` katalog widget'larını döndürüyor;
+`MainCatalog.products` ve `TopChoosenCatalog.products` boş, sayfalı ürün listesini sağlamıyor. Bu nedenle
+scraper ürünleri sunucu tarafında oluşturulan kategori HTML'inden almaya devam eder.
+
 ---
 
-## Mimari ve Dayanıklılık (Fault-Tolerance)
+## Hata, tamlık ve devam etme
 
-1. **Periyodik ve Atomik Kayıt:** Her kategori tamamlandığında veriler `.csv.part` dosyasına yazılıp atomik olarak hedef CSV'ye taşınır. Tarama yarıda kesilse bile toplanan tüm kategoriler korunur.
-2. **Kaldığı Yerden Devam Edebilme:** Hedef günün CSV dosyası mevcutsa, önceden toplanan ürünler belleğe alınır ve mükerrer kayıt oluşturulmadan eksik kategoriler tamamlanır.
-3. **Paralel Çalışma:** Kategori bazında `ThreadPoolExecutor` desteği vardır.
-4. **Canonical sayfalama:** Sayfa istekleri ilk yanıtın son URL'sine göre oluşturulur; D&R canonical yönlendirmelerinde `Page=N` parametresi korunur.
+1. Bildirilen her `Page=N` başarıyla alınmalıdır. Geçici 404/429/500/502/503/504/520 yanıtları yeniden denenir;
+   ürün kartı içermeyen sayfa veya stokta olmadığı açıkça belirtilmeyen, çözümlenemeyen kartlar taramayı başarısız kılar.
+   Güncel fiyatı olmayan ve stokta olmadığı açıkça belirtilen kartlar boş sayfa olarak checkpoint'e kaydedilir.
+2. Tamamlanan her ürün sayfası, satırları ve ürün ID'lerini `InflationItems/Codes/09_Recreation/DR/checkpoints/`
+   altında SQLite checkpoint'ine tek transaction ile kaydeder. Bu klasör gitignore kapsamındadır.
+3. `Ctrl+C` işi durdurur; tamamlanmış sayfalar korunur, kesilen sayfa resume sırasında yeniden alınabilir.
+   Aynı komutla başlatıldığında tamamlanan sayfalar atlanır. Ayarlar değiştiyse checkpoint reddedilir;
+   `--fresh` checkpoint'i silip taramayı başlatır (var olan CSV başlangıç verisi olarak korunur).
+4. CSV hedefi yalnızca tüm seçili kategoriler başarıyla bittikten sonra atomik olarak değiştirilir. Hata veya
+   durdurma mevcut CSV'yi bozmaz; başarılı yazımdan sonra checkpoint silinir.
+5. Kategori paralelleştirmesi `ThreadPoolExecutor` ile yapılır; canonical URL'ye göre `Page=N` korunur.
 
 ---
 
@@ -65,20 +79,23 @@ Toplanan ürünler kural tabanlı NLP ve kategori yolu eşlemesiyle aşağıdaki
 InflationItems/Datas/09_Recreation/DR/dr_YYYY-MM-DD.csv
 ```
 
-Kolonlar (yalnızca dört kolon; `category_number` her satırda `9`):
+Kolonlar (ortak dört kolon ilk sırada, D&R ürün ID'si sonda):
 ```csv
-product_name,price,category_number,sub_category_number
+product_name,price,category_number,sub_category_number,product_id
 ```
 
+`product_id`, ürün kartındaki `data-id` veya `data-gtm.item_id` alanından alınır ve metin olarak korunur.
+Bu alan yeni çıktılarda yer alır; geçmiş dört kolonlu CSV'ler otomatik olarak ürün ID'siyle doldurulmaz.
 Kategori adı/yolu yalnızca çalışma sırasında kalem kodunu belirlemek için kullanılır, CSV'ye yazılmaz.
 
 ---
 
 ## Kullanım ve Çalıştırma
 
-### 1. Varsayılan Günlük Çalıştırma (Önerilen: 2 worker)
+### 1. Varsayılan günlük çalıştırma
+
 ```bash
-python3 InflationItems/Codes/09_Recreation/DR/dr_scraper.py --workers 2
+python3 InflationItems/Codes/09_Recreation/DR/dr_scraper.py
 ```
 
 ### 2. Belirli Bir Kategoriyi Hızlıca Test Etme
@@ -103,5 +120,6 @@ options:
   --output OUTPUT       Özel çıktı dosyası yolu
   --page-limit N        Kategori başına taranacak maksimum sayfa sayısı
   --only KATEGORİ       Sadece adı geçen kategoriyi tara (ör. 'Kitap', 'Kırtasiye')
-  --workers N           Eşzamanlı worker sayısı (Varsayılan: 1, önerilen: 2)
+  --workers N           Eşzamanlı kategori worker sayısı (varsayılan: 1)
+  --fresh               Checkpoint'i silip yeniden başlat (var olan CSV başlangıç verisi kalır)
 ```

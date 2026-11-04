@@ -24,6 +24,16 @@ Her kulüp için Mars Athletic gateway üzerinden aşağıdaki paketler çekilir
 5. **Kayıt Bedeli (Giriş Ücreti):** İlk üyelik sırasında kulüp bazında uygulanan tek seferlik katılım/kayıt bedeli (`enrolmentFee`).
 Plan API'sindeki 404 yanıtları iki kez, her denemede 3–4 saniye beklenerek yeniden denenir. Bir kulübün plan isteği retry'lerden sonra hâlâ başarısızsa, eksik kapsamlı CSV yazılmaz ve scraper hata verir.
 
+Plan isteği varsayılan olarak tek worker ile çalışır; 2026-11-04 tarihli canlı denemede 8 worker ile
+gateway'den tekrarlayan HTTP 520/500 yanıtları alındı. `--max-workers` artırıldığında aynı hata riski doğar.
+
+Tam taramada tek worker ile de kulüp plan istekleri HTTP 520 döndürdü; aynı gün `portal.macfit.com`
+ana sayfası da HTTP 520 verdi. Scraper ilk kalıcı plan hatasında sıradaki kulüpleri iptal eder ve
+eksik CSV yazmaz; kaynak yanıt vermeden tam günlük veri üretilemez.
+
+2026-11-04 tarihli bounded `--limit 25` denemesinde `Club/get-clubs` endpoint'i de beş denemede
+HTTP 520 döndürdü; scraper çıktı CSV'si oluşturmadı.
+
 Kulüp Konseptleri:
 - `MACFit`: Standart kulüpler (Classic, Gold, Platinum paketleri)
 - `MAC/One`: Premium kulüpler

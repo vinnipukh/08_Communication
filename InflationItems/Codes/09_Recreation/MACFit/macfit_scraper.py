@@ -90,6 +90,8 @@ def find_project_root() -> Path:
 
 
 RETRY_STATUSES = (429, 500, 502, 503, 504, 520)
+# Eight concurrent plan requests produced repeated gateway HTTP 520 responses in a live run.
+DEFAULT_MAX_WORKERS = 1
 
 
 def request_get_json(
@@ -372,7 +374,7 @@ def scrape_macfit(
     club_limit: Optional[int] = None,
     club_type_filter: Optional[str] = None,
     city_filter: Optional[str] = None,
-    max_workers: int = 8,
+    max_workers: int = DEFAULT_MAX_WORKERS,
 ) -> Tuple[Path, int]:
     """Execute complete MACFit scraping run across all clubs and save CSV."""
     root = find_project_root()
@@ -442,10 +444,13 @@ def scrape_macfit(
             except Exception as exc:
                 logger.error("Error scraping club %s: %s", club_title, exc)
                 failed_clubs.append(club_title)
+                for pending in future_to_club:
+                    pending.cancel()
+                break
 
     if failed_clubs:
         raise RuntimeError(
-            f"{len(failed_clubs)} of {len(clubs_to_scrape)} clubs failed plan requests; "
+            f"Plan requests failed for {', '.join(failed_clubs)}; stopping the crawl and "
             f"refusing to write an incomplete CSV at {output_path}."
         )
 
@@ -510,8 +515,8 @@ def main():
     parser.add_argument(
         "--max-workers",
         type=int,
-        default=8,
-        help="Number of concurrent worker threads (default 8)",
+        default=DEFAULT_MAX_WORKERS,
+        help=f"Number of concurrent worker threads (default {DEFAULT_MAX_WORKERS})",
     )
 
     args = parser.parse_args()
