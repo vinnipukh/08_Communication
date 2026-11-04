@@ -65,7 +65,7 @@ scraper ürünleri sunucu tarafında oluşturulan kategori HTML'inden almaya dev
    altında SQLite checkpoint'ine tek transaction ile kaydeder. Bu klasör gitignore kapsamındadır.
 3. `Ctrl+C` işi durdurur; tamamlanmış sayfalar korunur, kesilen sayfa resume sırasında yeniden alınabilir.
    Aynı komutla başlatıldığında tamamlanan sayfalar atlanır. Ayarlar değiştiyse checkpoint reddedilir;
-   `--fresh` checkpoint'i silip taramayı başlatır (var olan CSV başlangıç verisi olarak korunur).
+   `--fresh` checkpoint'i silip sıfırdan tarar; mevcut CSV seed edilmez ve yeni tarama bitene kadar korunur.
 4. CSV hedefi yalnızca tüm seçili kategoriler başarıyla bittikten sonra atomik olarak değiştirilir. Hata veya
    durdurma mevcut CSV'yi bozmaz; başarılı yazımdan sonra checkpoint silinir.
 5. Kategori paralelleştirmesi `ThreadPoolExecutor` ile yapılır; canonical URL'ye göre `Page=N` korunur.
@@ -121,5 +121,5 @@ options:
   --page-limit N        Kategori başına taranacak maksimum sayfa sayısı
   --only KATEGORİ       Sadece adı geçen kategoriyi tara (ör. 'Kitap', 'Kırtasiye')
   --workers N           Eşzamanlı kategori worker sayısı (varsayılan: 1)
-  --fresh               Checkpoint'i silip yeniden başlat (var olan CSV başlangıç verisi kalır)
+  --fresh               Checkpoint'i silip kaynaktan baştan tarar; mevcut CSV seed edilmez
 ```

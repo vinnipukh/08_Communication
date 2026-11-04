@@ -732,7 +732,7 @@ def main() -> None:
     parser.add_argument(
         "--fresh",
         action="store_true",
-        help="Discard the page checkpoint and start a new crawl (the existing CSV remains a baseline).",
+        help="Discard the checkpoint and re-scrape from source; the existing CSV is not used as a baseline.",
     )
     args = parser.parse_args()
 
@@ -749,14 +749,16 @@ def main() -> None:
 
     checkpoint_path = CHECKPOINT_DIR / f"{out.stem}.sqlite3"
     config = {
-        "version": 2,
+        "version": 3,
         "date": args.date,
         "output": out.name,
         "categories": categories,
         "page_limit": args.page_limit,
     }
     seed_rows: list[dict[str, Any]] = []
-    if args.fresh or not checkpoint_path.exists():
+    if args.fresh:
+        log.info("Fresh run: existing output is not loaded and stays unchanged until completion.")
+    elif not checkpoint_path.exists():
         seed_rows, _, _ = load_existing_csv(out)
 
     checkpoint = CrawlCheckpoint(checkpoint_path, config, seed_rows, args.fresh)
