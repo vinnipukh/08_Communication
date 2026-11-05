@@ -53,12 +53,18 @@ Milli Piyango Online (`millipiyangoonline.com` / Sisal Şans - Milli Piyango İd
 InflationItems/Datas/09_Recreation/Milli_Piyango/milli_piyango_YYYY-MM-DD.csv
 ```
 
-Kolonlar (yalnızca dört kolon; `category_number` her satırda `9`):
+Kolonlar (dört zorunlu kolon + `product_id`, `product_url`; `category_number` her satırda `9`):
 ```csv
-product_name,price,category_number,sub_category_number
+product_name,price,category_number,sub_category_number,product_id,product_url
 ```
 
-Örnek veri:
+`product_id`: Site ürün ID'si yayınlamadığı için oyunun/biletin sabit slug'ıdır (ör. `cilgin-sayisal-loto-1-kolon`,
+`kazi-kazan-12-ay-sans-20-tl`). Kazı kazanda kartın nominal değeri ID'nin parçasıdır (aynı oyunun 20 TL ve 30 TL kartı
+farklı ürünlerdir); ID'ye fiyat değişimi değil, isim yazımı ve nominal değer etki eder. Kaynakta `Bovling` ve `Bovlİng`
+yazımlarıyla iki 200 TL kart aynı slug'ı üretir (2026-11-04 canlı denemesi: 59 satır, 58 benzersiz ID).
+`product_url`: değerin okunduğu kural sayfası.
+
+Örnek veri (ilk dört kolon):
 ```csv
 product_name,price,category_number,sub_category_number
 Çılgın Sayısal Loto - 1 Kolon,25.00,9,0947001

@@ -57,9 +57,9 @@ COMMON_HEADERS = {
     "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
 }
 
-# Only the four shared columns are written. Other per-product fields are used inside the run
-# (deduplication, naming) but are not saved.
-CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number"]
+# The four shared columns come first; product_id / product_url follow. The site publishes no
+# product IDs, so product_id is a fixed slug of the game / ticket / card (price excluded).
+CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number", "product_id", "product_url"]
 
 # ── Logging Setup ─────────────────────────────────────────────────────────────
 logging.basicConfig(
@@ -77,6 +77,15 @@ def find_project_root() -> Path:
         if (parent / ".git").exists() or (parent / "InflationItems").is_dir():
             return parent
     return current.parents[3]
+
+
+_SLUG_TRANSLATION = str.maketrans("ÇĞİIÖŞÜçğıöşü", "cgiiosucgiosu")
+
+
+def slugify(value: str) -> str:
+    """Stable ASCII slug: "Çılgın Sayısal Loto - 1 Kolon" -> "cilgin-sayisal-loto-1-kolon"."""
+    value = value.translate(_SLUG_TRANSLATION).lower()
+    return re.sub(r"[^a-z0-9]+", "-", value).strip("-")
 
 
 def turkish_title(value: str) -> str:
@@ -99,6 +108,8 @@ class MilliPiyangoScraper:
         self.session = requests.Session(impersonate="chrome")
         self.session.headers.update(COMMON_HEADERS)
         self.items: Dict[str, float] = {}
+        # product_name -> (product_id, product_url)
+        self.meta: Dict[str, tuple] = {}
 
     def fetch_page(self, url: str, timeout: int = 30) -> Optional[str]:
         """Fetch HTML content with timeout and gentle handling."""
@@ -145,6 +156,7 @@ class MilliPiyangoScraper:
                 logger.warning("No live price found for %s; row skipped", product_name)
             else:
                 self.items[product_name] = price
+                self.meta[product_name] = (slugify(product_name), url)
             time.sleep(0.5)
 
     def scrape_milli_piyango_tickets(self) -> None:
@@ -162,6 +174,7 @@ class MilliPiyangoScraper:
             match = re.search(pattern, html_mp, re.I)
             if match:
                 self.items[product_name] = float(match.group(1))
+                self.meta[product_name] = (slugify(product_name), RULES_URLS["mp_yilbasi"])
                 logger.info("Live scraped price for %s: %s TL", product_name, match.group(1))
             else:
                 logger.warning("No live price found for %s; row skipped", product_name)
@@ -184,6 +197,9 @@ class MilliPiyangoScraper:
                         clean_name = turkish_title(raw_name)
                         prod_name = f"Kazı Kazan - {clean_name} ({int(price)} TL)"
                         scraped_cards[prod_name] = price
+                        # The card's face value identifies the product (a 20 TL and a 30 TL "12 Ay Şans" are
+                        # different cards), so it is part of the ID; the ID still never depends on the name's spelling.
+                        self.meta[prod_name] = (f"kazi-kazan-{slugify(clean_name)}-{int(price)}-tl", RULES_URLS["kazi_kazan"])
 
         if scraped_cards:
             logger.info("Found %d Kazı Kazan cards via live scrape.", len(scraped_cards))
@@ -218,6 +234,8 @@ class MilliPiyangoScraper:
                 "category_name": CATEGORY_NAME,
                 "sub_category_number": SUB_CATEGORY_NUMBER,
                 "category_number": CATEGORY_NUMBER,
+                "product_id": self.meta.get(name, ("", ""))[0],
+                "product_url": self.meta.get(name, ("", ""))[1],
             })
 
         logger.info("Successfully assembled %d items for category %s (%s).", len(rows), CATEGORY_NUMBER, SUB_CATEGORY_NUMBER)

@@ -1,5 +1,6 @@
 import argparse
 import csv
+import json
 import logging
 import re
 import sys
@@ -346,6 +347,23 @@ def find_product_container(link):
     return None
 
 
+def extract_product_id(container):
+    # The card carries the shop's own product ID twice: data-favorite-button="<id>" and the "id"
+    # field of the data-gtm-product JSON.
+    for tag in container.find_all(attrs={"data-favorite-button": True}):
+        value = normalize_text(tag.get("data-favorite-button"))
+        if value.isdigit():
+            return value
+    for tag in container.find_all(attrs={"data-gtm-product": True}):
+        try:
+            value = json.loads(tag.get("data-gtm-product")).get("id")
+        except (ValueError, AttributeError):
+            continue
+        if value not in (None, ""):
+            return str(value)
+    return ""
+
+
 def extract_total_results(html):
     soup = BeautifulSoup(html, "html.parser")
     text = normalize_text(soup.get_text(" ", strip=True))
@@ -385,7 +403,8 @@ def parse_products(html):
         items[product_url] = {
             "product_name": name,
             "price": price,
-            "_product_url": product_url
+            "_product_url": product_url,
+            "_product_id": extract_product_id(container)
         }
 
     return list(items.values()), candidate_links
@@ -557,13 +576,22 @@ def save_to_csv(data, date_str):
     output_file = DATA_DIR / f"petlebi_{date_str}.csv"
     with open(output_file, "w", newline="", encoding="utf-8-sig") as file:
         writer = csv.writer(file)
-        writer.writerow(["product_name", "price", "category_number", "sub_category_number"])
+        writer.writerow([
+            "product_name",
+            "price",
+            "category_number",
+            "sub_category_number",
+            "product_id",
+            "product_url"
+        ])
         for item in sorted(data, key=lambda x: (x["sub_category_number"], x["product_name"].casefold())):
             writer.writerow([
                 item["product_name"],
                 f'{item["price"]:.2f}',
                 item["category_number"],
-                item["sub_category_number"]
+                item["sub_category_number"],
+                item.get("_product_id", ""),
+                item.get("_product_url", "")
             ])
     return output_file
 
@@ -660,7 +688,8 @@ def main():
             "price": item["price"],
             "category_number": CATEGORY_NUMBER,
             "sub_category_number": PET_FOOD_SUB_CATEGORY_NUMBER,
-            "_product_url": item["_product_url"]
+            "_product_url": item["_product_url"],
+            "_product_id": item.get("_product_id", "")
         })
 
     for item in other_selected:
@@ -669,7 +698,8 @@ def main():
             "price": item["price"],
             "category_number": CATEGORY_NUMBER,
             "sub_category_number": OTHER_PET_PRODUCTS_SUB_CATEGORY_NUMBER,
-            "_product_url": item["_product_url"]
+            "_product_url": item["_product_url"],
+            "_product_id": item.get("_product_id", "")
         })
 
     rows_before_dedupe = len(rows)

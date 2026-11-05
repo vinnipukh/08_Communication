@@ -47,9 +47,16 @@ MAX_RETRIES = 3
 
 HEADERS = {"Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8"}
 
-# Only the four shared columns are written. Other per-product fields are used inside the run
-# (deduplication, naming) but are not saved.
-CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number"]
+# The four shared columns come first, then product_id (a slug of section, service and animal:
+# the page has no product IDs) and product_url (the tariff page).
+CSV_COLUMNS = [
+    "product_name",
+    "price",
+    "category_number",
+    "sub_category_number",
+    "product_id",
+    "product_url",
+]
 
 # The page does not say whether VAT is included, so the column is left empty.
 KDV_INCLUDED = ""
@@ -60,6 +67,14 @@ CELL_PATTERN = re.compile(r"<t[dh][^>]*>(.*?)</t[dh]>", re.IGNORECASE | re.DOTAL
 HEADING_PATTERN = re.compile(r"<h[1-6][^>]*>(.*?)</h[1-6]>", re.IGNORECASE | re.DOTALL)
 AMOUNT_PATTERN = re.compile(r"\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:,\d+)?")
 PERIOD_PATTERN = re.compile(r"(Ocak|Temmuz)\s+(20\d{2})\s+itibari")
+
+
+_SLUG_TRANSLATION = str.maketrans("ÇĞİIÖŞÜçğıöşü", "cgiiosucgiosu")
+
+
+def slugify(value):
+    value = value.translate(_SLUG_TRANSLATION).lower()
+    return re.sub(r"[^a-z0-9]+", "-", value).strip("-")
 
 
 def clean(fragment):
@@ -102,6 +117,7 @@ def parse_page(page_html):
     period = f"{period_match.group(2)}/{'1' if period_match.group(1) == 'Ocak' else '2'}" if period_match else ""
 
     rows = []
+    seen_ids = {}
 
     for table_match in TABLE_PATTERN.finditer(page_html):
         # The section is the last heading before the table.
@@ -128,6 +144,13 @@ def parse_page(page_html):
                 if not service or not animal or price is None:
                     continue
 
+                # Fixed per section / service / animal, independent of price and tariff period.
+                product_id = slugify(f"{section} {service} {animal}")
+                seen_ids[product_id] = seen_ids.get(product_id, 0) + 1
+
+                if seen_ids[product_id] > 1:
+                    product_id = f"{product_id}-{seen_ids[product_id]}"
+
                 rows.append(
                     {
                         "product_name": f"{SOURCE_PREFIX} - {section} - {service} - {animal}",
@@ -142,6 +165,8 @@ def parse_page(page_html):
                         "tariff_period": period,
                         "kdv_included": KDV_INCLUDED,
                         "source_url": PAGE_URL,
+                        "product_id": product_id,
+                        "product_url": PAGE_URL,
                     }
                 )
 

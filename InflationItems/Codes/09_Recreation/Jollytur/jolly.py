@@ -658,10 +658,23 @@ def parse_tours(html_text):
         }:
             continue
 
+        # The site's own tour/definition ID sits on the listing card element.
+        id_holder = (
+            container
+            if container.get("data-definitionid")
+            else container.find(attrs={"data-definitionid": True})
+        )
+        product_id = (
+            normalize_text(id_holder.get("data-definitionid"))
+            if id_holder is not None
+            else ""
+        )
+
         items[product_url] = {
             "product_name": name,
             "price": price,
             "_product_url": product_url,
+            "_product_id": product_id,
         }
 
     return (
@@ -1101,6 +1114,8 @@ def add_subcategory(
             "price": item["price"],
             "category_number": CATEGORY_NUMBER,
             "sub_category_number": subcategory_number,
+            "product_id": item.get("_product_id", ""),
+            "product_url": item.get("_product_url", ""),
         }
         for item in items
     ]
@@ -1167,6 +1182,8 @@ def save_to_csv(
                 "price",
                 "category_number",
                 "sub_category_number",
+                "product_id",
+                "product_url",
             ]
         )
 
@@ -1183,6 +1200,8 @@ def save_to_csv(
                     f'{row["price"]:.2f}',
                     row["category_number"],
                     row["sub_category_number"],
+                    row["product_id"],
+                    row["product_url"],
                 ]
             )
 

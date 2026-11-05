@@ -8,7 +8,7 @@ import time
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
-from urllib.parse import urljoin, urlsplit, urlunsplit
+from urllib.parse import parse_qs, urljoin, urlsplit, urlunsplit
 
 from bs4 import BeautifulSoup
 from curl_cffi import requests
@@ -42,9 +42,15 @@ HEADERS = {
     "Accept-Language": "tr-TR,tr;q=0.9,en;q=0.8"
 }
 
-# Only the four shared columns are written. Other per-product fields are used inside the run
-# (deduplication, naming) but are not saved.
-CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number"]
+# The four shared columns come first, then the site's product ID and the product URL.
+CSV_COLUMNS = [
+    "product_name",
+    "price",
+    "category_number",
+    "sub_category_number",
+    "product_id",
+    "product_url",
+]
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 
@@ -117,6 +123,32 @@ def normalize_url(href):
     ))
 
 
+def extract_product_id(card, href, product_url):
+    # Listing links look like /p/<slug>/_/R-p-<model id>?mc=<colour/variant code>&c=<colour>.
+    # The model id is the site's own product ID (numeric, or a UUID for marketplace items); the
+    # mc code selects the colour variant. The heading link carries no mc, another link in the
+    # card does, so every card link is searched.
+    match = re.search(r"/R-p-([^/?#]+)", urlsplit(urljoin(BASE_URL, href)).path)
+
+    if match is None:
+        return urlsplit(product_url).path.strip("/")
+
+    variant = ""
+
+    for anchor in card.select("a[href]"):
+        found = parse_qs(
+            urlsplit(urljoin(BASE_URL, anchor["href"])).query
+        ).get("mc", [""])[0]
+
+        if found:
+            variant = found
+            break
+
+    product_id = match.group(1)
+
+    return f"{product_id}:{variant}" if variant else product_id
+
+
 def extract_product(card, category_code):
     heading = card.select_one("h2")
 
@@ -168,6 +200,7 @@ def extract_product(card, category_code):
         "price": price,
         "category_number": CATEGORY_NUMBER,
         "sub_category_number": category_code,
+        "product_id": extract_product_id(card, link["href"], product_url),
         "product_url": product_url
     }
 

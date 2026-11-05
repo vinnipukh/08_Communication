@@ -79,7 +79,7 @@ mapping rules are checked or filtered.
 **Data quality issues in the 09 folder (as copied):**
 
 - `Datas/09_Recreation/Nezih/`: ~12k rows/day but no `category_number` / `sub_category_number`
-  columns, so it counts for no item. The folder also holds a stray `beymen_enflasyon_2026-10-02.csv`.
+  columns, so it counts for no item. (The stray `beymen_enflasyon_2026-10-02.csv` there was deleted 2026-11-01.)
 - `DR`, `MACFit`, `Milli_Piyango`, `Zuhal_Muzik` CSVs have no `category_number` column.
 - `Zuhal_Muzik` writes parent codes (`09212`, `0922`) on ~300 rows instead of item codes.
 - `Codes/09_Recreation/Sports/koraysport_scraper.py`, `sportive_scraper.py`, `spx_scraper.py` are
@@ -249,8 +249,8 @@ run and its CSV output, not by these probes.
 
 ## 10. Next steps
 
-1. ~~Fix the existing 09 data~~ done 2026-10-31 (§11). Still open: the stray
-   `Datas/09_Recreation/Nezih/beymen_enflasyon_2026-10-02.csv`.
+1. ~~Fix the existing 09 data~~ done 2026-10-31 (§11); the stray
+   `Nezih/beymen_enflasyon_2026-10-02.csv` was deleted 2026-11-01.
 2. Write scrapers for the five items with no source, highest weight first: 0946203 + 0946201
    (Spor İstanbul wp-json, Armut, Grupanya API), 0946103, 0945001 (AVHO PDF), 0969006
    (Düğün.com API), 0961001 (Paribu chain + Biletinial cinema).
@@ -323,8 +323,8 @@ Zuhal), Kitapyurdu's `book_category` and Zuhal's `coicop_code` mapped to item co
 17-column files (no codes at all) re-coded with the scraper's own `_coicop_code` from their category
 columns, which also drops the 26,353 rows (3.7 %) outside group 09, exactly as the scraper now does.
 `category_number` `09` became `9` everywhere. The original files stay in git history. Left as they are:
-Zuhal's 2,772 rows with parent codes `09212` and `0922` in the old files, and the stray
-`Nezih/beymen_enflasyon_2026-10-02.csv` (a Beymen file with its own columns, not 09 data).
+Zuhal's 2,772 rows with parent codes `09212` and `0922` in the old files, (the stray
+`Nezih/beymen_enflasyon_2026-10-02.csv`, a Beymen file with its own columns, was deleted 2026-11-01).
 Decathlon rows are matched by name and price now (no product URL), so rows equal in all four columns
 collapse into one.
 

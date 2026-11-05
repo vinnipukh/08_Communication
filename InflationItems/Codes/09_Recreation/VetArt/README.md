@@ -31,7 +31,14 @@ No CSV is written when no rows are parsed. 21 rows on 2026-10-31.
 
 ## CSV
 
-`utf-8-sig`, exactly four columns: `product_name, price, category_number, sub_category_number`.
+`utf-8-sig`, four required columns plus two ID columns: `product_name, price, category_number, sub_category_number,
+product_id, product_url`.
+
+- `product_id`: the page has no product IDs, so this is a slug of section + service + animal (for example
+  `muayene-ve-klinik-uygulama-ucretleri-genel-muayene-kedi`). It does not depend on the price or the tariff period,
+  so it stays the same across tariff updates; it changes only if VetArt renames a section, service or animal
+  heading. A repeated slug in one run gets a `-2`, `-3` suffix. Check 2026-11-04: 21 rows, 21 filled, 21 unique.
+- `product_url`: the tariff page, the same for every row.
 
 - `product_name`: `VetArt - <section> - <service> - <animal>`; section, service and animal (`Kedi`, `Köpek` or
   `Kafes Kuşlar`, cage birds) are as published and only in the name.

@@ -13,8 +13,14 @@ uv run python -I -X utf8 InflationItems/Codes/09_Recreation/Sports/<script>.py
 ## Decathlon (`decathlon_scraper.py`)
 
 Source: category listing HTML, `?from=<offset>&size=40`, `.product-card` parsing, 10 s between pages.
-A run merges into an existing same-day CSV (key: product name + price, since the CSV has no product URL; rows
-identical in all four columns collapse into one).
+A run merges into an existing same-day CSV (key: product name + price; rows identical in name and price collapse
+into one). A same-day CSV from before the ID columns existed is rejected as "older format" and left unchanged.
+
+Decathlon CSVs carry two extra columns after the four required ones: `product_id` and `product_url`.
+`product_id` is the site's own model ID from the product link (`/p/<slug>/_/R-p-<id>`; numeric, or a UUID for
+marketplace items), followed by `:<mc>` when the card links a colour/variant (`?mc=<code>`), e.g. `7449:8018574`.
+Colour variants are separate rows with the colour in the name, so the variant code is what keeps IDs unique
+(bounded live check 2026-11-04: 160 rows, 160 filled, 160 unique). The `mc` code is only on a non-heading link of the card.
 
 | Group (`--only`) | Listing path | Code | Page cap |
 |---|---|---|---|
