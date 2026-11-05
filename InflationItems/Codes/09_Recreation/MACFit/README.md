@@ -34,6 +34,12 @@ eksik CSV yazmaz; kaynak yanıt vermeden tam günlük veri üretilemez.
 2026-11-04 tarihli bounded `--limit 25` denemesinde `Club/get-clubs` endpoint'i de beş denemede
 HTTP 520 döndürdü; scraper çıktı CSV'si oluşturmadı.
 
+**Yedek mod (2026-11-05):** Gateway `Club/get-clubs` isteğine yanıt vermezse scraper
+`https://www.macfit.com/fiyat-listesi` sayfasındaki dört konsept için "en ucuz kulüp, aylık" başlangıç
+fiyatını (MACRaw, MACFit, MAC/One, MACStudio) kaydeder; satır adı
+`<konsept> en ucuz kulüp - Aylık Üyelik (web sitesi başlangıç fiyatı)`. Bu 4 satır kulüp/paket kırılımı
+olan tam seriyle karşılaştırılamaz; gateway düzelince scraper normal tam CSV'yi yazar.
+
 Kulüp Konseptleri:
 - `MACFit`: Standart kulüpler (Classic, Gold, Platinum paketleri)
 - `MAC/One`: Premium kulüpler

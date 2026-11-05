@@ -368,6 +368,51 @@ def fetch_plans_for_club(club: Dict[str, Any]) -> List[Dict[str, Any]]:
     return items_collected
 
 
+PUBLIC_PRICE_URL = "https://www.macfit.com/fiyat-listesi"
+
+
+def fetch_public_price_list() -> List[Dict[str, Any]]:
+    """Fallback while the portal gateway is down: the "from" monthly price per concept.
+
+    www.macfit.com/fiyat-listesi shows only the cheapest club price of each concept
+    (MACRaw, MACFit, MAC/One, MACStudio), not the per-club plans of the gateway.
+    """
+    try:
+        if curl_requests is not None:
+            resp = curl_requests.get(
+                PUBLIC_PRICE_URL, headers=COMMON_HEADERS, impersonate="chrome", timeout=30
+            )
+        else:
+            resp = requests.get(PUBLIC_PRICE_URL, headers=COMMON_HEADERS, timeout=30)
+        if resp.status_code != 200:
+            logger.error("GET %s failed with HTTP %d", PUBLIC_PRICE_URL, resp.status_code)
+            return []
+        html_text = resp.content.decode("utf-8", errors="replace")
+    except Exception as exc:
+        logger.error("GET %s failed: %s", PUBLIC_PRICE_URL, exc)
+        return []
+
+    import re
+
+    records: List[Dict[str, Any]] = []
+    for card in re.finditer(
+        r"<h3>\s*([^<]+?)\s*</h3>.*?class=\"newprice[^\"]*\"[^>]*>\s*<span class=\"price\">\s*([\d.,]+)\s*TL",
+        html_text,
+        re.S,
+    ):
+        concept = card.group(1).strip()
+        price = float(card.group(2).replace(".", "").replace(",", "."))
+        records.append(
+            {
+                "product_name": f"{concept} en ucuz kulüp - Aylık Üyelik (web sitesi başlangıç fiyatı)",
+                "price": price,
+                "category_number": CATEGORY_NUMBER,
+                "sub_category_number": SUB_CATEGORY_NUMBER,
+            }
+        )
+    return records
+
+
 def scrape_macfit(
     target_date: str,
     output_path: Optional[Path] = None,
@@ -388,8 +433,19 @@ def scrape_macfit(
 
     all_clubs = fetch_all_clubs()
     if not all_clubs:
-        logger.error("No clubs retrieved, aborting scrape.")
-        return output_path, 0
+        logger.error("No clubs retrieved from the gateway; falling back to %s", PUBLIC_PRICE_URL)
+        records = fetch_public_price_list()
+        if not records:
+            logger.error("Fallback price list is empty, aborting scrape.")
+            return output_path, 0
+        tmp_path = output_path.with_suffix(".csv.tmp")
+        with open(tmp_path, "w", encoding="utf-8-sig", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS, extrasaction="ignore")
+            writer.writeheader()
+            writer.writerows(records)
+        tmp_path.replace(output_path)
+        logger.warning("Gateway down: saved %d fallback concept prices to %s", len(records), output_path)
+        return output_path, len(records)
 
     # Filter active clubs and exclude virtual ones (e.g. MAC+ Dijital)
     clubs_to_scrape = [
