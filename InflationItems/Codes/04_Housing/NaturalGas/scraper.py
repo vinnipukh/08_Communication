@@ -187,9 +187,12 @@ def igdas_month(client: Client, month: date) -> list[dict]:
     rows = []
     for d in data if isinstance(data, list) else []:
         kind = norm(d.get("MUSTERI_TIPI")).upper()
-        if kind == "KONUT":
+        # Since 2026-11 (seen 11-07) the API lists volume bands: "KONUT KADEME 1 (Evsel Tüketiciler) K-1" .. "K-5";
+        # the household row is the first band (K-1, 0-100.000 Sm³), as the old single "KONUT" row was.
+        first_band = bool(re.search(r"\bK-1$", kind))
+        if kind == "KONUT" or (kind.startswith("KONUT KADEME 1") and first_band):
             tier = "Konut Kademe-1"
-        elif kind.startswith("KONUT KADEME-2"):
+        elif kind.startswith("KONUT KADEME-2") or (kind.startswith("KONUT KADEME 2") and first_band):
             tier = "Konut Kademe-2"
         else:
             continue

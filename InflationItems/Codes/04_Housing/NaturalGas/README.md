@@ -82,6 +82,10 @@ Kademe-1 plus the fee rows (4 rows a day in 2025, 10 in 2026).
   verifying. If İzmirgaz renews with another CA, update `IZMIRGAZ_INTERMEDIATE`.
 - İGDAŞ connection errors — use `igdas.istanbul`, not `www.igdas.istanbul` (the `www.` host drops
   curl_cffi connections).
+- `İGDAŞ MMYYYY: expected KONUT and KONUT KADEME-2` — the API renamed its customer types. Since 2026-11 (failed run
+  2026-11-07) it lists volume bands `KONUT KADEME 1 (Evsel Tüketiciler) K-1..K-5` and `KONUT KADEME 2 ... K-1..K-5`;
+  the household price is the K-1 band (0-100.000 Sm³) of each, which `igdas_month()` now picks (the old `KONUT` /
+  `KONUT KADEME-2` labels still match). Prices were unchanged by the rename.
 - `İGDAŞ MMYYYY: no KONUT / KONUT KADEME-2 price in force` — the API listed only future-dated rows for this
   month; in a month with a mid-month change the daily run takes the row in force today.
 - `Başkentgaz PDF period ... does not match` — the period line has had several forms ("YIL: 2026 AY: EKİM",
