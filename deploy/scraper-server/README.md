@@ -137,7 +137,7 @@ hangisi olduğu çalıştırma logunda `[group] failed scrapers: …` satırınd
 | 12:30 | rec_small | Avansas, Diyanet (OCR), Hisar, MACFit, Nezih, Korayspor, Milli Piyango, İstanbul Akvaryum, KidZania, Ankara VHO (OCR), İVHO, VetArt, Spor İstanbul, Arnavutköy, Grupanya | ~10 dk | ~17 bin | 45 dk |
 | 13:25 | rec_medium | Kitapyurdu, Jollytur, SPX, Biletinial (tiyatro + sinema), DüğünBuketi, Düğün.com, Petchef, Temiz Mama | ~30 dk | ~7 bin | 120 dk |
 | 15:35 | rec_shops | Petlebi, Toyzzshop, Petzzshop, Decathlon (fitness + giyim), Zuhal Müzik | ~55 dk | ~28 bin | 240 dk |
-| 19:45 | rec_dr | D&R (TÜİK 09 kategorileri, `DR/dr_scraper.py`; 08'deki `dr` işi başka bir scraper) | ~65 dk | ~85 bin | 240 dk |
+| 19:45 | rec_dr | D&R (TÜİK 09 kategorileri, `DR/dr_scraper.py`; 08'deki `dr` işi başka bir scraper) | ~65 dk | ~85 bin | 300 dk (285. dakikada kendisi durup eldekini yazar) |
 
 En kötü durumda (her iş timeout'a kadar) son iş 23:47'de biter; cleanup 00:30'da. Tepe RAM: OCR'lı Diyanet ~665 MB ve
 Ankara VHO ~604 MB (ağır olanlar; modeller pakette, indirme yok), diğer scraper'lar 50-100 MB civarı; işler üst üste

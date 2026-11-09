@@ -40,7 +40,8 @@ case "$NAME" in
   rec_small)  TIMEOUT=45m;  CMD=("$PY" -u "$RECREATION/run_group.py" small) ;;
   rec_medium) TIMEOUT=120m; CMD=("$PY" -u "$RECREATION/run_group.py" medium) ;;
   rec_shops)  TIMEOUT=240m; CMD=("$PY" -u "$RECREATION/run_group.py" shops) ;;
-  rec_dr)     TIMEOUT=240m; CMD=("$PY" -u "$RECREATION/DR/dr_scraper.py") ;;
+  # D&R stops itself at 285 min and writes what it has, before the hard 300 min timeout kills it
+  rec_dr)     TIMEOUT=300m; CMD=("$PY" -u "$RECREATION/DR/dr_scraper.py" --max-minutes 285) ;;
   *) echo "usage: $0 {samsung|huawei|xiaomi|pozitif|beymen|dr|vatan|telecom|internet|streaming|repair|naturalgas|iski|rec_small|rec_medium|rec_shops|rec_dr}"; exit 2 ;;
 esac
 

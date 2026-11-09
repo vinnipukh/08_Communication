@@ -70,11 +70,17 @@ HEADERS = {
 }
 
 REQUEST_TIMEOUT = 30
-MAX_RETRIES = 4
+MAX_RETRIES = 6           # 429 / 5xx / bağlantı hataları için istek başına deneme
+NOT_FOUND_RETRIES = 2     # 404 çoğu zaman gerçekten olmayan sayfadır; uzun süre denemeye değmez
 RETRY_BACKOFF = 2.0
+MAX_BACKOFF = 30.0
 PAGE_DELAY = 0.5
+PARSE_RETRIES = 5         # bozuk/boş HTML gelen liste sayfası için yeniden çekme sayısı
+FIRST_PAGE_RETRIES = 3    # kategori/alt kategori ilk sayfası için ek tur (her tur fetch_html denemelerini içerir)
+RETRY_PASS_WAIT = 60      # hata veren kategoriler için ikinci tur öncesi bekleme (sn)
 MAX_PAGES = 5000
 MAX_SUBLINKS = 40
+MAX_CONSECUTIVE_FAILED_PAGES = 3  # site bazen gerçekte olmayan sayfa sayısı bildirir (ör. felsefe 248, gerçek 124)
 RETRY_STATUSES = (404, 429, 500, 502, 503, 504, 520)
 
 _HERE = Path(__file__).resolve()
@@ -199,22 +205,46 @@ def parse_price(text: str | None) -> float | None:
         return None
 
 
+class FetchError(RuntimeError):
+    def __init__(self, message: str, status: int | None = None):
+        super().__init__(message)
+        self.status = status
+
+
 def fetch_html(session: requests.Session, url: str) -> requests.Response:
     last_error: Exception | None = None
+    status: int | None = None
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             r = session.get(url, timeout=REQUEST_TIMEOUT)
             r.raise_for_status()
             return r
-        except requests.RequestException as exc:
+        except Exception as exc:  # noqa: BLE001 - requests, urllib3, ssl, decode errors: all retryable
             last_error = exc
             status = getattr(getattr(exc, "response", None), "status_code", None)
-            if attempt == MAX_RETRIES or (status is not None and status not in RETRY_STATUSES):
+            limit = NOT_FOUND_RETRIES if status == 404 else MAX_RETRIES
+            if attempt >= limit or (status is not None and status not in RETRY_STATUSES):
                 break
-            wait = RETRY_BACKOFF * attempt
-            log.warning("%s deneme %d/%d başarısız: %s (%.0fs sonra tekrar)", url, attempt, MAX_RETRIES, exc, wait)
+            wait = min(RETRY_BACKOFF * attempt * (2 if status == 429 else 1), MAX_BACKOFF)
+            log.warning("%s deneme %d/%d başarısız: %s (%.0fs sonra tekrar)", url, attempt, limit, exc, wait)
             time.sleep(wait)
-    raise RuntimeError(f"Could not fetch {url}: {last_error}")
+    raise FetchError(f"Could not fetch {url}: {last_error}", status)
+
+
+def fetch_first_page(session: requests.Session, url: str, name: str) -> requests.Response:
+    """Kategori/alt kategori ilk sayfası: fetch_html'in kendi denemelerinin üstüne birkaç tur daha.
+    404 ise hemen bırakır (bağlantı gerçekten yok)."""
+    for attempt in range(1, FIRST_PAGE_RETRIES + 1):
+        try:
+            return fetch_html(session, url)
+        except FetchError as exc:
+            if exc.status == 404 or attempt == FIRST_PAGE_RETRIES:
+                raise
+            wait = MAX_BACKOFF * attempt
+            log.warning("%s ilk sayfa tur %d/%d başarısız: %s (%.0fs sonra tekrar)",
+                        name, attempt, FIRST_PAGE_RETRIES, exc, wait)
+            time.sleep(wait)
+    raise AssertionError("unreachable")
 
 
 def page_url(category_url: str, page: int) -> str:
@@ -369,6 +399,31 @@ def parse_listing_page(
     return []
 
 
+def fetch_listing_page(
+    session: requests.Session, url: str, name: str, page: int, pages: int
+) -> tuple[BeautifulSoup, list[dict[str, Any]]] | None:
+    """Fetch + parse one listing page. Re-fetches (with backoff) when the HTML is
+    transiently empty/broken instead of failing the whole category.
+    Returns None if the page stays unparseable after all attempts."""
+    last_error: Exception | None = None
+    for attempt in range(1, PARSE_RETRIES + 1):
+        try:
+            response = fetch_html(session, url)
+            soup = BeautifulSoup(response.text, "lxml")
+            return soup, parse_listing_page(soup, name, page, pages)
+        except Exception as exc:  # noqa: BLE001 - network, parser or markup errors are all retryable
+            last_error = exc
+            if isinstance(exc, FetchError) and exc.status == 404 and attempt >= 2:
+                break  # sayfa gerçekten yok (site sayfa sayısını fazla bildiriyor)
+            if attempt < PARSE_RETRIES:
+                wait = min(RETRY_BACKOFF * attempt * 2, MAX_BACKOFF)
+                log.warning("%s sayfa %d/%d deneme %d/%d başarısız: %s (%.0fs sonra tekrar)",
+                            name, page, pages, attempt, PARSE_RETRIES, exc, wait)
+                time.sleep(wait)
+    log.error("%s sayfa %d/%d atlandı (kalıcı hata): %s", name, page, pages, last_error)
+    return None
+
+
 def sub_links(soup: BeautifulSoup, current_url: str) -> list[str]:
     """Vitrin sayfasındaki alt kategori bağlantıları."""
     cur = urlsplit(current_url).path.rstrip("/").lower()
@@ -399,11 +454,12 @@ def scrape_category(
     stop_event: threading.Event,
     depth: int = 0,
     max_pages: int = MAX_PAGES,
+    on_error: Callable[[str, Exception], None] | None = None,
 ) -> None:
     if stop_event.is_set():
         return
 
-    first_response = fetch_html(session, url)
+    first_response = fetch_first_page(session, url, name)
     url = first_response.url
     first = BeautifulSoup(first_response.text, "lxml")
     pages = min(total_pages(first), max_pages)
@@ -422,18 +478,26 @@ def scrape_category(
             if book and slug in BOOK_SKIP_SLUGS:
                 continue
             time.sleep(PAGE_DELAY)
-            scrape_category(
-                session,
-                f"{name} > {slug[:40]}",
-                link,
-                book,
-                page_handler,
-                completed_pages,
-                progress_lock,
-                stop_event,
-                depth + 1,
-                max_pages,
-            )
+            sub_name = f"{name} > {slug[:40]}"
+            try:
+                scrape_category(
+                    session,
+                    sub_name,
+                    link,
+                    book,
+                    page_handler,
+                    completed_pages,
+                    progress_lock,
+                    stop_event,
+                    depth + 1,
+                    max_pages,
+                    on_error,
+                )
+            except Exception as exc:  # noqa: BLE001 - one broken subcategory must not stop its siblings
+                log.error("Alt kategori '%s' hata verdi, sıradakine geçiliyor: %s", sub_name, exc)
+                if on_error is None:
+                    raise
+                on_error(sub_name, exc)
         return
 
     page_one = (url, 1)
@@ -442,7 +506,14 @@ def scrape_category(
     if page_one_completed:
         products = []
     else:
-        products = parse_listing_page(first, name, 1, pages)
+        try:
+            products = parse_listing_page(first, name, 1, pages)
+        except Exception as exc:  # noqa: BLE001 - transiently broken first page: re-fetch it
+            log.warning("%s sayfa 1/%d çözülemedi (%s), yeniden çekiliyor", name, pages, exc)
+            fetched = fetch_listing_page(session, url, name, 1, pages)
+            if fetched is None:
+                raise RuntimeError(f"{name} sayfa 1/{pages} çözülemedi") from exc
+            products = fetched[1]
     if book and products:
         with SEEN_LOCK:
             duplicate_listing = not page_one_completed and all(
@@ -459,6 +530,7 @@ def scrape_category(
         page_handler(name, url, 1, products)
         log.info("%s sayfa 1/%d -> %d ürün", name, pages, len(products))
 
+    consecutive_failed = 0
     for number in range(2, pages + 1):
         key = (url, number)
         with progress_lock:
@@ -470,9 +542,17 @@ def scrape_category(
         time.sleep(PAGE_DELAY)
         if stop_event.is_set():
             return
-        response = fetch_html(session, page_url(url, number))
-        page_soup = BeautifulSoup(response.text, "lxml")
-        products = parse_listing_page(page_soup, name, number, pages)
+        fetched = fetch_listing_page(session, page_url(url, number), name, number, pages)
+        if fetched is None:
+            # not checkpointed -> a rerun will retry this page
+            consecutive_failed += 1
+            if consecutive_failed >= MAX_CONSECUTIVE_FAILED_PAGES:
+                log.error("%s: art arda %d sayfa başarısız, sayfa %d/%d sonrası bırakıldı (site sayfa sayısını fazla bildiriyor olabilir)",
+                          name, consecutive_failed, number, pages)
+                break
+            continue
+        consecutive_failed = 0
+        _, products = fetched
         with SEEN_LOCK:
             SEEN_IDS.update(p["product_id"] for p in products)
         page_handler(name, url, number, products)
@@ -734,6 +814,12 @@ def main() -> None:
         action="store_true",
         help="Discard the checkpoint and re-scrape from source; the existing CSV is not used as a baseline.",
     )
+    parser.add_argument(
+        "--max-minutes",
+        type=int,
+        default=0,
+        help="Soft deadline: stop after N minutes and write the rows collected so far (exit 1). 0 = no limit.",
+    )
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s", datefmt="%H:%M:%S")
@@ -820,6 +906,11 @@ def main() -> None:
         def save_page(scope_name: str, scope_url: str, page: int, products: list[dict[str, Any]]) -> None:
             process_page(scope_name, scope_url, page, products, book_default)
 
+        sub_errors: list[str] = []
+
+        def sub_error(scope_name: str, exc: Exception) -> None:
+            sub_errors.append(scope_name)
+
         try:
             scrape_category(
                 session,
@@ -831,17 +922,25 @@ def main() -> None:
                 progress_lock=save_lock,
                 stop_event=stop_event,
                 max_pages=args.page_limit,
+                on_error=sub_error,
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             with save_lock:
                 failed_categories.append(name)
             log.error("Kategori '%s' hata verdi: %s", name, exc)
+            return
+        finally:
+            session.close()
+        if sub_errors:
+            with save_lock:
+                failed_categories.append(name)
+            log.error("Kategori '%s': %d alt kategori hata verdi (%s)", name, len(sub_errors), ", ".join(sub_errors))
 
-    try:
-        if args.workers > 1 and len(categories) > 1:
-            log.info("Multi-threaded tarama başlatılıyor (workers=%d, kategoriler=%d)...", args.workers, len(categories))
+    def run_jobs(jobs: list[tuple[str, str, str | None]]) -> None:
+        if args.workers > 1 and len(jobs) > 1:
+            log.info("Multi-threaded tarama başlatılıyor (workers=%d, kategoriler=%d)...", args.workers, len(jobs))
             with ThreadPoolExecutor(max_workers=args.workers) as executor:
-                futures = [executor.submit(worker_job, name, url, book_default) for name, url, book_default in categories]
+                futures = [executor.submit(worker_job, name, url, book_default) for name, url, book_default in jobs]
                 try:
                     for future in as_completed(futures):
                         future.result()
@@ -851,10 +950,35 @@ def main() -> None:
                         future.cancel()
                     raise
         else:
-            for name, url, book_default in categories:
+            for name, url, book_default in jobs:
                 if stop_event.is_set():
                     break
                 worker_job(name, url, book_default)
+
+    # Soft deadline: stop a bit before the cron job's hard timeout and still write what we have.
+    deadline_hit = threading.Event()
+    deadline_timer: threading.Timer | None = None
+    if args.max_minutes > 0:
+        def on_deadline() -> None:
+            log.error("Süre sınırı (%d dk) doldu; mevcut sayfa bitince durulacak ve eldeki veri yazılacak.",
+                      args.max_minutes)
+            deadline_hit.set()
+            stop_event.set()
+
+        deadline_timer = threading.Timer(args.max_minutes * 60, on_deadline)
+        deadline_timer.daemon = True
+        deadline_timer.start()
+
+    try:
+        run_jobs(categories)
+        # Second pass for failed categories: checkpointed pages are skipped, so only the gaps are re-fetched.
+        if failed_categories and not stop_event.is_set():
+            retry = [c for c in categories if c[0] in failed_categories]
+            log.warning("Hata veren kategoriler %ds sonra tekrar denenecek: %s",
+                        RETRY_PASS_WAIT, ", ".join(failed_categories))
+            stop_event.wait(RETRY_PASS_WAIT)
+            failed_categories.clear()
+            run_jobs(retry)
     except KeyboardInterrupt:
         stop_event.set()
         log.warning(
@@ -863,26 +987,32 @@ def main() -> None:
         )
         checkpoint.close()
         raise SystemExit(130)
+    finally:
+        if deadline_timer is not None:
+            deadline_timer.cancel()
 
     try:
-        if stop_event.is_set():
+        if stop_event.is_set() and not deadline_hit.is_set():
             log.warning(
                 "Stopped after the last committed page. Progress is saved in %s; rerun the same command to resume.",
                 checkpoint_path,
             )
             raise SystemExit(130)
-        if failed_categories:
-            failed = ", ".join(failed_categories)
-            raise SystemExit(
-                f"Scrape incomplete; failed categories: {failed}. "
-                f"Checkpoint retained at {checkpoint_path}; rerun the same command to resume."
-            )
         if not rows:
             log.error("No data collected.")
             raise SystemExit(1)
 
         checkpoint.close()
         write_csv(rows, out)
+        if deadline_hit.is_set() or failed_categories:
+            # Partial data is better than none: the CSV is written (and pushed), the run still exits
+            # non-zero so the report shows FAILED, and a same-day rerun resumes from the checkpoint.
+            reason = (f"süre sınırı ({args.max_minutes} dk)" if deadline_hit.is_set()
+                      else f"hata veren kategoriler: {', '.join(failed_categories)}")
+            raise SystemExit(
+                f"Eksik tarama ({reason}); {len(rows)} satır yine de yazıldı: {out}. "
+                f"Checkpoint {checkpoint_path} içinde duruyor; aynı gün tekrar çalıştırılırsa kaldığı yerden devam eder."
+            )
         checkpoint_path.unlink(missing_ok=True)
         log.info("Tarama tamamlandı. Toplam %d satır kaydedildi: %s", len(rows), out)
     finally:
