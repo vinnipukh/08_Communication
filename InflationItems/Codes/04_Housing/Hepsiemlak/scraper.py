@@ -66,6 +66,7 @@ SPLIT_PAGES = 60  # a province above this many pages is crawled district by dist
 # per-IP block on a shared (dormitory) connection can last well over the first ~20 min
 BACKOFF = [35, 85, 140, 325, 600, 1200, 1800, 1800, 1800, 1800]
 MAX_WAIT = 1800
+MAX_ROUTE_FAILURES = 3  # unexpected errors on one route before it is parked as "lost" (retried by --resume)
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
 DATA_DIR = REPO_ROOT / "InflationItems" / "Datas" / "04_Housing" / "Hepsiemlak"
@@ -257,6 +258,8 @@ class Crawler:
         self.pages: dict[str, int] = {}     # route -> page count reported by the site (for resuming)
         self.sizes: dict[str, int] = {}     # route -> listing count reported by the site
         self.queue: list[tuple[int, str]] = []  # (priority, route), highest taken first
+        self.failures: dict[str, int] = {}  # route -> unexpected errors in this run
+        self.lost: set[str] = set()         # routes that kept failing; the run is incomplete while any remain
         self.active = 0
         self.blocked_saved = False
         self.challenges = {"passed": 0, "failed": 0}
@@ -274,6 +277,8 @@ class Crawler:
                 self.queue = sorted(tuple(x) for x in ck.get("queue", []))  # saved highest first
                 for route in self.progress:  # routes a stopped session was in the middle of
                     self.push(route, 10**6)
+                for route in ck.get("lost", []):  # routes that failed repeatedly last run: try again
+                    self.push(route, 10**6)
             log.info("resuming: %d routes done, %d in progress, %d listings in %s",
                      len(self.done), len(self.progress), len(self.seen), csv_path.name)
         self.fh = csv_path.open("a" if resuming else "w", encoding="utf-8", newline="")
@@ -286,7 +291,7 @@ class Crawler:
         self.ckpt_path.write_text(json.dumps({
             "date": date.today().isoformat(), "done": sorted(self.done), "progress": self.progress,
             "pages": {r: n for r, n in self.pages.items() if r in self.progress},
-            "queue": sorted(self.queue, reverse=True)}), encoding="utf-8")
+            "queue": sorted(self.queue, reverse=True), "lost": sorted(self.lost)}), encoding="utf-8")
 
     def save_block(self, status, html: str):
         if not self.blocked_saved and status:
@@ -385,8 +390,18 @@ class Crawler:
                     self.push(route, 10**6)  # hand it to another session first
                     self.save_ckpt()
                     return
-                except Exception as exc:  # one bad route must not kill the crawl
+                except Exception as exc:  # one bad route must not kill the crawl, nor vanish silently
                     log.exception("[%s] %s failed: %s", s.name, route, exc)
+                    n = self.failures[route] = self.failures.get(route, 0) + 1
+                    if n < MAX_ROUTE_FAILURES:
+                        log.warning("[%s] %s: retry %d/%d with a fresh browser", s.name, route, n, MAX_ROUTE_FAILURES - 1)
+                        self.push(route, 10**6)
+                        await s.close()
+                        await asyncio.sleep(60)
+                    else:
+                        log.error("[%s] %s: LOST after %d failures (kept in the checkpoint for --resume)", s.name, route, n)
+                        self.lost.add(route)
+                    self.save_ckpt()
                 finally:
                     self.active -= 1
         finally:
@@ -402,7 +417,7 @@ class Crawler:
                  n, "proxies" if proxies else "the local IP", Delay.low, Delay.high, len(self.queue))
         await asyncio.gather(*(self.worker(i, proxies[i] if proxies else None) for i in range(n)))
         self.fh.close()
-        return self.capped or (not self.queue and not self.progress)
+        return self.capped or (not self.queue and not self.progress and not self.lost)
 
 
 async def province_seeds() -> list[str]:
@@ -462,6 +477,8 @@ def main():
         finally:
             log.info("wrote %d rows to %s; Cloudflare challenges passed %d, failed %d", len(crawler.seen), csv_path,
                      crawler.challenges["passed"], crawler.challenges["failed"])
+            if crawler.lost:
+                log.error("routes lost this run: %s", ", ".join(sorted(crawler.lost)))
             for route, count in sorted(crawler.sizes.items()):
                 log.debug("site count %s: %d", route, count)
 

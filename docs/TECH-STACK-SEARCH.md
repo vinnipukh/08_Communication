@@ -570,6 +570,14 @@ only). The one-off conversion script was not added to the repository.
   session ran ~600 pages in 96 min with no 429 (16,824 rows, 24 challenges passed); from dormitory
   connections the first long 429 came after ~26 and ~90 pages. The difference is the IP, not the code.
 
+- Unattended server runs (2026-11-08, under test): `deploy/hepsiemlak-server/` runs each shard on its own server
+  (one IP per shard, one session, same delays) through `run_shard.sh` (flock, `--resume` retry loop, status line
+  in `log.txt` with the row count against the sitemap count). No cron and no push yet; first step is a bounded
+  live test per server IP, since all earlier runs were from residential/dormitory IPs and datacenter IPs may be
+  treated differently by Cloudflare. `scraper.py`: a route that raised an unexpected error used to drop out of
+  the queue silently (the run still ended "complete"); it is now retried up to `MAX_ROUTE_FAILURES` (3) with a
+  fresh browser, then kept as `lost` in the checkpoint, the run exits 1 and `--resume` retries it.
+
 ## 3.5 EPDK electricity tariff scraper (2026-10-28)
 
 `InflationItems/Codes/04_Housing/Electricity/scraper.py` (TÜİK 0451001), output
