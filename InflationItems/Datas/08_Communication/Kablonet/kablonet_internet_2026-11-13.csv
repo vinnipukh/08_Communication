@@ -1,0 +1,28 @@
+﻿product_name,price,category_number,sub_category_number,date,operator,group,product_id,list_price,period,speed_mbps,upload_mbps,infrastructure,commitment_months,url
+25 Mbps'e kadar Kablo İnternet (DOCSIS),1300.0,8,0833001,2026-11-13,kablonet,tablo-1,25-kablo-internet-docsis,,1_ay,25,5,Kablo İnternet (DOCSIS),,https://www.turksatkablo.com.tr/internet-Tarifeler
+25 Mbps'e kadar Eve Kadar Fiber (GPON),1300.0,8,0833001,2026-11-13,kablonet,tablo-1,25-eve-kadar-fiber-gpon,,1_ay,25,5,Eve Kadar Fiber (GPON),,https://www.turksatkablo.com.tr/internet-Tarifeler
+35 Mbps'e kadar Kablo İnternet (DOCSIS),1375.0,8,0833001,2026-11-13,kablonet,tablo-1,35-kablo-internet-docsis,,1_ay,35,6,Kablo İnternet (DOCSIS),,https://www.turksatkablo.com.tr/internet-Tarifeler
+35 Mbps'e kadar Eve Kadar Fiber (GPON),1375.0,8,0833001,2026-11-13,kablonet,tablo-1,35-eve-kadar-fiber-gpon,,1_ay,35,12,Eve Kadar Fiber (GPON),,https://www.turksatkablo.com.tr/internet-Tarifeler
+50 Mbps'e kadar Kablo İnternet (DOCSIS),1450.0,8,0833001,2026-11-13,kablonet,tablo-1,50-kablo-internet-docsis,,1_ay,50,8,Kablo İnternet (DOCSIS),,https://www.turksatkablo.com.tr/internet-Tarifeler
+50 Mbps'e kadar Eve Kadar Fiber (GPON),1450.0,8,0833001,2026-11-13,kablonet,tablo-1,50-eve-kadar-fiber-gpon,,1_ay,50,10,Eve Kadar Fiber (GPON),,https://www.turksatkablo.com.tr/internet-Tarifeler
+75 Mbps'e kadar Kablo İnternet (DOCSIS),1525.0,8,0833001,2026-11-13,kablonet,tablo-1,75-kablo-internet-docsis,,1_ay,75,10,Kablo İnternet (DOCSIS),,https://www.turksatkablo.com.tr/internet-Tarifeler
+75 Mbps'e kadar Eve Kadar Fiber (GPON),1525.0,8,0833001,2026-11-13,kablonet,tablo-1,75-eve-kadar-fiber-gpon,,1_ay,75,15,Eve Kadar Fiber (GPON),,https://www.turksatkablo.com.tr/internet-Tarifeler
+100 Mbps'e kadar Kablo İnternet (DOCSIS),1600.0,8,0833001,2026-11-13,kablonet,tablo-1,100-kablo-internet-docsis,,1_ay,100,10,Kablo İnternet (DOCSIS),,https://www.turksatkablo.com.tr/internet-Tarifeler
+100 Mbps'e kadar Eve Kadar Fiber (GPON),1600.0,8,0833001,2026-11-13,kablonet,tablo-1,100-eve-kadar-fiber-gpon,,1_ay,100,20,Eve Kadar Fiber (GPON),,https://www.turksatkablo.com.tr/internet-Tarifeler
+200 Mbps'e kadar Kablo İnternet (DOCSIS),1675.0,8,0833001,2026-11-13,kablonet,tablo-1,200-kablo-internet-docsis,,1_ay,200,20,Kablo İnternet (DOCSIS),,https://www.turksatkablo.com.tr/internet-Tarifeler
+200 Mbps'e kadar Eve Kadar Fiber (GPON),1675.0,8,0833001,2026-11-13,kablonet,tablo-1,200-eve-kadar-fiber-gpon,,1_ay,200,30,Eve Kadar Fiber (GPON),,https://www.turksatkablo.com.tr/internet-Tarifeler
+500 Mbps'e kadar Eve Kadar Fiber (GPON),2400.0,8,0833001,2026-11-13,kablonet,tablo-1,500-eve-kadar-fiber-gpon,,1_ay,500,75,Eve Kadar Fiber (GPON),,https://www.turksatkablo.com.tr/internet-Tarifeler
+1000 Mbps'e kadar Eve Kadar Fiber (GPON),2950.0,8,0833001,2026-11-13,kablonet,tablo-1,1000-eve-kadar-fiber-gpon,,1_ay,1000,125,Eve Kadar Fiber (GPON),,https://www.turksatkablo.com.tr/internet-Tarifeler
+16 Mbps'e kadar DSL,1225.0,8,0833001,2026-11-13,kablonet,tablo-2,16-dsl,,1_ay,16,4,DSL,,https://www.turksatkablo.com.tr/internet-Tarifeler
+24 Mbps'e kadar DSL,1300.0,8,0833001,2026-11-13,kablonet,tablo-2,24-dsl,,1_ay,24,4,DSL,,https://www.turksatkablo.com.tr/internet-Tarifeler
+35 Mbps'e kadar DSL,1375.0,8,0833001,2026-11-13,kablonet,tablo-2,35-dsl,,1_ay,35,6,DSL,,https://www.turksatkablo.com.tr/internet-Tarifeler
+35 Mbps'e kadar FTTH,1375.0,8,0833001,2026-11-13,kablonet,tablo-2,35-ftth,,1_ay,35,12,FTTH,,https://www.turksatkablo.com.tr/internet-Tarifeler
+50 Mbps'e kadar DSL,1450.0,8,0833001,2026-11-13,kablonet,tablo-2,50-dsl,,1_ay,50,8,DSL,,https://www.turksatkablo.com.tr/internet-Tarifeler
+50 Mbps'e kadar FTTH,1450.0,8,0833001,2026-11-13,kablonet,tablo-2,50-ftth,,1_ay,50,10,FTTH,,https://www.turksatkablo.com.tr/internet-Tarifeler
+75 Mbps'e kadar DSL,1525.0,8,0833001,2026-11-13,kablonet,tablo-2,75-dsl,,1_ay,75,10,DSL,,https://www.turksatkablo.com.tr/internet-Tarifeler
+75 Mbps'e kadar FTTH,1525.0,8,0833001,2026-11-13,kablonet,tablo-2,75-ftth,,1_ay,75,15,FTTH,,https://www.turksatkablo.com.tr/internet-Tarifeler
+100 Mbps'e kadar DSL,1600.0,8,0833001,2026-11-13,kablonet,tablo-2,100-dsl,,1_ay,100,10,DSL,,https://www.turksatkablo.com.tr/internet-Tarifeler
+100 Mbps'e kadar FTTH,1600.0,8,0833001,2026-11-13,kablonet,tablo-2,100-ftth,,1_ay,100,20,FTTH,,https://www.turksatkablo.com.tr/internet-Tarifeler
+200 Mbps'e kadar FTTH,1675.0,8,0833001,2026-11-13,kablonet,tablo-2,200-ftth,,1_ay,200,30,FTTH,,https://www.turksatkablo.com.tr/internet-Tarifeler
+500 Mbps'e kadar FTTH,2400.0,8,0833001,2026-11-13,kablonet,tablo-2,500-ftth,,1_ay,500,40,FTTH,,https://www.turksatkablo.com.tr/internet-Tarifeler
+1000 Mbps'e kadar FTTH,2950.0,8,0833001,2026-11-13,kablonet,tablo-2,1000-ftth,,1_ay,1000,50,FTTH,,https://www.turksatkablo.com.tr/internet-Tarifeler
