@@ -24,9 +24,14 @@ import argparse
 import atexit
 import csv
 import html
+import ipaddress
+import json
 import logging
+import os
 import re
 import shutil
+import socket
+import ssl
 import statistics
 import sys
 import tempfile
@@ -54,9 +59,8 @@ BASE_URL = "https://www.ivho.org.tr/"
 # Fallback and floor for the discovery below (the 2026/2 tariff, checked 2026-10-31).
 KNOWN_PDF_URL = urljoin(BASE_URL, "assets/docs/IVHO_Alt_Ucret_Tarifesi_2026_2.pdf")
 
-# CA-issuers URL taken from the AIA field of the server certificate (Sectigo DV R36).
+# Fallback CA-issuers URL if the server leaf certificate AIA cannot be read dynamically.
 INTERMEDIATE_URL = "http://crt.sectigo.com/SectigoPublicServerAuthenticationCADVR36.crt"
-INTERMEDIATE_HOST_SUFFIX = ".sectigo.com"
 MAX_INTERMEDIATE_BYTES = 20_000
 
 DATA_DIR = (
@@ -65,13 +69,24 @@ DATA_DIR = (
     / "09_Recreation"
     / "IVHO"
 )
+# Gitignored local cache (InflationItems/Codes/**/checkpoints/) for conditional GET (304).
+CACHE_DIR = Path(__file__).resolve().parent / "checkpoints"
+CACHE_PDF_PATH = CACHE_DIR / "tariff.pdf"
+CACHE_META_PATH = CACHE_DIR / "tariff_meta.json"
 
 CATEGORY_NUMBER = "9"
 SUBCATEGORY_NUMBER = "0945001"
 SOURCE_PREFIX = "İVHO"
 
-REQUEST_TIMEOUT = 60
-MAX_RETRIES = 3
+CONNECT_TIMEOUT = 20
+READ_TIMEOUT = 60
+# Streamed PDF reads trigger curl's low-speed timer (connect + read = 40s < 1 B/s).
+PDF_STREAM_TIMEOUT = (15, 25)
+PDF_TOTAL_DEADLINE = 420
+PDF_MAX_BYTES = 100_000_000
+MAX_RETRIES = 4
+MAX_RESUMES = 16
+RETRY_BACKOFFS = (5, 15, 30)
 REQUEST_DELAY = 1.5
 
 # Page geometry in PDF points (A4, 595 x 842), measured on the 2026/2 booklet.
@@ -108,23 +123,94 @@ def normalize_text(value):
     return " ".join(str(value or "").replace("\xa0", " ").split()).strip()
 
 
-def build_trust_bundle():
-    """Path of a PEM bundle = certifi roots + the Sectigo intermediate, verified against a root."""
+def _is_public_ca_url(url):
+    parsed = urlparse(url)
+    host = (parsed.hostname or "").rstrip(".").lower()
+    if parsed.scheme not in ("http", "https") or not host:
+        return False
+    if host == "localhost" or host.endswith((".local", ".internal")):
+        return False
+    try:
+        ipaddress.ip_address(host)
+    except ValueError:
+        return True
+    return False
+
+
+def _fetch_leaf_certificate(host):
+    """Fetch the peer leaf certificate to read its AIA caIssuers URL (never skips HTTP TLS verify)."""
+    from cryptography import x509
+
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+    context.check_hostname = False
+    context.verify_mode = ssl.CERT_NONE
+    with socket.create_connection((host, 443), timeout=CONNECT_TIMEOUT) as sock:
+        with context.wrap_socket(sock, server_hostname=host) as tls_sock:
+            der = tls_sock.getpeercert(binary_form=True)
+    return x509.load_der_x509_certificate(der)
+
+
+def _discover_intermediate_url(host):
+    """Return (ca_issuers_url, leaf_cert_or_None) from the live leaf cert's AIA extension."""
+    from cryptography import x509
+    from cryptography.x509.oid import AuthorityInformationAccessOID, ExtensionOID
+
+    try:
+        leaf = _fetch_leaf_certificate(host)
+    except Exception as error:
+        logger.warning("Could not inspect peer certificate for %s (%s); using fallback AIA URL", host, error)
+        return INTERMEDIATE_URL, None
+
+    try:
+        aia = leaf.extensions.get_extension_for_oid(ExtensionOID.AUTHORITY_INFORMATION_ACCESS).value
+    except x509.ExtensionNotFound:
+        return INTERMEDIATE_URL, leaf
+
+    for desc in aia:
+        if desc.access_method == AuthorityInformationAccessOID.CA_ISSUERS and isinstance(
+            desc.access_location, x509.UniformResourceIdentifier
+        ):
+            url = desc.access_location.value
+            if _is_public_ca_url(url):
+                return url, leaf
+
+    return INTERMEDIATE_URL, leaf
+
+
+def _download_intermediate_bytes(url):
+    """Download the CA intermediate certificate with Chrome TLS impersonation and retries."""
+    if not _is_public_ca_url(url):
+        raise RuntimeError(f"Refusing to fetch an intermediate certificate from {url}")
+
+    last_error = None
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            response = requests.get(
+                url,
+                impersonate="chrome",
+                timeout=(CONNECT_TIMEOUT, 30),
+                allow_redirects=False,
+            )
+            if response.status_code == 200 and 0 < len(response.content) <= MAX_INTERMEDIATE_BYTES:
+                return response.content
+            last_error = f"HTTP {response.status_code}, {len(response.content)} bytes"
+        except RequestException as error:
+            last_error = str(error)
+
+        if attempt < MAX_RETRIES:
+            time.sleep(RETRY_BACKOFFS[min(attempt - 1, len(RETRY_BACKOFFS) - 1)])
+
+    raise RuntimeError(f"Unexpected answer for the intermediate certificate ({url}): {last_error}")
+
+
+def build_trust_bundle(host=f"www.{HOST}"):
+    """Path of a PEM bundle = certifi roots + the AIA intermediate, verified against a root."""
     import certifi
     from cryptography import x509
     from cryptography.hazmat.primitives import serialization
 
-    host = urlparse(INTERMEDIATE_URL).hostname or ""
-
-    if not host.endswith(INTERMEDIATE_HOST_SUFFIX):
-        raise RuntimeError(f"Refusing to fetch an intermediate certificate from {host}")
-
-    response = requests.get(INTERMEDIATE_URL, timeout=30, allow_redirects=False)
-
-    if response.status_code != 200 or not 0 < len(response.content) <= MAX_INTERMEDIATE_BYTES:
-        raise RuntimeError(f"Unexpected answer for the intermediate certificate: {response.status_code}")
-
-    data = response.content
+    ca_url, leaf = _discover_intermediate_url(host)
+    data = _download_intermediate_bytes(ca_url)
     intermediate = (
         x509.load_pem_x509_certificate(data)
         if data.startswith(b"-----")
@@ -138,6 +224,9 @@ def build_trust_bundle():
 
     if not intermediate.extensions.get_extension_for_class(x509.BasicConstraints).value.ca:
         raise RuntimeError("The downloaded certificate is not a CA certificate")
+
+    if leaf is not None and leaf.issuer != intermediate.subject:
+        raise RuntimeError("The downloaded intermediate does not match the server certificate issuer")
 
     roots_pem = Path(certifi.where()).read_bytes()
 
@@ -177,6 +266,30 @@ def is_certificate_error(error):
     return "certificate" in text or "ssl" in text or "(60)" in text
 
 
+def _parse_int(value):
+    try:
+        return int(value) if value is not None else None
+    except (TypeError, ValueError):
+        return None
+
+
+CONTENT_RANGE_PATTERN = re.compile(
+    r"^bytes\s+(?P<start>\d+)-(?P<end>\d+)/(?P<total>\d+|\*)$", re.IGNORECASE
+)
+
+
+def _parse_content_range(header_value):
+    match = CONTENT_RANGE_PATTERN.match((header_value or "").strip())
+    if not match:
+        return None
+    total = match.group("total")
+    return (
+        int(match.group("start")),
+        int(match.group("end")),
+        None if total == "*" else int(total),
+    )
+
+
 class IVHOClient:
     """curl_cffi session for ivho.org.tr that never disables certificate verification."""
 
@@ -184,47 +297,247 @@ class IVHOClient:
         self.session = requests.Session(impersonate="chrome")
         self.verify = True
 
-    def get(self, url, referer=None):
-        if urlparse(url).hostname not in (HOST, f"www.{HOST}"):
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_exc):
+        self.close()
+
+    def close(self):
+        self.session.close()
+
+    def _validate_host(self, url):
+        host = urlparse(url).hostname
+        if host not in (HOST, f"www.{HOST}"):
             raise RuntimeError(f"Refusing to request {url}: not an ivho.org.tr address")
+        return host
 
+    def _bootstrap_trust_if_needed(self, host, error):
+        if self.verify is True and is_certificate_error(error):
+            logger.warning(
+                "Certificate chain of %s is incomplete (%s); adding its authenticated intermediate",
+                HOST,
+                str(error).splitlines()[0][:120],
+            )
+            self.verify = build_trust_bundle(host)
+            # Pause briefly after the aborted TLS handshake so the origin does not throttle us.
+            time.sleep(REQUEST_DELAY)
+            return True
+        return False
+
+    def _retry_sleep(self, attempt, response=None, deadline=None):
+        retry_after = response.headers.get("retry-after") if response is not None else None
+        if retry_after and retry_after.strip().isdigit():
+            wait = min(int(retry_after.strip()), 60)
+        else:
+            wait = RETRY_BACKOFFS[min(attempt - 1, len(RETRY_BACKOFFS) - 1)]
+        if deadline is not None:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                return False
+            wait = min(wait, remaining)
+        if wait > 0:
+            time.sleep(wait)
+        return True
+
+    def get(self, url, referer=None):
+        host = self._validate_host(url)
         headers = {"Referer": referer} if referer else None
+        attempt = 0
 
-        for attempt in range(1, MAX_RETRIES + 1):
+        while attempt < MAX_RETRIES:
             try:
                 # Redirects are not followed: the trust bundle is for this host only.
                 response = self.session.get(
                     url,
                     headers=headers,
-                    timeout=REQUEST_TIMEOUT,
+                    timeout=(CONNECT_TIMEOUT, READ_TIMEOUT),
                     verify=self.verify,
                     allow_redirects=False,
                 )
             except RequestException as error:
-                if self.verify is True and is_certificate_error(error):
-                    logger.warning(
-                        "Certificate chain of %s is incomplete (%s); adding its authenticated intermediate",
-                        HOST,
-                        str(error).splitlines()[0][:120],
-                    )
-                    self.verify = build_trust_bundle()
+                if self._bootstrap_trust_if_needed(host, error):
                     continue
-
-                logger.warning("Request failed for %s (attempt %d): %s", url, attempt, error)
-                time.sleep(3 * attempt)
+                attempt += 1
+                logger.warning("Request failed for %s (attempt %d/%d): %s", url, attempt, MAX_RETRIES, error)
+                if attempt < MAX_RETRIES:
+                    self._retry_sleep(attempt)
                 continue
 
             if response.status_code == 200:
                 return response
 
-            logger.warning("HTTP %s for %s (attempt %d)", response.status_code, url, attempt)
-            time.sleep(3 * attempt)
+            attempt += 1
+            logger.warning(
+                "HTTP %s for %s (attempt %d/%d)", response.status_code, url, attempt, MAX_RETRIES
+            )
+            if attempt < MAX_RETRIES:
+                self._retry_sleep(attempt, response=response)
+
+        raise RuntimeError(f"Could not fetch {url}")
+
+    def download_pdf(self, url, referer=None, cached_meta=None, cached_bytes=None):
+        """Stream the tariff PDF with conditional GET (304) and HTTP Range resume.
+
+        Using stream=True switches curl_cffi from a total-transfer timeout to a connect + low-speed
+        inactivity timeout, preventing 60s cutoffs on slow 13+ MB PDF transfers.
+        """
+        host = self._validate_host(url)
+        deadline = time.monotonic() + PDF_TOTAL_DEADLINE
+        buf = bytearray()
+        active_meta = {}
+        expected_total = None
+        attempt = 0
+        resumes = 0
+
+        while attempt < MAX_RETRIES and resumes <= MAX_RESUMES and time.monotonic() < deadline:
+            bytes_before = len(buf)
+            req_headers = {"Referer": referer} if referer else {}
+            if buf:
+                req_headers["Range"] = f"bytes={len(buf)}-"
+                if active_meta.get("etag"):
+                    req_headers["If-Range"] = active_meta["etag"]
+                elif active_meta.get("last_modified"):
+                    req_headers["If-Range"] = active_meta["last_modified"]
+            elif cached_bytes and cached_meta:
+                if cached_meta.get("etag"):
+                    req_headers["If-None-Match"] = cached_meta["etag"]
+                if cached_meta.get("last_modified"):
+                    req_headers["If-Modified-Since"] = cached_meta["last_modified"]
+
+            response = None
+            try:
+                response = self.session.get(
+                    url,
+                    headers=req_headers,
+                    timeout=PDF_STREAM_TIMEOUT,
+                    verify=self.verify,
+                    allow_redirects=False,
+                    stream=True,
+                )
+
+                if response.status_code == 304 and not buf and cached_bytes:
+                    logger.info("Tariff PDF unchanged (304 Not Modified); using cached copy")
+                    return cached_bytes, cached_meta, True
+
+                if response.status_code == 416 and buf:
+                    logger.warning("Server returned 416 for Range offset %d; restarting download", len(buf))
+                    buf.clear()
+                    active_meta = {}
+                    expected_total = None
+                    continue
+
+                if response.status_code == 200:
+                    if buf:
+                        logger.info("Server returned 200 instead of 206; restarting PDF download")
+                        buf.clear()
+                        bytes_before = 0
+                    expected_total = _parse_int(response.headers.get("content-length"))
+                    active_meta = {
+                        "url": url,
+                        "etag": response.headers.get("etag"),
+                        "last_modified": response.headers.get("last-modified"),
+                        "content_length": expected_total,
+                    }
+                elif response.status_code == 206 and buf:
+                    cr = _parse_content_range(response.headers.get("content-range"))
+                    resp_etag = response.headers.get("etag")
+                    if (
+                        cr is None
+                        or cr[0] != len(buf)
+                        or (expected_total is not None and cr[2] is not None and cr[2] != expected_total)
+                        or (active_meta.get("etag") and resp_etag and resp_etag != active_meta["etag"])
+                    ):
+                        logger.warning("Incompatible 206 Content-Range (%s); restarting download", response.headers.get("content-range"))
+                        buf.clear()
+                        active_meta = {}
+                        expected_total = None
+                        attempt += 1
+                        if attempt < MAX_RETRIES:
+                            self._retry_sleep(attempt, response=response, deadline=deadline)
+                        continue
+                    if expected_total is None and cr[2] is not None:
+                        expected_total = cr[2]
+                        active_meta["content_length"] = expected_total
+                else:
+                    attempt += 1
+                    logger.warning(
+                        "HTTP %s for %s (attempt %d/%d)", response.status_code, url, attempt, MAX_RETRIES
+                    )
+                    if attempt < MAX_RETRIES:
+                        self._retry_sleep(attempt, response=response, deadline=deadline)
+                    continue
+
+                if expected_total is not None and expected_total > PDF_MAX_BYTES:
+                    raise RuntimeError(f"Refusing oversized PDF ({expected_total} bytes): {url}")
+
+                for chunk in response.iter_content():
+                    if not chunk:
+                        continue
+                    if len(buf) + len(chunk) > PDF_MAX_BYTES:
+                        raise RuntimeError(f"PDF download exceeded {PDF_MAX_BYTES} bytes: {url}")
+                    buf.extend(chunk)
+                    if time.monotonic() >= deadline:
+                        raise RequestException(f"Exceeded total PDF deadline ({PDF_TOTAL_DEADLINE}s)")
+
+                if expected_total is not None and len(buf) < expected_total:
+                    raise RequestException(
+                        f"Incomplete PDF transfer ({len(buf)}/{expected_total} bytes)"
+                    )
+
+                if not buf.startswith(b"%PDF"):
+                    raise RuntimeError(f"Response is not a PDF: {url}")
+
+                active_meta["content_length"] = len(buf)
+                return bytes(buf), active_meta, False
+
+            except RequestException as error:
+                if self._bootstrap_trust_if_needed(host, error):
+                    continue
+                has_validator = bool(active_meta.get("etag") or active_meta.get("last_modified"))
+                if len(buf) > bytes_before and has_validator and resumes < MAX_RESUMES:
+                    resumes += 1
+                    # Progress on the partial transfer resets zero-progress retry count.
+                    attempt = 0
+                    total_suffix = f"/{expected_total}" if expected_total is not None else ""
+                    logger.warning(
+                        "PDF stream interrupted for %s at %d%s bytes (%s); resuming (%d/%d)",
+                        url,
+                        len(buf),
+                        total_suffix,
+                        error,
+                        resumes,
+                        MAX_RESUMES,
+                    )
+                    wait = min(RETRY_BACKOFFS[0], max(0.0, deadline - time.monotonic()))
+                    if wait > 0:
+                        time.sleep(wait)
+                    continue
+                attempt += 1
+                logger.warning(
+                    "PDF download failed for %s (%d bytes received, attempt %d/%d): %s",
+                    url,
+                    len(buf),
+                    attempt,
+                    MAX_RETRIES,
+                    error,
+                )
+                # Discard partial data if we lack a strong validator to safely resume with If-Range.
+                if buf and not has_validator:
+                    buf.clear()
+                    active_meta = {}
+                    expected_total = None
+                if attempt < MAX_RETRIES:
+                    self._retry_sleep(attempt, deadline=deadline)
+            finally:
+                if response is not None:
+                    response.close()
 
         raise RuntimeError(f"Could not fetch {url}")
 
 
 # ----------------------------------------------------------------------------------------
-# Tariff PDF
+# Tariff PDF & cache
 # ----------------------------------------------------------------------------------------
 
 # The İVHO home page is a script-rendered page without links, so the current PDF is looked
@@ -239,6 +552,59 @@ PDF_LINK_PATTERN = re.compile(
 PERIOD_PATTERN = re.compile(r"(?P<year>20\d{2})(?:[_-](?P<half>\d))?")
 
 
+def load_cached_pdf(pdf_url):
+    """Return (pdf_bytes, meta) if a valid cached PDF matches pdf_url, else (None, None)."""
+    if not CACHE_META_PATH.is_file() or not CACHE_PDF_PATH.is_file():
+        return None, None
+    try:
+        meta = json.loads(CACHE_META_PATH.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None, None
+
+    if meta.get("url") != pdf_url or not (meta.get("etag") or meta.get("last_modified")):
+        return None, None
+
+    try:
+        pdf_bytes = CACHE_PDF_PATH.read_bytes()
+    except OSError:
+        return None, None
+
+    expected_len = meta.get("content_length")
+    if not pdf_bytes.startswith(b"%PDF") or (
+        isinstance(expected_len, int) and len(pdf_bytes) != expected_len
+    ):
+        return None, None
+
+    return pdf_bytes, meta
+
+
+def save_cached_pdf(pdf_url, pdf_bytes, meta):
+    """Atomically store the verified PDF and its HTTP validators for future 304 checks."""
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    pdf_tmp = CACHE_DIR / f"{CACHE_PDF_PATH.name}.{os.getpid()}.tmp"
+    meta_tmp = CACHE_DIR / f"{CACHE_META_PATH.name}.{os.getpid()}.tmp"
+    payload = {
+        "url": pdf_url,
+        "etag": meta.get("etag"),
+        "last_modified": meta.get("last_modified"),
+        "content_length": len(pdf_bytes),
+    }
+    try:
+        pdf_tmp.write_bytes(pdf_bytes)
+        os.replace(pdf_tmp, CACHE_PDF_PATH)
+        meta_tmp.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        os.replace(meta_tmp, CACHE_META_PATH)
+    except OSError as error:
+        logger.warning("Could not write PDF cache (%s); continuing without cache", error)
+        pdf_tmp.unlink(missing_ok=True)
+        meta_tmp.unlink(missing_ok=True)
+
+
+def clear_cached_pdf():
+    CACHE_PDF_PATH.unlink(missing_ok=True)
+    CACHE_META_PATH.unlink(missing_ok=True)
+
+
 def period_of(url):
     match = PERIOD_PATTERN.search(url.rsplit("/", 1)[-1])
     return (int(match.group("year")), int(match.group("half") or 0)) if match else (0, 0)
@@ -247,26 +613,30 @@ def period_of(url):
 def choose_tariff_pdf():
     """Newest "Alt Ücret Tarifesi" PDF linked on the discovery pages; the known URL is the floor."""
     candidates = {KNOWN_PDF_URL}
-    session = requests.Session(impersonate="chrome")
 
-    for page_url in DISCOVERY_PAGES:
-        try:
-            origin = f"{urlparse(page_url).scheme}://{urlparse(page_url).netloc}/"
-            session.get(origin, timeout=30)
+    with requests.Session(impersonate="chrome") as session:
+        for page_url in DISCOVERY_PAGES:
+            try:
+                origin = f"{urlparse(page_url).scheme}://{urlparse(page_url).netloc}/"
+                session.get(origin, timeout=30)
+                time.sleep(REQUEST_DELAY)
+                resp = session.get(page_url, timeout=30)
+                if resp.status_code != 200:
+                    logger.warning("HTTP %s for %s", resp.status_code, page_url)
+                    continue
+                text = resp.text
+            except RequestException as error:
+                logger.warning("Could not read %s: %s", page_url, error)
+                continue
+
+            for url in PDF_LINK_PATTERN.findall(html.unescape(text)):
+                url = url.replace("http://", "https://", 1)
+                name = fold_text(url.rsplit("/", 1)[-1])
+
+                if "tarife" in name and "ciftlik" not in name:
+                    candidates.add(url)
+
             time.sleep(REQUEST_DELAY)
-            text = session.get(page_url, timeout=30).text
-        except RequestException as error:
-            logger.warning("Could not read %s: %s", page_url, error)
-            continue
-
-        for url in PDF_LINK_PATTERN.findall(html.unescape(text)):
-            url = url.replace("http://", "https://", 1)
-            name = fold_text(url.rsplit("/", 1)[-1])
-
-            if "tarife" in name and "ciftlik" not in name:
-                candidates.add(url)
-
-        time.sleep(REQUEST_DELAY)
 
     url = max(candidates, key=period_of)
     year, half = period_of(url)
@@ -552,27 +922,45 @@ def main():
     args = parser.parse_args()
 
     date_str = args.date or datetime.today().strftime("%Y-%m-%d")
-    client = IVHOClient()
 
-    if args.pdf_url:
-        pdf_url, period = args.pdf_url, "manual"
-    else:
-        # Homepage first, then the tariff PDF.
-        client.get(BASE_URL)
-        time.sleep(REQUEST_DELAY)
-        pdf_url, period = choose_tariff_pdf()
+    with IVHOClient() as client:
+        if args.pdf_url:
+            pdf_url, period = args.pdf_url, "manual"
+        else:
+            # Homepage first, then the tariff PDF.
+            client.get(BASE_URL)
+            time.sleep(REQUEST_DELAY)
+            pdf_url, period = choose_tariff_pdf()
 
-    logger.info("Tariff PDF: %s", pdf_url)
-    response = client.get(pdf_url, referer=BASE_URL)
+        logger.info("Tariff PDF: %s", pdf_url)
+        cached_bytes, cached_meta = load_cached_pdf(pdf_url)
+        pdf_bytes, meta, from_cache = client.download_pdf(
+            pdf_url,
+            referer=BASE_URL,
+            cached_meta=cached_meta,
+            cached_bytes=cached_bytes,
+        )
 
-    if not response.content.startswith(b"%PDF"):
-        raise RuntimeError(f"Response is not a PDF: {pdf_url}")
+        rows, kdv_pages = [], 0
+        try:
+            rows, kdv_pages = extract_rows(pdf_bytes)
+        except Exception as error:
+            if not from_cache:
+                raise
+            logger.warning("Cached PDF parse failed (%s); re-downloading fresh copy", error)
 
-    rows, kdv_pages = extract_rows(response.content)
+        if from_cache and not rows:
+            logger.warning("Cached PDF yielded no rows; clearing cache and re-downloading")
+            clear_cached_pdf()
+            pdf_bytes, meta, from_cache = client.download_pdf(pdf_url, referer=BASE_URL)
+            rows, kdv_pages = extract_rows(pdf_bytes)
 
     if not rows:
         logger.error("No pet tariff prices were parsed from %s", pdf_url)
         sys.exit(1)
+
+    if not from_cache:
+        save_cached_pdf(pdf_url, pdf_bytes, meta)
 
     if not kdv_pages:
         logger.warning("The pages do not say 'KDV dahildir'; kdv_included left empty")

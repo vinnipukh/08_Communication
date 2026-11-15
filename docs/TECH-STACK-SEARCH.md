@@ -860,9 +860,13 @@ Details: `deploy/scraper-server/README.md`.
 Round two: Petzzshop (ikas API), Petchef and TemizMama (product sitemap + product pages, because pagination/API
 are disallowed by robots.txt — the only 09 scrapers where a sitemap is the fastest allowed route), VetArt and
 Decathlon sports clothing (0922107) were added. İVHO (0945001, İstanbul chamber tariff PDF, text layer, 695 rows)
-was added with a TLS workaround: the server omits its Sectigo intermediate certificate, so the scraper fetches the
-intermediate from the certificate's CA-issuers URL, verifies its signature against a `certifi` root with
-`cryptography`, and trusts the resulting bundle for ivho.org.tr only; certificate verification stays on.
+was added with a TLS workaround: the server omits its Sectigo intermediate certificate, so the scraper discovers the
+intermediate URL from the live server certificate's AIA extension (falling back to the known Sectigo DV R36 URL,
+fetched via Chrome TLS impersonation with retries), verifies its signature against a `certifi` root with
+`cryptography`, and trusts the resulting bundle for ivho.org.tr only; certificate verification stays on. Because the
+host throttles and intermittently stalls 13+ MB PDF transfers around ~2 MB and temporarily drops IPs on rapid retries,
+the scraper streams with `stream=True` (low-speed inactivity timeout + 420s deadline), resumes with HTTP `Range` +
+`If-Range`, and caches the last verified PDF and validators in gitignored `checkpoints/` for `304 Not Modified` checks.
 
 ## 3.18 Xiaomi scraper imported and moved to the store API (2026-11-02)
 

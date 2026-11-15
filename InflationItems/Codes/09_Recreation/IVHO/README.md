@@ -38,14 +38,22 @@ section is the last upper-case heading above the row (page headings carry over).
 needed: the pages without text are advertisements. The Ankara VHO scraper has the OCR route
 (`../AnkaraVHO/`) if a future tariff ships as images.
 
+## Download reliability & caching
+
+The tariff PDF can be 13+ MB (earlier issues reached 25–49 MB) on a bandwidth-throttled host that drops IPs on rapid retries, so `curl_cffi`'s default 60s total-transfer timeout could abort mid-download. The scraper now:
+
+- streams the PDF (`stream=True`) with a connect + 40s low-speed inactivity timeout (`PDF_STREAM_TIMEOUT`) and an overall 420s deadline,
+- resumes interrupted transfers with HTTP `Range` + `If-Range` when validators (`ETag` / `Last-Modified`) are present (forward-progress resumes don't consume the zero-progress retry budget, up to `MAX_RESUMES=16`), using polite retry backoff,
+- caches the last verified PDF and its validators in gitignored `checkpoints/` (`tariff.pdf`, `tariff_meta.json`) and sends `If-None-Match` / `If-Modified-Since` so unchanged daily runs get `304 Not Modified` without re-downloading the PDF.
+
 ## TLS: the server omits its intermediate certificate
 
 `ivho.org.tr` sends only its own certificate, not the Sectigo intermediate, so plain verification fails
 ("unable to get local issuer certificate"); browsers fetch the intermediate themselves. Verification is never
 disabled. If the first request fails the certificate check, the scraper:
 
-1. downloads the intermediate from the CA-issuers URL of the certificate (`crt.sectigo.com`, host checked, size capped),
-2. checks that it is a valid CA certificate and **that its signature verifies against a root shipped in `certifi`**
+1. reads the CA-issuers URL from the live server certificate's AIA extension (falling back to the known Sectigo DV R36 URL; public host checked, size capped) and downloads the intermediate with Chrome TLS impersonation,
+2. checks that it is a valid CA certificate, matches the leaf certificate's issuer, and **that its signature verifies against a root shipped in `certifi`**
    (without this step a tampered download would become a trusted CA),
 3. writes certifi roots + that intermediate to a temporary bundle and uses it only for requests to
    ivho.org.tr (other hosts are refused, redirects are not followed). The bundle is deleted at exit.
