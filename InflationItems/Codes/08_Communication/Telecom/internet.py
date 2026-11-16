@@ -17,6 +17,7 @@ Output: InflationItems/Datas/08_Communication/<Provider>/<provider>_internet_YYY
 Usage:  python internet.py [--operator superonline|vodafone|kablonet|milleni|turknet|turktelekom|gibirnet|all] [--limit N]
 """
 
+import csv
 import json
 import os
 import re
@@ -63,16 +64,74 @@ def mbps(text):
 SUPERONLINE = "https://www.superonline.net"
 
 
+SUPERONLINE_CATEGORIES = ["tum-kampanyalar", "fiber-internet", "adsl-vdsl-internet", "kablo-internet",
+                          "superbox", "cihazli", "diger-kampanyalar"]
+SO_CAMPAIGN = re.compile(r"(https://www\.superonline\.net/ev-interneti/[a-z0-9-]+/[a-z0-9-]+)(?:/[^/?\s]*)?$")
+
+
+def next_queries(html):
+    m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html or "", re.S)
+    if not m:
+        return []
+    return json.loads(m.group(1)).get("props", {}).get("pageProps", {}).get(
+        "dehydratedState", {}).get("queries", [])
+
+
+def superonline_listing(f):
+    """Campaign base URLs from the /ev-interneti/<category>?sayfa=N hub pages (12 cards per page)."""
+    found, todo, done = set(), list(SUPERONLINE_CATEGORIES), set()
+    while todo:
+        cat = todo.pop(0)
+        if cat in done:
+            continue
+        done.add(cat)
+        for page in range(1, 30):
+            html = f.get(f"{SUPERONLINE}/ev-interneti/{cat}" + (f"?sayfa={page}" if page > 1 else ""))
+            lists = [q for q in next_queries(html) if q["queryKey"][0] == "campaignList"]
+            if not lists:
+                break
+            data = ((lists[0]["state"].get("data") or {}).get("data")) or {}
+            cards = data.get("campaigns") or []
+            for c in cards:
+                master = (c.get("campaignMasterCategory") or {}).get("navigationFullUrl") or ""
+                if master.startswith("/ev-interneti/") and c.get("urlPostfix"):
+                    found.add(f"{SUPERONLINE}{master}/{c['urlPostfix']}")
+                    todo.append(master.split("/")[2])
+            if not cards or page * 12 >= (data.get("totalCount") or 0):
+                break
+    return found
+
+
+def superonline_previous():
+    """Campaign base URLs of the newest earlier CSV: some live campaigns are hidden from the hub pages."""
+    files = sorted(p for p in (OUT_ROOT / "Superonline").glob("superonline_internet_*.csv")
+                   if p.stem[-10:] < TODAY)
+    if not files:
+        return set()
+    with open(files[-1], newline="", encoding="utf-8-sig") as fh:
+        return {m.group(1) for r in csv.DictReader(fh) if (m := SO_CAMPAIGN.match(r.get("url") or ""))}
+
+
 def superonline(limit):
     f = Fetcher(SUPERONLINE)
-    sitemap = f.get(SUPERONLINE + "/sitemap-campaigns.xml", min_len=500)
-    # /ev-interneti/<category>/<campaign>/<speed>: one page per campaign carries every speed offer
+    # /ev-interneti/<category>/<campaign>[/<speed>]: one page per campaign carries every speed offer
     campaigns = {}
-    for u in re.findall(r"<loc>\s*([^<\s]+)\s*</loc>", sitemap):
-        m = re.match(r"(https://www\.superonline\.net/ev-interneti/[^/?]+/[^/?]+)/[^/?]+$", u)
-        if m:
-            campaigns.setdefault(m.group(1), u)
-    log.info("superonline: %d campaigns in sitemap", len(campaigns))
+    try:
+        sitemap = f.get(SUPERONLINE + "/sitemap-campaigns.xml", min_len=500)
+        for u in re.findall(r"<loc>\s*([^<\s]+)\s*</loc>", sitemap):
+            m = SO_CAMPAIGN.match(u)
+            if m and m.group(1) != u:
+                campaigns.setdefault(m.group(1), u)
+    except Blocked as e:  # since 2026-11-16 the sitemap answers 200 with an empty body
+        log.warning("superonline: sitemap unusable (%s), using hub pages + previous CSV", e)
+    n_sitemap = len(campaigns)
+    listing, previous = superonline_listing(f), superonline_previous()
+    for base in sorted(listing | previous):
+        campaigns.setdefault(base, base)
+    log.info("superonline: %d campaigns (sitemap %d, hub pages %d, previous CSV %d)",
+             len(campaigns), n_sitemap, len(listing), len(previous))
+    if not campaigns:
+        raise Blocked("superonline: no campaigns from sitemap, hub pages or previous CSV")
     rows = []
     for base, url in campaigns.items():
         if limit and len(rows) >= limit:
@@ -95,6 +154,8 @@ def superonline(limit):
                 speed = o.get("download") if str(o.get("download") or "0") != "0" else ""
                 # Superbox (4.5G/5G home internet) offers have a GB quota instead of a speed
                 quota = f"{o.get('limit')} {o.get('limitType')}" if str(o.get("limit") or "0") != "0" else ""
+                if not speed and not quota:  # TV+-only add-ons listed under /ev-interneti/ hub pages
+                    continue
                 rows.append(irow(
                     "superonline", group=base.rsplit("/", 2)[-2],
                     product_id=f"{c.get('id')}-{o['id']}",
