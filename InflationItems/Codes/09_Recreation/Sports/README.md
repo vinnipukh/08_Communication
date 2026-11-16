@@ -1,6 +1,6 @@
 # Sports scrapers (TÜİK 09)
 
-Three scrapers, one CSV per store and day under `InflationItems/Datas/09_Recreation/<Store>/<store>_YYYY-MM-DD.csv`.
+Four scrapers, one CSV per store and day under `InflationItems/Datas/09_Recreation/<Store>/<store>_YYYY-MM-DD.csv`.
 Columns: exactly four, `product_name, price, category_number, sub_category_number` (`category_number` is `9`);
 the product URL is not saved.
 All use `curl_cffi` with Chrome impersonation and request the homepage first (Cloudflare `__cf_bm`; plain
@@ -62,3 +62,34 @@ Akinon storefront; the listing URL returns JSON when requested with `Accept: app
 `X-Requested-With`. Categories: erkek/kadin/cocuk `ekipman` (0922103, sports equipment) and kadin `tayt`
 (0922107, the only clothing source for that item besides Decathlon). 2 s delay. Flags: `--max-pages`
 (per category), `--date`. Output `SPX/spx_YYYY-MM-DD.csv`.
+
+## Sportive (`sportive_scraper.py`)
+
+Next.js (app router) storefront on Akinon, no JSON endpoint: the category HTML embeds the listing as a
+`{"data":{"pagination":...,"products":[...]}}` object in the `self.__next_f.push` flight chunks (48 products per
+page, `?page=N`). The scraper requests the homepage first, then each category with `curl_cffi`, 2 s between
+requests, and takes `name` and `price` (the current selling price, `retail_price` is the list price). Output
+`Sportive/sportive_YYYY-MM-DD.csv`, the four standard columns only.
+
+robots.txt disallows `/list/*`, `?p=`, `?order=`, `?marka=`, `?renk=`, `?category_ids=` and the brand pages;
+plain category URLs and `?page=N` are allowed and are all that is used (the sitemap is read only to find the
+category URLs, not at run time). A category with no stock shows "aramanız için ürün bulunamadı" and counts as empty,
+not as a failure (fitness equipment, table tennis, scooter, skate, boxing, handball and camp furniture were empty on
+2026-11-06). Any other failed category aborts the run with exit code 1 and no CSV, so a partial day is never saved.
+
+| Group (`--only`) | Code | Categories (leaf listings) |
+|---|---|---|
+| clothing | 0922107 | fitness / running / trail / tennis clothing, tayt (men, women, kids), sports bra, swimwear (men, women, kids), jerseys (men, women, team sports, goalkeeper), training tights |
+| equipment | 0922103 | fitness accessories, gym gloves, outdoor equipment, table tennis, skate, scooter, boxing, handball, volleyball, snorkel, other equipment |
+
+Parent listings (`/kadin-giyim/`, shoes) are left out: they are everyday wear and footwear, which no item here covers,
+and they would repeat every leaf. A product listed under several categories is kept once (by the site's product id)
+under the first category that lists it, clothing before equipment. Fitness equipment (`sporlar-fitness-aletleri`) would
+belong to 0922102 if it ever gets stock; it is mapped to 0922103 for now.
+
+```
+uv run python -I -X utf8 InflationItems/Codes/09_Recreation/Sports/sportive_scraper.py                              # full run
+uv run python -I -X utf8 InflationItems/Codes/09_Recreation/Sports/sportive_scraper.py --category /sporlar-voleybol/ --max-pages 1   # bounded
+```
+
+Flags: `--only clothing|equipment`, `--category <path>`, `--max-pages N` (default 30), `--date`.

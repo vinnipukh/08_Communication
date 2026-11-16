@@ -56,7 +56,7 @@ TELECOM=(
 # <run_scraper.sh name>:<space-separated CSV path prefixes under Datas/09_Recreation>
 RECREATION=(
   "rec_small:Avansas/avansas Diyanet/diyanet HisarTurizm/hisar_turizm MACFit/macfit Nezih/nezih Korayspor/korayspor Milli_Piyango/milli_piyango IstanbulAkvaryum/istanbulakvaryum KidZania/kidzania AnkaraVHO/ankara_vho IVHO/ivho VetArt/vetart SporIstanbul/sporistanbul ArnavutkoyBelediyesi/arnavutkoy Grupanya/grupanya"
-  "rec_medium:Kitapyurdu/kitapyurdu Jolly/jolly SPX/spx Biletinial/biletinial DugunBuketi/dugunbuketi DugunCom/dugun_com Petchef/petchef TemizMama/temizmama"
+  "rec_medium:Kitapyurdu/kitapyurdu Jolly/jolly SPX/spx Sportive/sportive Biletinial/biletinial DugunBuketi/dugunbuketi DugunCom/dugun_com Petchef/petchef TemizMama/temizmama"
   "rec_shops:Petlebi/petlebi ToyzzShop/toyzzshop Petzzshop/petzzshop Decathlon/decathlon Zuhal_Muzik/zuhal_muzik"
   "rec_dr:DR/dr"
 )

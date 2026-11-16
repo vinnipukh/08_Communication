@@ -1,7 +1,7 @@
 # TÜİK 09 Recreation, sport and culture: coverage check and new sources
 
 Work done: 2026-10-30 / 2026-10-31. Status: **existing 09 scrapers made browser-free and fixed
-(§11); SPX added; no other new source written yet.**
+(§11); SPX and Sportive added; no other new source written yet.**
 
 This page records what was done for category 09 so development can continue on another
 machine: where the 09 code and data came from, which basket items are covered today, which new
@@ -283,7 +283,7 @@ All 09 scrapers now run without a browser. `curl_cffi` means Chrome TLS imperson
 | Decathlon | `curl_cffi` | HTML `?from=&size=40` | was `requests` with a custom UA, which gets a Cloudflare 403; `--max-pages` added |
 | Korayspor | `curl_cffi` | HTML + `__NEXT_DATA__` `totalPages` | upstream scraper copied (the file was empty here); Cloudflare-safe client and pagination added |
 | **SPX** (new) | `curl_cffi` | Akinon listing JSON (`Accept: application/json`, `X-Requested-With`) | new `Sports/spx_scraper.py`: ekipman (0922103), kadın tayt (0922107) |
-| Sportive | — | — | empty placeholder removed: the site is an Akinon Next.js storefront without a JSON listing, and it is not in §3 |
+| Sportive | `curl_cffi` | Category HTML: the Akinon listing (`pagination`, `products[]`) is embedded in the Next.js flight chunks (`self.__next_f.push`), 48 per page, `?page=N` | new `Sports/sportive_scraper.py` (2026-11-06): not a JSON endpoint, so the HTML is parsed. robots.txt blocks `/list/*`, `?p=`, `?order=`, `?marka=`, `?renk=`, `?category_ids=` only; category URLs and `?page=N` are allowed. Sport-specific clothing goes to 0922107 (about 1,500 rows); equipment (0922103) only where the product name is clearly gear (balls, pumps, knee/arm guards, training gloves, snorkel; about 50 rows), because the `sporlar-*` listings are mostly accessories. Runs in `rec_medium`, about 6 min, about 60 requests |
 
 Verified by bounded live runs on 2026-10-31 (one page per category, or `--limit`); names and
 prices matched the previous day's CSVs. Hisar Turizm now writes about 1,250 umrah rows (all 556

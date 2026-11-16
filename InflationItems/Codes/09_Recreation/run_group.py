@@ -47,6 +47,7 @@ GROUPS = {
         ("kitapyurdu", "Kitapyurdu/kitapyurdu_scraper.py", [], 30),
         ("jollytur", "Jollytur/jolly.py", [], 30),
         ("spx", "Sports/spx_scraper.py", [], 30),
+        ("sportive", "Sports/sportive_scraper.py", [], 25),
         ("biletinial", "Biletinial/biletinial_scraper.py", [], 40),
         ("dugunbuketi", "DugunBuketi/dugunbuketi_scraper.py", [], 40),
         ("dugun_com", "DugunCom/dugun_com_scraper.py", [], 30),

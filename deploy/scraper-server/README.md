@@ -126,7 +126,7 @@ Bellek = USS (process'e özel bellek, Chrome alt process'leri dahil).
 | 10:00 | streaming (Netflix, Disney+, HBO Max, Amazon Prime, Apple TV+, YouTube Premium, Spotify, MUBI, TV+, Tivibu, GAİN, tabii) | ~1 dk | ~40 | ~300 MB (kısa Chrome) | 15 dk | tabii için tek seferlik headless Chrome |
 | 10:25 | repair (onarım: Apple, Samsung, Huawei, GSM İletişim) | ~30 dk | ~2.000 | düşük | 90 dk | yok |
 
-TÜİK 09 (eğlence, spor, kültür; 2026-10-31'den beri, tarayıcı yok) öğleden sonraki boş pencerede çalışır. 24 scraper'ın
+TÜİK 09 (eğlence, spor, kültür; 2026-10-31'den beri, tarayıcı yok) öğleden sonraki boş pencerede çalışır. 25 scraper'ın
 çoğu kısa olduğu için `InflationItems/Codes/09_Recreation/run_group.py` ile gruplanır (her scraper ayrı süreç ve ayrı süre
 sınırı; biri patlarsa sıradaki yine çalışır, herhangi biri patlarsa grup 1 ile çıkar ve `log.txt`'de FAILED görünür,
 hangisi olduğu çalıştırma logunda `[group] failed scrapers: …` satırındadır). DR ayrı iştir. Süreler geliştirici PC'sinde
@@ -135,7 +135,7 @@ hangisi olduğu çalıştırma logunda `[group] failed scrapers: …` satırınd
 | Saat | İş | Kapsam | Ölçülen süre | Satır | Timeout |
 |---|---|---|---|---|---|
 | 12:30 | rec_small | Avansas, Diyanet (OCR), Hisar, MACFit, Nezih, Korayspor, Milli Piyango, İstanbul Akvaryum, KidZania, Ankara VHO (OCR), İVHO, VetArt, Spor İstanbul, Arnavutköy, Grupanya | ~10 dk | ~17 bin | 45 dk |
-| 13:25 | rec_medium | Kitapyurdu, Jollytur, SPX, Biletinial (tiyatro + sinema), DüğünBuketi, Düğün.com, Petchef, Temiz Mama | ~30 dk | ~7 bin | 120 dk |
+| 13:25 | rec_medium | Kitapyurdu, Jollytur, SPX, Sportive, Biletinial (tiyatro + sinema), DüğünBuketi, Düğün.com, Petchef, Temiz Mama | ~36 dk | ~9 bin | 120 dk |
 | 15:35 | rec_shops | Petlebi, Toyzzshop, Petzzshop, Decathlon (fitness + giyim), Zuhal Müzik | ~55 dk | ~28 bin | 240 dk |
 | 19:45 | rec_dr | D&R (TÜİK 09 kategorileri, `DR/dr_scraper.py`; 08'deki `dr` işi başka bir scraper) | ~65 dk | ~85 bin | 300 dk (285. dakikada kendisi durup eldekini yazar) |
 
