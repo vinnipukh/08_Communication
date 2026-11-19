@@ -52,6 +52,12 @@ RULES_URLS = {
 }
 
 # The site drops plain python-requests TLS handshakes (read timeouts); curl_cffi Chrome works.
+FETCH_ATTEMPTS = 4        # per page
+FETCH_BACKOFF = 10        # seconds, multiplied by the attempt number
+MIN_HTML_CHARS = 5000     # real pages are ~100 KB; anything tiny is an error/empty page
+RUN_PASSES = 3            # whole-run retries when no price at all was scraped
+RUN_PASS_WAIT = 90        # seconds between passes
+
 COMMON_HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
@@ -100,6 +106,14 @@ def turkish_title(value: str) -> str:
     return " ".join(words)
 
 
+def parse_tl(raw: str) -> float:
+    """'25' -> 25.0, '12,5' -> 12.5, '1.000' -> 1000.0 (dot = thousands separator when 3 digits follow)."""
+    raw = raw.strip()
+    if re.fullmatch(r"\d{1,3}(?:\.\d{3})+", raw):
+        return float(raw.replace(".", ""))
+    return float(raw.replace(",", "."))
+
+
 class MilliPiyangoScraper:
     """Scrapes official prices for all Milli Piyango games."""
 
@@ -111,16 +125,22 @@ class MilliPiyangoScraper:
         # product_name -> (product_id, product_url)
         self.meta: Dict[str, tuple] = {}
 
-    def fetch_page(self, url: str, timeout: int = 30) -> Optional[str]:
-        """Fetch HTML content with timeout and gentle handling."""
-        try:
-            logger.info("Fetching %s...", url)
-            resp = self.session.get(url, timeout=timeout)
-            if resp.status_code == 200:
-                return resp.text
-            logger.warning("GET %s returned status %d", url, resp.status_code)
-        except Exception as exc:
-            logger.warning("Could not fetch %s: %s", url, exc)
+    def fetch_page(self, url: str, timeout: int = 30, attempts: int = FETCH_ATTEMPTS) -> Optional[str]:
+        """Fetch HTML with retries: non-200, short/empty bodies and network errors are retried
+        with a growing wait (the site sometimes answers 200 with an empty page)."""
+        for attempt in range(1, attempts + 1):
+            try:
+                logger.info("Fetching %s (attempt %d/%d)...", url, attempt, attempts)
+                resp = self.session.get(url, timeout=timeout)
+                if resp.status_code == 200 and len(resp.text) >= MIN_HTML_CHARS:
+                    return resp.text
+                logger.warning("GET %s returned status %d, %d chars", url, resp.status_code, len(resp.text or ""))
+            except Exception as exc:
+                logger.warning("Could not fetch %s: %s", url, exc)
+            if attempt < attempts:
+                wait = FETCH_BACKOFF * attempt
+                logger.info("Waiting %ds before retrying...", wait)
+                time.sleep(wait)
         return None
 
     def scrape_sayisal_games(self) -> None:
@@ -138,17 +158,17 @@ class MilliPiyangoScraper:
             html = self.fetch_page(url)
             if html:
                 m = re.search(
-                    r"ücreti\s*:?\s*(\d+(?:[.,]\d+)?)\s*TL",
+                    r"ücreti\s*:?\s*(\d+(?:[.,]\d+)*)\s*TL",
                     html,
                     re.IGNORECASE,
                 ) or re.search(
-                    r"(\d+(?:[.,]\d+)?)\s*TL[\’\']?dir",
+                    r"(\d+(?:[.,]\d+)*)\s*TL[\’\']?dir",
                     html,
                     re.IGNORECASE,
                 )
                 if m:
                     try:
-                        price = float(m.group(1).replace(",", "."))
+                        price = parse_tl(m.group(1))
                         logger.info("Live scraped price for %s: %.2f TL", product_name, price)
                     except ValueError:
                         pass
@@ -166,16 +186,22 @@ class MilliPiyangoScraper:
         # page still lists old 24/12/6 TL prices), so only the New Year draw is collected.
         html_mp = self.fetch_page(RULES_URLS["mp_yilbasi"]) or ""
         patterns = {
-            "Milli Piyango - Tam Bilet (Yılbaşı Özel)": r"tam\s+(\d+)\s*TL",
-            "Milli Piyango - Yarım Bilet (Yılbaşı Özel)": r"yarım\s+(\d+)\s*TL",
-            "Milli Piyango - Çeyrek Bilet (Yılbaşı Özel)": r"çeyrek\s+(?:bilet\s+)?(\d+)\s*TL",
+            "Milli Piyango - Tam Bilet (Yılbaşı Özel)": r"tam\s+(\d+(?:[.,]\d+)*)\s*TL",
+            "Milli Piyango - Yarım Bilet (Yılbaşı Özel)": r"yarım\s+(\d+(?:[.,]\d+)*)\s*TL",
+            "Milli Piyango - Çeyrek Bilet (Yılbaşı Özel)": r"çeyrek\s+(?:bilet\s+)?(\d+(?:[.,]\d+)*)\s*TL",
         }
         for product_name, pattern in patterns.items():
             match = re.search(pattern, html_mp, re.I)
+            price = None
             if match:
-                self.items[product_name] = float(match.group(1))
+                try:
+                    price = parse_tl(match.group(1))
+                except ValueError:
+                    logger.warning("Unparseable price %r for %s", match.group(1), product_name)
+            if price is not None:
+                self.items[product_name] = price
                 self.meta[product_name] = (slugify(product_name), RULES_URLS["mp_yilbasi"])
-                logger.info("Live scraped price for %s: %s TL", product_name, match.group(1))
+                logger.info("Live scraped price for %s: %s TL", product_name, price)
             else:
                 logger.warning("No live price found for %s; row skipped", product_name)
 
@@ -208,23 +234,24 @@ class MilliPiyangoScraper:
             logger.warning("No Kazı Kazan cards found on the live rules page.")
 
     def run(self) -> List[Dict[str, Any]]:
-        """Execute full scraping process."""
+        """Execute full scraping process; repeat the whole run (with a wait) while nothing was scraped."""
         logger.info("Starting Milli Piyango scraping for date %s", self.target_date)
 
-        try:
-            self.scrape_sayisal_games()
-        except Exception as exc:
-            logger.warning("Error during Sayısal scraping: %s", exc)
-
-        try:
-            self.scrape_milli_piyango_tickets()
-        except Exception as exc:
-            logger.warning("Error during Milli Piyango ticket scraping: %s", exc)
-
-        try:
-            self.scrape_kazi_kazan()
-        except Exception as exc:
-            logger.warning("Error during Kazı Kazan scraping: %s", exc)
+        for run_pass in range(1, RUN_PASSES + 1):
+            for label, step in (
+                ("Sayısal", self.scrape_sayisal_games),
+                ("Milli Piyango ticket", self.scrape_milli_piyango_tickets),
+                ("Kazı Kazan", self.scrape_kazi_kazan),
+            ):
+                try:
+                    step()
+                except Exception as exc:
+                    logger.warning("Error during %s scraping: %s", label, exc)
+            if self.items:
+                break
+            if run_pass < RUN_PASSES:
+                logger.warning("Pass %d/%d scraped nothing; waiting %ds and trying again", run_pass, RUN_PASSES, RUN_PASS_WAIT)
+                time.sleep(RUN_PASS_WAIT)
 
         rows = []
         for name, price in sorted(self.items.items()):
