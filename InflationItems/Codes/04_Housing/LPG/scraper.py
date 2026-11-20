@@ -56,6 +56,7 @@ Examples:
 """
 
 import argparse
+from urllib.parse import urlencode
 import base64
 import csv
 import json
@@ -80,6 +81,7 @@ MOGAZ_PAGE = "https://www.mogaz.com.tr/tupgaz/fiyatlar"
 MOGAZ_API = "https://www.mogaz.com.tr/processor/GetTupGazPrice"
 IPRAGAZ_PAGE = "https://www.ipragaz.com.tr/evde/tupgaz-fiyatlari"
 IPRAGAZ_RESULT = "https://www.ipragaz.com.tr/evde/tupgaz-fiyatlari-sonuc"
+IPRAGAZ_API = "https://www.ipragaz.com.tr/api/cylinderpricefinderresults/getcylinderprice"
 BACKOFF = [2, 5, 10]  # seconds waited after each failed request, then give up
 BRANDS = ["aygaz", "milangaz", "mogaz", "ipragaz"]
 PRICE_RANGE = (300, 20000)  # TL per 12 kg cylinder; outside means a parse error
@@ -315,26 +317,28 @@ def mogaz(client: Client, wanted: set | None):
 # --- İpragaz ----------------------------------------------------------------------------------------------
 
 def ipragaz(client: Client, wanted: set | None):
-    m = re.search(r"Cities: (\[.*?\])", client.get(IPRAGAZ_PAGE).text)
+    # The site is Next.js since 2026-11: the city list sits in __NEXT_DATA__ ("regions") and prices come from
+    # a JSON API (the result page only fills them in with JavaScript).
+    page = client.get(IPRAGAZ_PAGE).text
+    m = re.search(r'"regions":(\[.*?\]),"resultPageUrl"', page)
     if not m:
-        raise RuntimeError("İpragaz: 'Cities: [...]' list not found")
+        raise RuntimeError("İpragaz: 'regions' list not found")
     by_name = {v.casefold(): k for k, v in PROVINCES.items()}
     cities = []
-    for name in json.loads(m.group(1)):
-        plate, region = IPRAGAZ_NAMES.get(name) or (by_name.get(name.casefold()), "")
+    for region in json.loads(m.group(1)):
+        name = region["name"]
+        plate, area = IPRAGAZ_NAMES.get(name) or (by_name.get(name.casefold()), "")
         if plate is None:
             raise RuntimeError(f"İpragaz: unknown city name {name!r}")
-        cities.append((name, plate, region))
+        cities.append((name, plate, area))
 
     def fetch(name, plate, region):
-        resp = client.get(IPRAGAZ_RESULT, params={"city": name})
-        text = norm(BeautifulSoup(resp.text, "lxml").get_text(" "))
-        when = re.search(r"Tüpgaz fiyatları (\d{2}\.\d{2}\.\d{4}) tarihinden itibaren .{0,60}? ilinde geçerli "
-                         r"KDV dahil tavan satış fiyatlarıdır", text)
-        price = re.search(r"Ev Tüpü 12 kg ₺\s*([\d.]+)", text)
-        if not when or not price:
+        data = client.get(IPRAGAZ_API, params={"city": name}).json()
+        product = next((p for p in data.get("products") or [] if p.get("id") == "Ev Tüpü 12 kg"), None)
+        if not product or not data.get("date"):
             raise RuntimeError("date / 'Ev Tüpü 12 kg' price not found")
-        return [lpg_row("İpragaz", plate, region, "12 kg tüp", price.group(1), "", dmy(when.group(1)), resp.url)]
+        return [lpg_row("İpragaz", plate, region, "12 kg tüp", product["price"], "", dmy(data["date"]),
+                        f"{IPRAGAZ_RESULT}?{urlencode({'city': name})}")]
 
     return per_city("İpragaz", cities, wanted, fetch)
 
