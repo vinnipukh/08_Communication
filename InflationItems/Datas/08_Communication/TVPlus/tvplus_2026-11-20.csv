@@ -1,3 +1,4 @@
 ﻿product_name,price,category_number,sub_category_number,date,operator,group,product_id,list_price,period,url
 TV+ aylık plan,199.99,8,0839201,2026-11-20,tvplus,,tv-aylik-plan,,1_ay,https://tvplus.com.tr/paketler
 TV+ yıllık plan (aylık karşılığı),100.0,8,0839201,2026-11-20,tvplus,,tv-yillik-plan,,1_ay,https://tvplus.com.tr/paketler
+TV+ Paketi / Yıllık,299.0,8,0839201,2026-11-20,tvplus,tvplus-paket,167522,,1_ay,https://tvplus.com.tr/paketler
