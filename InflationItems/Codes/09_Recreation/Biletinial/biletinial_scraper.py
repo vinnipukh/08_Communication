@@ -93,16 +93,34 @@ MONTHS = (
     "Temmuz|Ağustos|Agustos|Eylül|Eylul|Ekim|Kasım|Kasim|Aralık|Aralik"
 )
 
+# Session headers on an event page read "KAS 25 İstanbul Anadolu Çarşamba · 20:30 <venue>
+# Organizasyon: ..." (a badge such as "%30 İndirim!" may sit between the day and the city).
+# The year is printed only for sessions outside the current year ("Perşembe 2027 · 20:30").
+# Product names keep the older "25 Kasım Çarşamba · 20:30" / "<venue> · <city>" form, so the
+# series stay comparable with the CSVs written before the page changed.
+MONTH_ABBREVIATIONS = {
+    "OCA": "Ocak",
+    "ŞUB": "Şubat",
+    "SUB": "Şubat",
+    "MAR": "Mart",
+    "NİS": "Nisan",
+    "NIS": "Nisan",
+    "MAY": "Mayıs",
+    "HAZ": "Haziran",
+    "TEM": "Temmuz",
+    "AĞU": "Ağustos",
+    "AGU": "Ağustos",
+    "EYL": "Eylül",
+    "EKİ": "Ekim",
+    "EKI": "Ekim",
+    "KAS": "Kasım",
+    "ARA": "Aralık",
+}
 SESSION_RE = re.compile(
-    rf"(?P<session>"
-    rf"\d{{1,2}}\s+(?:{MONTHS})"
-    rf"(?:"
-    rf"\s+\d{{4}}(?:\s+[A-Za-zÇĞİÖŞÜçğıöşü]+)?"
-    rf"|\s+[A-Za-zÇĞİÖŞÜçğıöşü]+(?:\s+\d{{4}})?"
-    rf")?"
-    rf"\s*·\s*\d{{2}}:\d{{2}}"
-    rf")",
-    re.IGNORECASE,
+    rf"\b(?P<month>{'|'.join(MONTH_ABBREVIATIONS)})\s+(?P<day>\d{{1,2}})\s+"
+    rf"(?P<place>.{{0,80}}?)\s*"
+    rf"(?P<weekday>Cumartesi|Pazartesi|Çarşamba|Perşembe|Pazar|Salı|Cuma)"
+    rf"(?:\s+(?P<year>\d{{4}}))?\s*·\s*(?P<time>\d{{2}}:\d{{2}})"
 )
 
 STARTING_PRICE_RE = re.compile(
@@ -277,34 +295,49 @@ def fetch_html(session, url):
     return get_with_retry(session, url).text
 
 
-def split_session_blocks(page_text):
+def session_city(place):
+    """City of a session from the text between the day and the weekday (badges come first)."""
+    words = normalize_text(place).split()
 
+    if len(words) >= 2 and words[-2] == "İstanbul":
+        return " ".join(words[-2:])
+
+    return words[-1] if words else ""
+
+
+def split_session_blocks(page_text):
+    """[(session label, city, text after the session header up to the next session)]."""
     matches = list(SESSION_RE.finditer(page_text))
     blocks = []
 
     for index, match in enumerate(matches):
-        block_start = match.start()
         block_end = (
             matches[index + 1].start()
             if index + 1 < len(matches)
             else len(page_text)
         )
 
-        block_text = normalize_text(page_text[block_start:block_end])
-        session_text = normalize_text(match.group("session"))
-        blocks.append((session_text, block_text))
+        label = (
+            f"{int(match.group('day')):02d} {MONTH_ABBREVIATIONS[match.group('month')]} "
+            f"{match.group('weekday')}"
+        )
+
+        if match.group("year"):
+            label += f" {match.group('year')}"
+
+        label += f" · {match.group('time')}"
+        blocks.append(
+            (
+                label,
+                session_city(match.group("place")),
+                normalize_text(page_text[match.end():block_end]),
+            )
+        )
 
     return blocks
 
 
-def extract_venue(block_text, session_text):
-    position = block_text.find(session_text)
-
-    if position < 0:
-        return ""
-
-    after = block_text[position + len(session_text):]
-
+def extract_venue(block_text):
     stop_words = [
         "Organizasyon:",
         "Başlangıç Fiyatı",
@@ -316,12 +349,11 @@ def extract_venue(block_text, session_text):
     positions = []
 
     for word in stop_words:
-        pos = after.find(word)
+        pos = block_text.find(word)
         if pos >= 0:
             positions.append(pos)
 
-    if positions:
-        after = after[:min(positions)]
+    after = block_text[:min(positions)] if positions else block_text
 
     return normalize_text(after).strip(" ·|-")
 
@@ -424,14 +456,17 @@ def parse_event_page(html_text, url):
 
     rows = []
 
-    for session_text, block_text in split_session_blocks(ticket_text):
+    for session_text, city, block_text in split_session_blocks(ticket_text):
         if (
             "Bilet Fiyatları" not in block_text
             and "Başlangıç Fiyatı" not in block_text
         ):
             continue
 
-        venue = extract_venue(block_text, session_text)
+        venue = extract_venue(block_text)
+
+        if venue and city:
+            venue = f"{venue} · {city}"
         category_prices = extract_category_prices(block_text)
 
         for ticket_type, price in category_prices:

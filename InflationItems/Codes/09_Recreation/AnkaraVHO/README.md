@@ -32,10 +32,12 @@ Run time on 2026-10-31: about 4 s with `--extract text`, about 15 s with `--extr
 
 1. `curl_cffi` session with `impersonate="chrome"`, homepage first, then
    `/asgari-ucret-tarifeleri/`. No browser is needed (no challenge seen).
-2. Every link to `/wp-content/uploads/YYYY/MM/*.pdf` on that page is a candidate. Links whose text
-   or file name says "Çiftlik" (farm animals) are dropped; the link text must say "Ev Hayvanları".
-3. The tariff period comes from the link text ("2026-2 Yılı", "2025/2 Yılı", "2026 Yılı" = first
-   half). Only the one-page table ("Tablo" in the link text or file name, e.g. "A3 Tablo") is used:
+2. Every link to `/wp-content/uploads/YYYY/MM/*.pdf` on that page is a candidate. Since 2026-11 the
+   page shows each file as `<span>title</span><a>PDF görüntüle ↗</a>`, so the title is the `<span>`
+   in front of the link (the link text itself is used when there is no such span). Candidates whose
+   title or file name says "Çiftlik" (farm animals) are dropped; the title must say "Ev Hayvanları".
+3. The tariff period comes from the title ("2026-2 Yılı", "2025/2 Yılı", "2026 Yılı" = first
+   half). Only the one-page table ("Tablo" in the title or file name, e.g. "A3 Tablo") is used:
    the multi-page booklet of the same period has a different layout and is not parsed.
    The newest period wins, then the newest upload folder.
 4. The chosen PDF and its period (e.g. `2026/2`) are logged and printed at the end of the run; they

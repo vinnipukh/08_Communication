@@ -72,7 +72,11 @@ HEADERS = {
 # (deduplication, naming) but are not saved.
 CSV_COLUMNS = ["product_name", "price", "category_number", "sub_category_number"]
 
+# The page lists each file as `<span>2026-2 Yılı Ev Hayvanları ... (A3 Tablo)</span><a href=".pdf">PDF
+# görüntüle ↗</a>`: the title is the <span> in front of the link, not the link text (older layout:
+# the title was the link text itself).
 PDF_LINK_PATTERN = re.compile(
+    r"(?:<span[^>]*>(?P<label>[^<]*)</span>\s*)?"
     r'<a[^>]+href="(?P<href>[^"]*/wp-content/uploads/(?P<year>\d{4})/(?P<month>\d{2})/[^"]+\.pdf)"[^>]*>'
     r"(?P<text>.*?)</a>",
     re.IGNORECASE | re.DOTALL,
@@ -142,6 +146,12 @@ def choose_tariff_pdf(listing_html, allow_older=False):
     for match in PDF_LINK_PATTERN.finditer(listing_html):
         url = urljoin(BASE_URL, html.unescape(match.group("href")))
         text = normalize_text(html.unescape(re.sub(r"<[^>]+>", " ", match.group("text"))))
+        label = normalize_text(html.unescape(match.group("label") or ""))
+
+        # Title in front of the link when there is one; otherwise the link text is the title.
+        if label:
+            text = label
+
         folded = fold_text(f"{text} {url.rsplit('/', 1)[-1]}")
 
         if "ciftlik" in folded or "ev hayvan" not in fold_text(text):

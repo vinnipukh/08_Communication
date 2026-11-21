@@ -87,7 +87,7 @@ OTHER_CATEGORIES = {
     "aquarium_filters": "https://www.petlebi.com/akvaryum-filtreleri",
     "aquarium_motors": "https://www.petlebi.com/akvaryum-motorlari",
     "aquarium_equipment": "https://www.petlebi.com/akvaryum-ekipmanlari",
-    "aquarium_accessories": "https://www.petlebi.com/akvaryum-aksesuarlari-ve-kumlari",
+    "aquarium_accessories": "https://www.petlebi.com/akvaryum-aksesuarlari",
     "aquarium_chemistry": "https://www.petlebi.com/akvaryum-kimyasi-ve-bakimi",
 
 

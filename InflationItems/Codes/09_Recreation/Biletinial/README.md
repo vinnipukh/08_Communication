@@ -20,7 +20,12 @@ requests, cinema 1.5 s. No browser is needed.
 
 `/tr-tr/tiyatro` (first 50 cards server-rendered) then `GET /List/GetMoreItems?organizerUrl=tiyatro&page=N` until it returns no items
 (on 2026-10-31 page 2 was empty, so the listing is 50 events). Each event page is parsed for session blocks and ticket types
-(Tam, Öğrenci, ...). About 750 rows. Output format is unchanged from the earlier Playwright version.
+(Tam, Öğrenci, ...). About 750 rows. Since 2026-11-21 the page writes a session header as
+`KAS 25 [badge] İstanbul Anadolu Çarşamba · 20:30 <venue>` (month abbreviation, day, city, weekday, `· time`; the year
+only after the weekday for other years). The scraper turns that back into the older name form
+`25 Kasım Çarşamba · 20:30 - <venue> · <city> - <ticket type>` so the series stay comparable. When no session header
+matches, every event gives 0 rows although the run exits 0 (the 2026-11-21 cron run wrote only cinema rows), so check the
+`Theatre ticket rows:` line of the run log. Output format is unchanged from the earlier Playwright version.
 
 ## Cinema (0961001)
 
