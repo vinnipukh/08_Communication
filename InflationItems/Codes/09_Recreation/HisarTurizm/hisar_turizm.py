@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import csv
-import json
 import logging
 import re
 import sys
@@ -12,6 +11,7 @@ from datetime import datetime, timedelta
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 
+from bs4 import BeautifulSoup
 from curl_cffi import requests
 from curl_cffi.requests.exceptions import RequestException
 
@@ -49,8 +49,8 @@ DATA_DIR = (
     / "HisarTurizm"
 )
 
-CULTURE_URL = "https://hisarturizm.com.tr/kultur-turlari/"
-UMRAH_URL = "https://hisarturizm.com.tr/umre-turlari/"
+CULTURE_URL = "https://hisarturizm.com.tr/tum-kultur-turlari"
+UMRAH_URL = "https://hisarturizm.com.tr/umre-turlari"
 TCMB_URL = "https://www.tcmb.gov.tr/kurlar/today.xml"
 
 CATEGORY_NUMBER = "9"
@@ -62,28 +62,18 @@ UMRAH_AGENCY = "0980009"
 
 REQUEST_TIMEOUT = 45
 MAX_RETRIES = 4
-AJAX_PER_PAGE = 50
-AJAX_DELAY_SECONDS = 1.5
+PAGE_DELAY_SECONDS = 1.0
+MAX_PAGES = 100
 
 HEADERS = {
     "Accept-Language": "tr-TR,tr;q=0.9,en;q=0.8",
 }
 
-TOUR_FRONTEND_RE = re.compile(
-    r"var\s+tourFrontend\s*=\s*(\{.*?\});\s*\n",
-    re.DOTALL,
-)
-
-FILTER_KEYS = (
-    "tur_kodu",
-    "branch",
-    "ay_yil",
-    "concept",
-    "duration",
-    "parkur",
-    "sezon",
-    "urun",
-)
+CURRENCY_SYMBOLS = {
+    "$": "USD",
+    "€": "EUR",
+    "₺": "TRY",
+}
 
 FOREIGN_WORDS = {
     "kudüs",
@@ -232,169 +222,177 @@ def request_with_retry(session, method, url, **kwargs):
     )
 
 
-def extract_frontend_config(html_text):
-    # The listing page embeds its first page of tours and the AJAX nonce in
-    # `var tourFrontend = {...};` (WordPress plugin tour-api-integration).
-    match = TOUR_FRONTEND_RE.search(
-        html_text
+def parse_price_text(text):
+    # "$1.725" / "€1.350" / "₺12.500" -> (Decimal, currency); None for "Dolu", "$-" etc.
+    text = normalize_text(text)
+
+    if not text or text[0] not in CURRENCY_SYMBOLS:
+        return None
+
+    number = text[1:].strip()
+
+    if not re.fullmatch(r"[\d.,]+", number):
+        return None
+
+    amount = parse_decimal(number)
+
+    if amount <= 0:
+        return None
+
+    return amount, CURRENCY_SYMBOLS[text[0]]
+
+
+def parse_card(card):
+    # One <article class="tl-card"> on the listing pages of the 2026-11 site
+    # (Laravel; the old WordPress `tourFrontend` JSON / admin-ajax is gone).
+    code = (card.get("data-stats-tour") or "").strip().upper()
+
+    if not code:
+        return None
+
+    def text_of(selector):
+        node = card.select_one(selector)
+        return normalize_text(node.get_text(" ")) if node else ""
+
+    title_link = card.select_one(".tl-title-link")
+
+    date_node = card.select_one("time.tl-date")
+
+    nights_match = re.search(
+        r"(\d+)\s*gece\s*[·.]\s*(\d+)\s*g[üu]n",
+        text_of(".tl-meta"),
+        re.IGNORECASE,
     )
 
-    if not match:
-        raise RuntimeError(
-            "tourFrontend config was not found on the Hisar page."
+    if nights_match:
+        duration = (int(nights_match.group(1)), int(nights_match.group(2)))
+
+    else:
+        nights = re.search(r"\d+", text_of(".tl-date-nights"))
+        duration = (
+            (int(nights.group()), int(nights.group()) + 1)
+            if nights
+            else None
         )
 
-    return json.loads(
-        match.group(1)
+    # room count -> (amount, currency)
+    prices = {}
+
+    label = re.search(r"(\d+)\s*ki[şs]ilik", text_of(".tl-offer-label"))
+    main = parse_price_text(text_of(".tl-price-amount"))
+
+    if label and main:
+        prices[int(label.group(1))] = main
+
+    for other in card.select(".tl-offer-others > span"):
+        other_count = re.match(r"\s*(\d+)", other.get_text())
+        strong = other.find("strong")
+        other_price = (
+            parse_price_text(strong.get_text())
+            if strong
+            else None
+        )
+
+        if other_count and other_price:
+            prices[int(other_count.group(1))] = other_price
+
+    stops = " ".join(
+        normalize_text(span.get_text())
+        for span in card.select(".tl-stops span")
     )
 
-
-def fetch_tours(session, url):
-    response = request_with_retry(
-        session,
-        "GET",
-        url,
-    )
-
-    config = extract_frontend_config(
-        response.text
-    )
-
-    total = int(
-        config.get("total_tour_count") or 0
-    )
-
-    tours = {
-        tour["id"]: tour
-        for tour in config.get("first_page_tours") or []
-        if tour.get("id")
+    return {
+        "id": code,
+        "title": normalize_text(title_link.get_text()) if title_link else code,
+        "concept": text_of(".tl-chip-concept"),
+        "is_full": "is-full" in (card.get("class") or []),
+        "departure": (
+            parse_iso_date(date_node.get("datetime")) if date_node else None
+        ),
+        "duration": duration,
+        "route": f"{text_of('.tl-meta')} {stops}",
+        "prices": prices,
     }
 
-    logger.info(
-        "Page JSON: %d of %d tours",
-        len(tours),
-        total,
-    )
 
-    if len(tours) >= total:
-        return list(tours.values())
-
-    # Same request the site's pagination buttons send (frontend.js filter_tours).
-    data = [
-        ("action", "filter_tours"),
-        ("nonce", config["nonce"]),
-    ]
-
-    for key in FILTER_KEYS:
-        data.append((key, ""))
-
-    for key in ("allowed_categories", "excluded_categories"):
-        for value in config.get(key) or []:
-            data.append((f"{key}[]", value))
-
-    ajax_headers = {
-        "Accept": "application/json, text/javascript, */*; q=0.01",
-        "X-Requested-With": "XMLHttpRequest",
-        "Origin": "https://hisarturizm.com.tr",
-        "Referer": url,
-    }
-
-    page = 1
-    total_pages = 1
-
-    while page <= total_pages:
-        time.sleep(AJAX_DELAY_SECONDS)
-
-        payload = request_with_retry(
-            session,
-            "POST",
-            config["ajax_url"],
-            data=data + [
-                ("page", str(page)),
-                ("per_page", str(AJAX_PER_PAGE)),
-            ],
-            headers=ajax_headers,
-        ).json()
-
-        if not payload.get("success"):
-            raise RuntimeError(
-                f"filter_tours failed on page {page}: {str(payload)[:200]}"
-            )
-
-        result = payload["data"]
-        total_pages = int(
-            result.get("total_pages") or 1
-        )
-
-        for tour in result.get("tours") or []:
-            if tour.get("id"):
-                tours[tour["id"]] = tour
-
-        logger.info(
-            "filter_tours page %d/%d | tours: %d / %s",
-            page,
-            total_pages,
-            len(tours),
-            result.get("count"),
-        )
-
-        page += 1
-
-    return list(tours.values())
-
-
-def parse_card_date(value):
+def parse_iso_date(value):
     try:
         return datetime.strptime(
             normalize_text(value),
-            "%d.%m.%Y",
+            "%Y-%m-%d",
         ).date()
     except ValueError:
         return None
 
 
+def fetch_tours(session, url):
+    tours = {}
+    page = 1
+
+    while page <= MAX_PAGES:
+        if page > 1:
+            time.sleep(PAGE_DELAY_SECONDS)
+
+        response = request_with_retry(
+            session,
+            "GET",
+            url,
+            params={"sayfa": page} if page > 1 else None,
+        )
+
+        soup = BeautifulSoup(
+            response.text,
+            "html.parser",
+        )
+
+        cards = soup.select("article.tl-card")
+
+        for card in cards:
+            tour = parse_card(card)
+
+            if tour:
+                tours[tour["id"]] = tour
+
+        logger.info(
+            "%s page %d | cards: %d | unique tours: %d",
+            url,
+            page,
+            len(cards),
+            len(tours),
+        )
+
+        if not cards or not soup.select_one(
+            ".tl-pages a[rel='next']"
+        ):
+            break
+
+        page += 1
+
+    if not tours:
+        raise RuntimeError(
+            f"No tour cards found on {url}; the Hisar page layout has changed."
+        )
+
+    return list(tours.values())
+
+
 def tour_room_prices(tour):
-    currency = (
-        tour.get("currency")
-        or "USD"
-    ).upper()
-
-    if currency == "TL":
-        currency = "TRY"
-
-    # frontend.js shows 2/3/4-person rooms for economy packages, otherwise only 2-person.
+    # Economy packages publish 2/3/4-person rooms, others only the 2-person room.
     room_counts = (
         (2, 3, 4)
-        if tour.get("is_ekonomik")
+        if canonical_key(tour.get("concept")) == "ekonomik"
         else (2,)
     )
 
-    result = []
-
-    for room_count in room_counts:
-        raw = normalize_text(
-            tour.get(f"price_{room_count}")
-        )
-
-        if not re.fullmatch(r"[\d.,]+", raw):
-            continue
-
-        amount = parse_decimal(
-            raw
-        )
-
-        if amount <= 0:
-            continue
-
-        result.append(
-            {
-                "room_count": room_count,
-                "amount": amount,
-                "currency": currency,
-            }
-        )
-
-    return result
+    return [
+        {
+            "room_count": room_count,
+            "amount": tour["prices"][room_count][0],
+            "currency": tour["prices"][room_count][1],
+        }
+        for room_count in room_counts
+        if room_count in tour["prices"]
+    ]
 
 
 def parse_decimal(number_text):
@@ -679,17 +677,13 @@ def parse_tours(
             )
             continue
 
-        start_date = parse_card_date(
-            tour.get("departure")
-        )
+        start_date = tour.get("departure")
 
-        end_date = parse_card_date(
-            tour.get("return")
-        )
+        duration = tour.get("duration")
 
-        duration = (
-            (int(tour["gece"]), int(tour["duration"]))
-            if tour.get("gece") is not None and tour.get("duration") is not None
+        end_date = (
+            start_date + timedelta(days=duration[1] - 1)
+            if start_date and duration
             else None
         )
 
@@ -699,7 +693,7 @@ def parse_tours(
 
         if not room_prices:
             logger.warning(
-                "%s has no published numeric room price (e.g. $-); skipped",
+                "%s has no published room price; skipped",
                 code,
             )
             continue
@@ -709,10 +703,7 @@ def parse_tours(
             source_label = "Umre"
 
         else:
-            text = " ".join(
-                normalize_text(tour.get(key))
-                for key in ("destination", "gidis_route", "donus_route")
-            )
+            text = tour.get("route") or ""
 
             subcategory = classify_culture_tour(
                 title,

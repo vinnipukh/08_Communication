@@ -829,9 +829,9 @@ homepage first) plus the site's own JSON calls, found by watching the page's XHR
   `core.toyzzshop.com/api/categories/<id>/products` (ids from `/api/categories/menu`).
 - Biletinial: the 50 theatre cards are server-rendered; further cards come from `/List/GetMoreItems`
   (empty today). The scroll loop was unnecessary.
-- Hisar Turizm: tours are embedded as `var tourFrontend = {...}` JSON; later pages come from
-  `admin-ajax.php` `action=filter_tours` with the page's nonce. The old browser fallback ran every day and
-  only saw page 1 (20 of 556 umrah tours).
+- Hisar Turizm: the site was rebuilt in 2026-11 (the WordPress `tourFrontend` JSON and `admin-ajax.php`
+  `filter_tours` were removed). The scraper now parses the server-rendered `article.tl-card` listing cards with
+  BeautifulSoup, following `?sayfa=N` pagination (umrah: ~22 pages / ~440 tours; culture: one page).
 `requests` was also blocked on two sites (Milli Piyango: read timeouts, so all rows came from a hard-coded
 fallback; Decathlon: Cloudflare 403 for a custom UA); both now use `curl_cffi`, and the Milli Piyango
 fallback was removed. Upstream updates (category_number columns, Korayspor) were copied, Nezih and Zuhal
