@@ -5,7 +5,7 @@ Everything each source publishes is collected (the basket is not decided yet).
 Recon 2026-10-09, docs/site-analysis/telecom/NOTES.md:
   apple        support.apple.com/ols/api/pricing/... JSON (out-of-warranty estimate per model + service),
                one parent tag per device family (iPhone, iPad, Apple Watch, AirPods; no Mac estimate in TR)
-  samsung      samsung.com/tr/support/ekran-degisimi-fiyat-bilgisi/ tables (recommended repair fees)
+  samsung      samsung.com/tr/support/repair-cost/ tables (recommended repair fees)
   huawei       ccpce-de.consumer.huawei.com product tree (lv2..lv6) + cspm/queryMaterialPrice per SKU
   gsmiletisim  gsmiletisim.com urun-kategori pages (independent repair shop, all brands)
 
@@ -74,31 +74,60 @@ def apple(limit):
 
 # ---------------------------------------------------------------- samsung
 
-SAMSUNG = "https://www.samsung.com/tr/support/ekran-degisimi-fiyat-bilgisi/"
+# the old /ekran-degisimi-fiyat-bilgisi/ page went 404 on 2026-11-28; this one has no model codes and
+# per-series tables (Galaxy S/Z/A/M, Ring), the Z table with a two-row header (İç/Dış Ekran sub-columns)
+SAMSUNG = "https://www.samsung.com/tr/support/repair-cost/"
+
+
+def _header(trs):
+    """Expand the (possibly two-row, colspan/rowspan) header into one label per column."""
+    labels, n_rows = [], 1
+    first = trs[0].find_all(["th", "td"])
+    if any(int(c.get("rowspan") or 1) > 1 for c in first):
+        n_rows = 2
+    sub = iter(c.get_text(" ", strip=True) for c in trs[1].find_all(["th", "td"])) if n_rows == 2 else iter(())
+    for c in first:
+        text = c.get_text(" ", strip=True)
+        span = int(c.get("colspan") or 1)
+        if span > 1:
+            labels += [f"{text} ({next(sub, '')})" for _ in range(span)]
+        else:
+            labels.append(text)
+    return labels, n_rows
 
 
 def samsung(limit):
-    soup = BeautifulSoup(Fetcher("https://www.samsung.com/tr/").get(SAMSUNG), "html.parser")
-    rows = []
+    body = Fetcher("https://www.samsung.com/tr/").get(SAMSUNG)
+    if body is None:
+        raise RuntimeError(f"samsung: {SAMSUNG} is gone, find the new repair-price page")
+    soup = BeautifulSoup(body, "html.parser")
+    rows, seen = [], set()
     for ti, table in enumerate(soup.select("table")):
         trs = table.select("tr")
-        if not trs:
+        if len(trs) < 2:
             continue
-        head = [c.get_text(" ", strip=True) for c in trs[0].find_all(["th", "td"])]
-        for tr in trs[1:]:
+        head, n_head = _header(trs)
+        if not head or not head[0].startswith(("Model", "Seri")):
+            continue
+        h = table.find_previous(["h2", "h3", "h4"])
+        group = slug(h.get_text(" ", strip=True)) if h else f"tablo-{ti + 1}"
+        code_col = 1 if len(head) > 1 and head[1] == "Model Kodu" else None
+        for tr in trs[n_head:]:
             cells = [c.get_text(" ", strip=True) for c in tr.find_all(["th", "td"])]
-            if len(cells) != len(head):  # the battery table carries a malformed duplicate row
+            if len(cells) != len(head) or cells[0] == head[0]:
                 continue
-            if head[:2] == ["Model Kodu", "Model Adı"]:
-                code, model = re.sub(r"\s+", " ", cells[0]), cells[1]
-                for service, value in zip(head[2:], cells[2:]):
-                    price = tl(value) if value not in ("-", "") else None
-                    if price:
-                        rows.append(rrow("samsung", model, service, price, SAMSUNG, group=f"tablo-{ti + 1}",
-                                         pid=f"{code.split()[0]}-{slug(service)}"))
-            elif head == ["Seri", "Ücret"]:  # battery replacement per series
-                rows.append(rrow("samsung", cells[0], "Batarya Değişimi", tl(cells[1]), SAMSUNG,
-                                 group="batarya"))
+            model = re.sub(r"\s+", " ", cells[0])
+            key = cells[code_col].split()[0] if code_col else slug(model)
+            for ci, (service, value) in enumerate(zip(head, cells)):
+                if ci == 0 or ci == code_col:
+                    continue
+                price = tl(value) if value not in ("-", "") else None
+                pid = f"{key}-{slug(service)}"
+                if price and pid not in seen:
+                    seen.add(pid)
+                    rows.append(rrow("samsung", model, service, price, SAMSUNG, group=group, pid=pid))
+    if not rows:
+        raise RuntimeError("samsung: repair-cost page has no parseable price tables")
     return rows[:limit] if limit else rows
 
 

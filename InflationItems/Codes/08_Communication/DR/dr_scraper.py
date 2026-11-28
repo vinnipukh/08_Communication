@@ -56,7 +56,7 @@ TECH_CATEGORY_ROOTS = {
     "Isıtma ve Soğutma": "Elektronik",
     "Kişisel Bakım & Sağlık": "Elektronik",
     "Kobo E-kitap Okuyucular": "Elektronik",
-    "Elektronik Diğer": "Elektronik",
+    # "Elektronik Diğer" removed: D&R dropped it ~2026-11-18 (URL now redirects; it only held Thule bags)
     "Outdoor": "Elektronik",
 }
 TECH_CATEGORY_ORDER = list(TECH_CATEGORY_ROOTS)
