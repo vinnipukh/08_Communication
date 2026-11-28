@@ -183,14 +183,14 @@ def tvplus(limit):
     if m:
         rows.append(srow("tvplus", "TV+ aylık plan", m.group(1), "1_ay", url))
         rows.append(srow("tvplus", "TV+ yıllık plan (aylık karşılığı)", m.group(2), "1_ay", url, pid="tv-yillik-plan"))
+    seen = set()
     for p in re.finditer(r'\{"package_id":"(\d+)","name":"([^"]+)".*?"campaignText":"([^"]*)"', rsc):
-        after = re.search(r"sonrasında ([\d.,]+)₺", p.group(3))
-        first = re.search(r"ilk \d+ ay ([\d.,]+)₺", p.group(3))
-        if after:
-            rows.append(srow("tvplus", p.group(2), after.group(1), "1_ay", url, group="turkcell-hbo-max",
+        # Regular price only: "ilk 6 ay 199 TL, sonrasında da 299 TL" -> 299 (promo price ignored).
+        after = re.search(r"sonras[ıi]nda\s+(?:da\s+)?([\d.,]+?)\s*(?:₺|TL)", p.group(3))
+        if after and (p.group(2), after.group(1)) not in seen:
+            seen.add((p.group(2), after.group(1)))
+            rows.append(srow("tvplus", p.group(2), after.group(1), "1_ay", url, group="tvplus-paket",
                              pid=p.group(1)))
-            if first:
-                rows[-1]["product_name"] += f" (kampanya: ilk ay(lar) {first.group(1)} TL)"
     return need(rows, "tvplus")
 
 

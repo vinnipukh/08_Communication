@@ -174,18 +174,32 @@ TURKCELL_PAGES = [  # (path, segment for paymentType BOTH)
 ]
 
 
-def turkcell(limit):
-    f = Fetcher(TURKCELL)
-    rows = []
-    for path, both in TURKCELL_PAGES:
+def turkcell_queries(f, path):
+    """dehydratedState queries of a Turkcell page; None on 404. The site sometimes serves a page
+    whose package queries are empty (a partial cache), so retry until packages are present."""
+    for attempt in range(4):
         html = f.get(TURKCELL + path)
         if html is None:
-            log.warning("turkcell: %s is 404", path)
-            continue
+            return None
         m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, re.S)
         if not m:
             raise Blocked(f"turkcell {path}: no __NEXT_DATA__")
         queries = json.loads(m.group(1))["props"]["pageProps"]["dehydratedState"]["queries"]
+        if any(isinstance(q["state"].get("data"), dict) and q["state"]["data"].get("packages") for q in queries):
+            return queries
+        log.warning("turkcell: %s has no packages (attempt %d), retrying", path, attempt + 1)
+        time.sleep(20)
+    raise Blocked(f"turkcell {path}: no packages after retries")
+
+
+def turkcell(limit):
+    f = Fetcher(TURKCELL)
+    rows = []
+    for path, both in TURKCELL_PAGES:
+        queries = turkcell_queries(f, path)
+        if queries is None:
+            log.warning("turkcell: %s is 404", path)
+            continue
         for q in queries:
             data = q["state"].get("data")
             if not isinstance(data, dict):
