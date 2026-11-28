@@ -1,0 +1,308 @@
+﻿product_name,price,category_number,sub_category_number,date,operator,group,product_id,service,list_price,url
+Galaxy S26 Ultra,15800.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-s26-ultra-eko-ekran-onarimi,Eko - Ekran Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy S26 Ultra,4900.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-s26-ultra-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy S26 Ultra,8200.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-s26-ultra-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy S26 Ultra,4800.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-s26-ultra-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 26+,11600.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-26-eko-ekran-onarimi,Eko - Ekran Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 26+,4500.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-26-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 26+,6900.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-26-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 26+,4500.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-26-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 26 FE,4900.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-26-fe-eko-ekran-onarimi,Eko - Ekran Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 26 FE,4000.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-26-fe-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 26 FE,4500.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-26-fe-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 26 FE,3500.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-26-fe-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 25 Edge,14600.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-25-edge-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 25 Edge,4000.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-25-edge-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 25 Edge,6200.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-25-edge-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 25 Edge,4100.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-25-edge-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 25 Ultra,14900.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-25-ultra-eko-ekran-onarimi,Eko - Ekran Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 25 Ultra,4900.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-25-ultra-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 25 Ultra,7800.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-25-ultra-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 25 Ultra,4700.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-25-ultra-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 25+,10700.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-25-eko-ekran-onarimi,Eko - Ekran Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 25+,4500.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-25-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 25+,6700.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-25-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 25+,4400.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-25-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 25 FE,5000.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-25-fe-eko-ekran-onarimi,Eko - Ekran Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 25 FE,4000.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-25-fe-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 25 FE,4600.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-25-fe-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 25 FE,3600.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-25-fe-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 24 Ultra,14900.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-24-ultra-eko-ekran-onarimi,Eko - Ekran Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 24 Ultra,4900.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-24-ultra-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 24 Ultra,7200.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-24-ultra-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 24 Ultra,4300.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-24-ultra-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 24+,10700.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-24-eko-ekran-onarimi,Eko - Ekran Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 24+,4500.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-24-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 24+,5900.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-24-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 24+,4000.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-24-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 24 FE,5000.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-24-fe-eko-ekran-onarimi,Eko - Ekran Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 24 FE,4000.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-24-fe-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 24 FE,4400.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-24-fe-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 24 FE,3300.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-24-fe-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 23 Ultra,14900.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-23-ultra-eko-ekran-onarimi,Eko - Ekran Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 23 Ultra,4900.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-23-ultra-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 23 Ultra,6700.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-23-ultra-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 23 Ultra,4400.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-23-ultra-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 23+,11600.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-23-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 23+,10700.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-23-eko-ekran-onarimi,Eko - Ekran Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 23+,4500.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-23-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 23+,6200.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-23-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 23+,3600.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-23-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 23 FE,5000.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-23-fe-eko-ekran-onarimi,Eko - Ekran Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 23 FE,4000.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-23-fe-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 23 FE,4400.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-23-fe-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 23 FE,3000.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-23-fe-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 22 Ultra,15000.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-22-ultra-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 22 Ultra,12700.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-22-ultra-eko-ekran-onarimi,Eko - Ekran Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 22 Ultra,3400.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-22-ultra-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 22 Ultra,5500.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-22-ultra-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 22 Ultra,4100.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-22-ultra-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 22+,11100.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-22-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 22+,7500.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-22-eko-ekran-onarimi,Eko - Ekran Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 22+,3400.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-22-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 22+,5100.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-22-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy 22+,3600.0,8,0835001,2026-11-28,samsung,galaxy-s-serisi,galaxy-22-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 8 Ultra,51300.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-8-ultra-ekran-modul-onarimi-ic-ekran,Ekran - Modül Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 8 Ultra,33900.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-8-ultra-eko-ekran-onarimi-ic-ekran,Eko - Ekran Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 8 Ultra,12500.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-8-ultra-eko-ekran-onarimi-dis-ekran,Eko - Ekran Onarımı (Dış Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 8 Ultra,2700.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-8-ultra-ekran-koruyucu-film,Ekran Koruyucu Film,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 8 Ultra,6200.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-8-ultra-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 8 Ultra,7600.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-8-ultra-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 8 Ultra,6100.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-8-ultra-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 8,51400.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-8-ekran-modul-onarimi-ic-ekran,Ekran - Modül Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 8,32700.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-8-eko-ekran-onarimi-ic-ekran,Eko - Ekran Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 8,12200.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-8-eko-ekran-onarimi-dis-ekran,Eko - Ekran Onarımı (Dış Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 8,2600.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-8-ekran-koruyucu-film,Ekran Koruyucu Film,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 8,6200.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-8-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 8,6700.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-8-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 8,5400.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-8-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 8,24700.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-8-ekran-modul-onarimi-ic-ekran,Ekran - Modül Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 8,12900.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-8-eko-ekran-onarimi-ic-ekran,Eko - Ekran Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 8,9000.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-8-eko-ekran-onarimi-dis-ekran,Eko - Ekran Onarımı (Dış Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 8,1900.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-8-ekran-koruyucu-film,Ekran Koruyucu Film,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 8,5100.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-8-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 8,5800.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-8-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 8,4300.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-8-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 7,44000.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-7-ekran-modul-onarimi-ic-ekran,Ekran - Modül Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 7,29900.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-7-eko-ekran-onarimi-ic-ekran,Eko - Ekran Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 7,10400.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-7-eko-ekran-onarimi-dis-ekran,Eko - Ekran Onarımı (Dış Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 7,2400.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-7-ekran-koruyucu-film,Ekran Koruyucu Film,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 7,5400.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-7-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 7,6400.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-7-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 7,5000.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-7-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 7,21500.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-7-ekran-modul-onarimi-ic-ekran,Ekran - Modül Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 7,13600.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-7-eko-ekran-onarimi-ic-ekran,Eko - Ekran Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 7,8500.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-7-eko-ekran-onarimi-dis-ekran,Eko - Ekran Onarımı (Dış Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 7,1900.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-7-ekran-koruyucu-film,Ekran Koruyucu Film,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 7,4800.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-7-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 7,5500.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-7-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 7,4200.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-7-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 7 FE,14900.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-7-fe-ekran-modul-onarimi-ic-ekran,Ekran - Modül Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 7 FE,9200.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-7-fe-eko-ekran-onarimi-ic-ekran,Eko - Ekran Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 7 FE,5300.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-7-fe-eko-ekran-onarimi-dis-ekran,Eko - Ekran Onarımı (Dış Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 7 FE,1600.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-7-fe-ekran-koruyucu-film,Ekran Koruyucu Film,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 7 FE,4000.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-7-fe-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 7 FE,5000.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-7-fe-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 7 FE,3700.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-7-fe-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 6,36300.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-6-ekran-modul-onarimi-ic-ekran,Ekran - Modül Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 6,26800.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-6-eko-ekran-onarimi-ic-ekran,Eko - Ekran Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 6,9800.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-6-eko-ekran-onarimi-dis-ekran,Eko - Ekran Onarımı (Dış Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 6,2100.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-6-ekran-koruyucu-film,Ekran Koruyucu Film,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 6,5100.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-6-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 6,5500.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-6-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 6,5400.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-6-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 6,18800.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-6-ekran-modul-onarimi-ic-ekran,Ekran - Modül Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 6,11400.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-6-eko-ekran-onarimi-ic-ekran,Eko - Ekran Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 6,7500.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-6-eko-ekran-onarimi-dis-ekran,Eko - Ekran Onarımı (Dış Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 6,1700.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-6-ekran-koruyucu-film,Ekran Koruyucu Film,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 6,4300.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-6-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 6,5200.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-6-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 6,3700.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-6-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 5,28600.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-5-ekran-modul-onarimi-ic-ekran,Ekran - Modül Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 5,23900.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-5-eko-ekran-onarimi-ic-ekran,Eko - Ekran Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 5,6800.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-5-eko-ekran-onarimi-dis-ekran,Eko - Ekran Onarımı (Dış Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 5,1800.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-5-ekran-koruyucu-film,Ekran Koruyucu Film,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 5,4000.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-5-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 5,4800.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-5-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 5,3800.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-5-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 5,16600.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-5-ekran-modul-onarimi-ic-ekran,Ekran - Modül Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 5,12100.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-5-eko-ekran-onarimi-ic-ekran,Eko - Ekran Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 5,5600.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-5-eko-ekran-onarimi-dis-ekran,Eko - Ekran Onarımı (Dış Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 5,1600.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-5-ekran-koruyucu-film,Ekran Koruyucu Film,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 5,4000.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-5-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 5,4000.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-5-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 5,3700.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-5-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 4,27500.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-4-ekran-modul-onarimi-ic-ekran,Ekran - Modül Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 4,26500.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-4-eko-ekran-onarimi-ic-ekran,Eko - Ekran Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 4,6400.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-4-eko-ekran-onarimi-dis-ekran,Eko - Ekran Onarımı (Dış Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 4,1700.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-4-ekran-koruyucu-film,Ekran Koruyucu Film,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 4,4000.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-4-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 4,4700.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-4-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Fold 4,3800.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-fold-4-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 4,16600.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-4-ekran-modul-onarimi-ic-ekran,Ekran - Modül Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 4,15000.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-4-eko-ekran-onarimi-ic-ekran,Eko - Ekran Onarımı (İç Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 4,5100.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-4-eko-ekran-onarimi-dis-ekran,Eko - Ekran Onarımı (Dış Ekran),,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 4,1600.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-4-ekran-koruyucu-film,Ekran Koruyucu Film,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 4,4000.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-4-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 4,4000.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-4-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Z Flip 4,3700.0,8,0835001,2026-11-28,samsung,galaxy-z-serisi,galaxy-z-flip-4-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A57,4800.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a57-eko-ekran-onarimi,Eko - Ekran Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A57,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a57-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A57,3500.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a57-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A57,2800.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a57-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A56,4600.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a56-eko-ekran-onarimi,Eko - Ekran Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A56,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a56-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A56,3500.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a56-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A56,2800.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a56-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A55,4400.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a55-eko-ekran-onarimi,Eko - Ekran Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A55,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a55-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A55,3600.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a55-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A55,2700.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a55-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A54 5G,5400.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a54-5g-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A54 5G,4200.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a54-5g-eko-ekran-onarimi,Eko - Ekran Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A54 5G,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a54-5g-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A54 5G,3800.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a54-5g-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A54 5G,2800.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a54-5g-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A53 5G,5500.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a53-5g-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A53 5G,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a53-5g-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A53 5G,3600.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a53-5g-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A53 5G,2800.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a53-5g-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A37,5200.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a37-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A37,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a37-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A37,3600.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a37-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A37,2800.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a37-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A36,5200.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a36-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A36,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a36-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A36,3300.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a36-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A36,2800.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a36-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A35,4400.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a35-eko-ekran-onarimi,Eko - Ekran Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A35,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a35-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A35,3300.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a35-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A35,2700.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a35-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A34,5200.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a34-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A34,4500.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a34-eko-ekran-onarimi,Eko - Ekran Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A34,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a34-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A34,3400.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a34-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A34,2600.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a34-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A33 5G,5000.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a33-5g-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A33 5G,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a33-5g-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A33 5G,3300.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a33-5g-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A33 5G,2600.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a33-5g-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A27 5G,4600.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a27-5g-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A27 5G,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a27-5g-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A27 5G,2900.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a27-5g-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A27 5G,2600.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a27-5g-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A26,4400.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a26-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A26,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a26-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A26,2900.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a26-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A26,2600.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a26-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A25,4100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a25-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A25,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a25-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A25,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a25-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A25,2400.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a25-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A24,4100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a24-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A24,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a24-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A24,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a24-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A24,2400.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a24-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A23,3600.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a23-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A23,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a23-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A23,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a23-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A23,2900.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a23-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A17 5G,3900.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a17-5g-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A17 5G,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a17-5g-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A17 5G,2900.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a17-5g-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A17 5G,2500.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a17-5g-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A17,3900.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a17-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A17,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a17-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A17,2900.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a17-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A17,2400.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a17-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A16 5G,3900.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a16-5g-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A16 5G,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a16-5g-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A16 5G,2700.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a16-5g-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A16 5G,2400.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a16-5g-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A16,3900.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a16-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A16,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a16-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A16,2700.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a16-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A16,2500.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a16-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A15,3700.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a15-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A15,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a15-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A15,2200.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a15-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A15,2400.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a15-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A14,3400.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a14-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A14,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a14-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A14,2700.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a14-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A14,2300.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a14-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A13,3500.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a13-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A13,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a13-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A13,2800.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a13-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A13,2600.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a13-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A13 4G,3600.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a13-4g-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A13 4G,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a13-4g-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A13 4G,2800.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a13-4g-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A13 4G,2600.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a13-4g-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A07 5G,3500.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a07-5g-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A07 5G,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a07-5g-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A07 5G,2700.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a07-5g-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A07 5G,2500.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a07-5g-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A07,4100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a07-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A07,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a07-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A07,2700.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a07-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A07,2600.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a07-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A065,3600.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a065-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A065,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a065-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A065,2800.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a065-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A065,2500.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a065-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A05,3300.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a05-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A05,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a05-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A05,2700.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a05-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A05,2400.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a05-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A055,3000.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a055-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A055,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a055-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A055,2800.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a055-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A055,2400.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a055-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A04s,3300.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a04s-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A04s,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a04s-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A04s,2700.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a04s-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A04s,2500.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a04s-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A04,3500.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a04-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A04,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a04-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A04,2900.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a04-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A04,2500.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a04-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A04e,4600.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a04e-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A04e,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a04e-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A04e,2400.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a04e-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A04e,2300.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a04e-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A03,3700.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a03-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A03,3100.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a03-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A03,2800.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a03-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy A03,2400.0,8,0835001,2026-11-28,samsung,galaxy-a-serisi,galaxy-a03-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M54,5300.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m54-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M54,3100.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m54-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M54,3900.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m54-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M54,2600.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m54-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M34 5G,4300.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m34-5g-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M34 5G,3100.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m34-5g-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M34 5G,3100.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m34-5g-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M34 5G,2500.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m34-5g-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M33 5G,4000.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m33-5g-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M33 5G,3100.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m33-5g-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M33 5G,2800.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m33-5g-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M33 5G,2600.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m33-5g-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M23 5G,3800.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m23-5g-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M23 5G,3100.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m23-5g-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M23 5G,2800.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m23-5g-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M23 5G,2700.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m23-5g-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M15 5G,4000.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m15-5g-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M15 5G,3100.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m15-5g-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M15 5G,2700.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m15-5g-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M15 5G,2500.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m15-5g-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M14 5G,3800.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m14-5g-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M14 5G,3100.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m14-5g-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M14 5G,2700.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m14-5g-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M14 5G,2500.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m14-5g-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M13,4000.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m13-ekran-modul-onarimi,Ekran - Modül Onarımı,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M13,3100.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m13-batarya,Batarya,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M13,2800.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m13-kamera,Kamera,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy M13,2500.0,8,0835001,2026-11-28,samsung,galaxy-m-serisi,galaxy-m13-arka-kapak,Arka Kapak,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Ring,11000.0,8,0835001,2026-11-28,samsung,galaxy-ring,galaxy-ring-yuzuk,Yüzük,,https://www.samsung.com/tr/support/repair-cost/
+Galaxy Ring,5000.0,8,0835001,2026-11-28,samsung,galaxy-ring,galaxy-ring-sarj-kutusu,Şarj Kutusu,,https://www.samsung.com/tr/support/repair-cost/
