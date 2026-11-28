@@ -20,6 +20,7 @@ import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+RETRY_PAUSE_SECONDS = 60
 
 # (name, script relative to this folder, extra arguments, time limit in minutes). Limits are ~4x
 # the durations measured on a developer PC, because the cron server's CPU is slower.
@@ -122,6 +123,13 @@ def main():
 
     for name, script, extra, limit in entries:
         problem, _minutes = run_one(name, script, extra, limit)
+
+        # Most failures are one-off site hiccups (HTTP 500, a page served without its content);
+        # one retry after a pause fixes them. Timeouts are not retried: they would double the wait.
+        if problem and problem != "timeout" and problem != "missing script":
+            print(f"[group] {name}: retrying once in {RETRY_PAUSE_SECONDS} s", flush=True)
+            time.sleep(RETRY_PAUSE_SECONDS)
+            problem, _minutes = run_one(name, script, extra, limit)
 
         if problem:
             failures.append(f"{name} ({problem})")

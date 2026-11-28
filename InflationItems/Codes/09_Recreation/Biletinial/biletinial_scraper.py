@@ -7,6 +7,7 @@ import re
 import sys
 import time
 from datetime import datetime, timedelta
+import json
 from pathlib import Path
 from urllib.parse import urljoin, urlparse, urlunparse
 
@@ -635,6 +636,27 @@ def parse_cinema_page(html_text, url, fallback_name):
     return rows
 
 
+KNOWN_CINEMAS_FILE = Path(__file__).resolve().parent / "known_cinemas.json"
+
+
+def load_known_cinemas():
+    try:
+        data = json.loads(KNOWN_CINEMAS_FILE.read_text(encoding="utf-8"))
+        return {str(k): str(v) for k, v in data.items()}
+    except (OSError, ValueError, AttributeError):
+        return {}
+
+
+def save_known_cinemas(venues):
+    try:
+        KNOWN_CINEMAS_FILE.write_text(
+            json.dumps(dict(sorted(venues.items())), ensure_ascii=False, indent=0),
+            encoding="utf-8",
+        )
+    except OSError as exc:
+        logger.warning("Could not save %s: %s", KNOWN_CINEMAS_FILE.name, exc)
+
+
 def scrape_cinema(session, max_films, max_venues):
     # Homepage first (also when the theatre part ran before in the same session).
     get_with_retry(session, BASE_URL + "/tr-tr")
@@ -647,6 +669,14 @@ def scrape_cinema(session, max_films, max_venues):
         (today + timedelta(days=1)).strftime("%Y-%m-%d"),
     ]
     venues = collect_cinema_venues(session, film_urls, dates)
+
+    # Film pages only list the cities that have sessions right now, so a quiet day can find
+    # 14 cinemas instead of 50. Remember every cinema ever seen and always read those pages too.
+    known = load_known_cinemas()
+    for url, name in known.items():
+        venues.setdefault(url, name)
+    if venues:
+        save_known_cinemas({**known, **venues})
     venue_items = sorted(venues.items())[:max(0, max_venues)]
 
     logger.info("Total cinema pages: %d (cap %d)", len(venue_items), max_venues)
